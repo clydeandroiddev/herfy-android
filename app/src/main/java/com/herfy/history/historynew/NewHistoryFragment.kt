@@ -247,19 +247,19 @@ class NewHistoryFragment : BaseFragment(), OrdersContract.View {
                     )
                 ) {
                     if (order.sequence <= OrderStatusType.DISPATCHED.value) {
-                        updateStatusGIF(com.herfy.home.R.drawable.make_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
                     } else if (order.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && order.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        updateStatusGIF(com.herfy.home.R.drawable.delivered_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
                     } else {
-                        updateStatusGIF(com.herfy.home.R.drawable.delivered_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
                     }
                 } else {
                     if (order.sequence <= OrderStatusType.IN_KITCHEN.value) {
-                        updateStatusGIF(com.herfy.home.R.drawable.make_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
                     } else if (order.sequence >= OrderStatusType.READY.value && order.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        updateStatusGIF(com.herfy.home.R.drawable.collected_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
                     } else {
-                        updateStatusGIF(com.herfy.home.R.drawable.collected_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
                     }
                 }
 

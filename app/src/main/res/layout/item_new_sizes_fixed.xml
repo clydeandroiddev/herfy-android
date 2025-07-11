@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="false"
+    app:cardCornerRadius="20dp"
+    app:strokeWidth="1dp"
+    android:layout_margin="@dimen/margin_micro">
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:background="?selectableItemBackground">
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/Styles.Text.Footnote.Semi.Bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimaryDark"
+            tools:text="Small" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/txtSizesPrice"
+            android:layout_width="match_parent"
+            style="@style/Styles.Text.Footnote"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="Sar 2"
+            android:textColor="@color/colorPrimaryDark"
+            android:textDirection="ltr"
+            android:layout_height="wrap_content"/>
+
+
+            <ImageView
+                android:id="@+id/radioButton"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                android:button="@drawable/item_drawable_radio_state"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

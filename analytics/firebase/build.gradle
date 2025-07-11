@@ -8,11 +8,10 @@ plugins {
 
 android {
     namespace 'com.herfy.analytics.firebase'
-    compileSdk 34
-
+    compileSdk 36
     defaultConfig {
         minSdk 24
-
+        targetSdk 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -100,13 +99,16 @@ android {
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
+
 }
 
 dependencies {

@@ -2,6 +2,7 @@ package com.herfy.history.historynew.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -65,11 +66,11 @@ class HistoryListAdapter(
             } else if (item.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value &&
                 item.sequence <= OrderStatusType.CANCELLED_BY_EMPLOYEE.value
             ) {
-                status.setTextColor(status.context.resources.getColor(R.color.cancelled_color))
+                status.setTextColor(ContextCompat.getColor(holder.itemView.context, com.herfy.commonstyles.R.color.cancelled_color))
                 statusIcon.setImageResource(R.drawable.ic_circle_xmark)
                 status.text = CacheUtil.getInstance().getTranslations(Text.CANCELLED, "Cancelled")
             } else {
-                status.setTextColor(status.context.resources.getColor(R.color.cancelled_color))
+                status.setTextColor(ContextCompat.getColor(holder.itemView.context, com.herfy.commonstyles.R.color.cancelled_color))
                 statusIcon.setImageResource(R.drawable.ic_circle_xmark)
                 status.text = CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed")
             }

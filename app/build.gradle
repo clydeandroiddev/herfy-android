@@ -7,20 +7,20 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'dagger.hilt.android.plugin'
 
-
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(18))
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
 android {
-    compileSdk 34
+    namespace 'com.herfy'
+    compileSdk 36
     defaultConfig {
-        minSdkVersion 24
-        targetSdk 34
+        minSdk 24
+        targetSdk 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -34,7 +34,18 @@ android {
             }
         }
     }
+
+    //For butterknife
+    tasks.withType(JavaCompile).configureEach{
+        options.fork = true
+        options.forkOptions.jvmArgs +=[
+                '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+                '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+                '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED']
+    }
+
     buildFeatures {
+        buildConfig true
         viewBinding true
         dataBinding true
     }
@@ -226,12 +237,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-        }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     useLibrary 'android.test.runner'
@@ -245,7 +256,6 @@ android {
     lint {
         disable 'RestrictedApi'
     }
-    namespace 'com.herfy'
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->

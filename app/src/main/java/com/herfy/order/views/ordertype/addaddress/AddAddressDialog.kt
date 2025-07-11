@@ -162,7 +162,7 @@ class AddAddressDialog : DialogFragment() {
                         it.latitude, it.longitude
                     ).staticMap(requireActivity().resources.getString(com.herfy.R.string.google_maps_api_key))
                 ).apply(RequestOptions.centerInsideTransform())
-                    .placeholder(com.herfy.R.drawable.image_placeholder)
+                    .placeholder(com.herfy.common.R.drawable.image_placeholder)
                     .diskCacheStrategy(
                         DiskCacheStrategy.ALL
                     ).into(staticMap)
@@ -184,7 +184,7 @@ class AddAddressDialog : DialogFragment() {
                         it.attributes.lat.toDouble(), it.attributes.longt.toDouble()
                     ).staticMap(requireActivity().resources.getString(com.herfy.R.string.google_maps_api_key))
                 ).apply(RequestOptions.centerInsideTransform())
-                    .placeholder(com.herfy.R.drawable.image_placeholder)
+                    .placeholder(com.herfy.common.R.drawable.image_placeholder)
                     .diskCacheStrategy(
                         DiskCacheStrategy.ALL
                     ).into(staticMap)
@@ -192,7 +192,7 @@ class AddAddressDialog : DialogFragment() {
                 noteForTheDriverEdit.setText(it.attributes.instructions)
                 flatNumber.setText(it.attributes.line2)
                 flatNumber.isEnabled = false
-                flatNumber.setBackgroundResource(R.drawable.background_edit_filled)
+                flatNumber.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_edit_filled)
                 addressLine.text = it.attributes.line1
                 featureName.text = it.attributes.line1
                 val labelValue = it.attributes.label

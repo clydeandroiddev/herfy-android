@@ -301,10 +301,10 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
         paymentTypes.forEach { paymentType ->
             if (paymentType == PaymentType.CASH) {
                 isCashPaymentAvailable = true
-                val view: View = inflater.inflate(R.layout.item_payment_cash, null)
-                cashPayment = view.findViewById(R.id.cash_layout)
-                cashContainer = view.findViewById(R.id.container_cash)
-                rbCash = view.findViewById(R.id.rb_cash)
+                val view: View = inflater.inflate(com.herfy.checkout.R.layout.item_payment_cash, null)
+                cashPayment = view.findViewById(com.herfy.checkout.R.id.cash_layout)
+                cashContainer = view.findViewById(com.herfy.checkout.R.id.container_cash)
+                rbCash = view.findViewById(com.herfy.checkout.R.id.rb_cash)
                 cashLabel = view.findViewById(R.id.cash_label)
                 cashImage = view.findViewById(R.id.cash_image)
                 cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
@@ -313,12 +313,12 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
             } else if (paymentType == PaymentType.CARD) {
                 isCardPaymentAvailable = true
                 setupSavedCards()
-                val view: View = inflater.inflate(R.layout.item_card_payment, null)
-                rbCard = view.findViewById(R.id.rb_card)
-                cardLabel = view.findViewById(R.id.card_label)
-                cardContainer = view.findViewById(R.id.container_card)
-                cardImage = view.findViewById(R.id.card_image)
-                cardPayment = view.findViewById(R.id.cards_layout)
+                val view: View = inflater.inflate(com.herfy.checkout.R.layout.item_card_payment, null)
+                rbCard = view.findViewById(com.herfy.checkout.R.id.rb_card)
+                cardLabel = view.findViewById(com.herfy.checkout.R.id.card_label)
+                cardContainer = view.findViewById(com.herfy.checkout.R.id.container_card)
+                cardImage = view.findViewById(com.herfy.checkout.R.id.card_image)
+                cardPayment = view.findViewById(com.herfy.checkout.R.id.cards_layout)
                 cardLabel.text = CacheUtil.getInstance().getTranslations(Text.NEW_DEBIT_CREDIT_CARD, "New Debit/Credit Card")
                 binding.paymentTypeContainer.addView(view)
                 cardContainer.setOnClickListener {
@@ -331,12 +331,12 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 }
             } else if (paymentType == PaymentType.CARD_ON_DELIVERY || paymentType == PaymentType.CARD_ON_PICKUP) {
                 isCODPaymentAvailable = true
-                val view: View = inflater.inflate(R.layout.item_payment_cod_cop, null)
-                codPayment = view.findViewById(R.id.cod_layout)
-                codContainer = view.findViewById(R.id.container_cod)
-                codLabel = view.findViewById(R.id.cod_label)
-                rbCod = view.findViewById(R.id.rb_cod)
-                codImage = view.findViewById(R.id.cod_image)
+                val view: View = inflater.inflate(com.herfy.checkout.R.layout.item_payment_cod_cop, null)
+                codPayment = view.findViewById(com.herfy.checkout.R.id.cod_layout)
+                codContainer = view.findViewById(com.herfy.checkout.R.id.container_cod)
+                codLabel = view.findViewById(com.herfy.checkout.R.id.cod_label)
+                rbCod = view.findViewById(com.herfy.checkout.R.id.rb_cod)
+                codImage = view.findViewById(com.herfy.checkout.R.id.cod_image)
                 binding.cashOnDeliveryContainer.addView(view)
                 codLabel.text = if (CacheUtil.getInstance().orderType === OrderType.DELIVERY) {
                     CacheUtil.getInstance().getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
@@ -384,15 +384,15 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
 
     private fun unselectedView(radioButton: ImageView, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
         radioButton.setImageResource(checkoutR.drawable.ic_payment_radio_unselected)
-        cardView.strokeColor = ContextCompat.getColor(this, R.color.card_stroke_color)
+        cardView.strokeColor = ContextCompat.getColor(this, com.herfy.commonstyles.R.color.card_stroke_color)
         constraintLayout.setBackgroundColor(Color.WHITE)
-        imageView.background = resources.getDrawable(R.drawable.unselected_image_bg)
+        imageView.background = ContextCompat.getDrawable(this, com.herfy.checkout.R.drawable.unselected_image_bg)
     }
     private fun selectedView(radioButton: ImageView, imageView: ImageView, constraintLayout: ConstraintLayout, cardView: MaterialCardView) {
         radioButton.setImageResource(checkoutR.drawable.ic_payment_radio_selected)
-        cardView.strokeColor = ContextCompat.getColor(this,R.color.border_color_light)
-        constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.card_selected_bg))
-        imageView.background = resources.getDrawable(R.drawable.selected_image_bg)
+        cardView.strokeColor = ContextCompat.getColor(this, com.herfy.commonstyles.R.color.border_color_light)
+        constraintLayout.setBackgroundColor(ContextCompat.getColor(this, com.herfy.commonstyles.R.color.card_selected_bg))
+        imageView.background = ContextCompat.getDrawable(this, com.herfy.checkout.R.drawable.selected_image_bg)
     }
 
     private fun setupSavedCards() {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="google_sign_in_client_id" translatable="false">669493504227-3v0hq1lgrn0lbas1hqk2khsqh646bpj9.apps.googleusercontent.com</string>
     <string name="exit_to_home">com.herfy.authentication.EXIT</string>
 </resources>

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true"
+    app:strokeColor="@android:color/transparent"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_store_selected"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/mainListing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/indicator"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/nearestContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#E8F6ED"
+                    app:cardCornerRadius="6dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/nearestLabel"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:paddingStart="8dp"
+                        android:paddingTop="3dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="3dp"
+                        android:textAllCaps="true"
+                        android:textColor="#117A38"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="NEAREST" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <View
+                    android:id="@+id/spaceNearest"
+                    android:layout_width="4dp"
+                    android:layout_height="1dp"
+                    app:layout_constraintStart_toEndOf="@id/nearestContainer"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/closeContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#FFE5E8"
+                    app:cardCornerRadius="6dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toEndOf="@id/spaceNearest"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/closedLabel"
+                        style="@style/Styles.Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:paddingStart="8dp"
+                        android:paddingTop="3dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="3dp"
+                        android:textColor="#D70015"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="CLOSED - Opens 11am" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/directionsImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_direction_unselected"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/kmCount"
+                    style="@style/Styles.Text.Footnote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:alpha="0.5"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:textColor="#212121"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/directionsImage"
+                    app:layout_constraintEnd_toStartOf="@id/directionsImage"
+                    app:layout_constraintTop_toTopOf="@id/directionsImage"
+                    tools:text="0.8 km" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/branchName"
+                    style="@style/Styles.Text.Title3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:maxLines="3"
+                    android:textAlignment="viewStart"
+                    android:textColor="#212121"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@id/kmCount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/directionsImage"
+                    tools:text="Herfy - Al Hamra" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/branchAddress"
+                style="@style/Styles.Text.Footnote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:maxLines="3"
+                android:textAlignment="viewStart"
+                android:textColor="#55667B"
+                android:textSize="14sp"
+                tools:text="QQHF+6W4, Al Hamra, Riyadh 13217" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/branchTime"
+                style="@style/Styles.Text.Footnote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:textAlignment="viewStart"
+                android:textColor="#212121"
+                android:textSize="14sp"
+                tools:text="10AM - 2AM" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pickupMethodsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/pickupMethodsLabel"
+                    style="@style/Styles.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:maxLines="3"
+                    android:textAlignment="viewStart"
+                    android:textColor="#0064AC"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Pickup Methods" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/pickupMethodsLabel">
+
+                    <LinearLayout
+                        android:id="@+id/walkInContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/margin_30dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_pickup_methods"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="@dimen/margin_10dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/directions_walk" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/walkInLabel"
+                            style="@style/Styles.Text.Footnote"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:ellipsize="end"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="#212121"
+                            android:textSize="14sp"
+                            tools:text="Walk In" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/curbsideContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/margin_30dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_pickup_methods"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="@dimen/margin_10dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/local_parking" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/curbsideLabel"
+                            style="@style/Styles.Text.Footnote"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:ellipsize="end"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="#212121"
+                            android:textSize="14sp"
+                            tools:text="Curbside" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/driveThruContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/margin_30dp"
+                        android:background="@drawable/bg_pickup_methods"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="@dimen/margin_10dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/directions_car" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/driveThruLabel"
+                            style="@style/Styles.Text.Footnote"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:ellipsize="end"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="#212121"
+                            android:textSize="14sp"
+                            tools:text="Drive Thru" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -70,12 +70,7 @@ public class CartNotificationBroadcastReceiver extends BroadcastReceiver {
 
             builder.setSmallIcon(R.drawable.notification);
 
-            String appKey = BuildUtil.soloAppKey();
-            if (appKey.equalsIgnoreCase("UKFQD1wwUBev4PRP") || appKey.equalsIgnoreCase("dYJux5BNAwTbEwEE")) {
-                builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.notification_large));
-            } else {
-                builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.splash));
-            }
+            builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.splash));
             FirebaseECommerceEventUtil.Companion.abandonedCartEvent(context, CacheUtil.getInstance().getCart());
             builder.setContentTitle(context.getResources().getString(R.string.app_name));
 

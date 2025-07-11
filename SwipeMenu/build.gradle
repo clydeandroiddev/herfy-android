@@ -5,10 +5,11 @@ apply plugin: 'maven-publish'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdk 34
+    namespace 'com.tubb.smrv'
+    compileSdk 36
     defaultConfig {
-        minSdkVersion 16
-        targetSdk 34
+        minSdk 16
+        targetSdk 36
     }
     buildTypes {
         debug {
@@ -77,9 +78,20 @@ android {
             shrinkResources false
         }
     }
+
     buildFeatures {
         viewBinding = true
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
 }
 
 dependencies {

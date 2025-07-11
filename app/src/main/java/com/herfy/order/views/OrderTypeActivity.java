@@ -1152,7 +1152,7 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View view = inflater.inflate(R.layout.marker_store_new, null);
+            View view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null);
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.title(String.valueOf(i));
@@ -1325,10 +1325,10 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                View view = inflater.inflate(R.layout.marker_store_new, null);
+                View view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null);
 
                 //ImageView infoWindow = view.findViewById(R.id.info_window);
-                TextView distanceText = view.findViewById(R.id.distance);
+                TextView distanceText = view.findViewById(com.herfy.ordertype.R.id.kmAway);
 
                 distanceText.setTypeface(FontHandler.getRegularTypeface());
 
@@ -1368,7 +1368,7 @@ public class OrderTypeActivity extends BaseActivity implements OrderContract.Vie
 
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                View view = inflater.inflate(R.layout.marker_store_new, null);
+                View view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null);
 
                 //ImageView infoWindow = view.findViewById(R.id.info_window);
                 //infoWindow.setVisibility(View.INVISIBLE);

@@ -111,8 +111,8 @@ class MenuCategoryItemAdapter(
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(ivImage)
 
-                val soldOutColor = ContextCompat.getColor(itemView.context, R.color.soldout)
-                val notSoldOutColor = ContextCompat.getColor(itemView.context, R.color.transparent)
+                val soldOutColor = ContextCompat.getColor(itemView.context, com.herfy.commonstyles.R.color.soldout)
+                val notSoldOutColor = ContextCompat.getColor(itemView.context, android.R.color.transparent)
 
                 if (LocaleUtil.getInstance().isArabic) {
                     tvSoldOut.mode = SlantedTextView.MODE_LEFT
@@ -156,9 +156,9 @@ class MenuCategoryItemAdapter(
                     visibility = if(AuthUtil.getInstance().isSignedIn) {
                         setImageResource(
                             if (CacheUtil.getInstance().favorites.contains(menuItem.id)) {
-                                R.drawable.ic_favorite_filled
+                                com.herfy.common.R.drawable.ic_favorite_filled
                             } else {
-                                R.drawable.ic_favorite_empty
+                                com.herfy.common.R.drawable.ic_favorite_empty
                             }
                         )
                         View.VISIBLE
@@ -239,9 +239,9 @@ class MenuCategoryItemAdapter(
                             onFavorite(item.menuItem)
                             setImageResource(
                                 if (CacheUtil.getInstance().favorites.contains(item.menuItem.id)) {
-                                    R.drawable.ic_favorite_empty
+                                    com.herfy.common.R.drawable.ic_favorite_empty
                                 } else {
-                                    R.drawable.ic_favorite_filled
+                                    com.herfy.common.R.drawable.ic_favorite_filled
                                 }
                             )
                         }

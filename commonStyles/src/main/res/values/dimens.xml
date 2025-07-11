@@ -94,4 +94,6 @@
     <dimen name="spinner_padding_end">20dp</dimen>
 
     <dimen name="order_type_padding">32dp</dimen>
+    <dimen name="view_keyboard_regular">30dp</dimen>
+    <dimen name="view_keyboard_shown">220dp</dimen>
 </resources>

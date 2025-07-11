@@ -243,3 +243,36 @@ com.samsung.android.game.cloudgame.dev.sdk.* { *;}
 
 -keep class com.shockwave.**
 -keep class com.checkout.** { *; }
+
+-keepattributes Exceptions
+
+# For using GSON @Expose annotation
+-keepattributes Annotation
+# OkHttp ProGuard rules
+-dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+
+#livedata
+-keep class * extends androidx.lifecycle.ViewModel {
+<init>();
+}
+-keep class * extends androidx.lifecycle.AndroidViewModel {
+<init>(android.app.Application);
+}
+-keep class androidx.lifecycle.**{*;}
+-keep class com.google.gson.examples.android.model.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+# Keep all string resources
+-keep class **.R$* { <fields>; }
+
+# Keep classes required for localization
+-keep class android.content.res.** { *; }
+-keep class androidx.core.** { *; }

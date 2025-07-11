@@ -1181,7 +1181,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
                 activity?.let {
                     binding.homeOption4.sliderPlaceholder.setBackgroundColor(
                         ContextCompat.getColor(
-                            it, R.color.transparent
+                            it, android.R.color.transparent
                         )
                     )
                     val sliderAdapter = SliderFragmentStateAdapter(it, sliderPresenter, slides)

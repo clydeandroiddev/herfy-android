@@ -47,7 +47,7 @@ public class CartModifierPriceAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new CartModifierPriceAdapter.ModifierItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.item_cart_modifiers, parent, false));
+                com.herfy.cart.R.layout.item_cart_modifiers, parent, false));
     }
 
     @Override

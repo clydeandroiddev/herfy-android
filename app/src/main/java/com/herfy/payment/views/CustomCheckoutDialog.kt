@@ -41,6 +41,7 @@ import com.herfy.util.AppLogger
 import com.herfy.util.ViewUtil
 import org.json.JSONObject
 import com.herfy.utils.helper.*
+import com.checkout.frames.R as CheckoutR
 
 
 class CustomCheckoutDialog(private val context: Context) : BaseDialogFragment() {
@@ -316,7 +317,7 @@ class CustomCheckoutDialog(private val context: Context) : BaseDialogFragment() 
 
 
     private fun provideHeaderStyle(ctx : Context) = DefaultLightStyle.screenHeader(
-        textId = R.string.cko_payment_details_title,
+        textId = CheckoutR.string.cko_payment_details_title,
         imageId = R.drawable.ic_back_arrow,
         leadingIconSize = backIconSize,
         textColor = inputFieldColor,
@@ -327,7 +328,7 @@ class CustomCheckoutDialog(private val context: Context) : BaseDialogFragment() 
 
     private fun providePayButtonStyle(ctx : Context): PayButtonComponentStyle {
         val buttonStyle = DefaultButtonStyle.lightSolid(
-            textId = R.string.cko_pay,
+            textId = CheckoutR.string.cko_pay,
             contentColor = inputFieldColor,
             containerColor = Color.parseColor(String.format(
                 "#FF%06X", 0xFFFFFF and ViewUtil.getColorAccent(ctx))).toLong(),

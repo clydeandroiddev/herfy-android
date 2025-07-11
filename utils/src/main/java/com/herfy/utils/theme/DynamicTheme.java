@@ -50,4 +50,9 @@ public class DynamicTheme {
         int rgb = (Color.red(color) + Color.green(color) + Color.blue(color)) / 3;
         return rgb > 210;
     }
+
+    public static int getDefaultPrimaryColor() {
+        return Color.parseColor("#" + DynamicTheme.DEFAULT_PRIMARY_COLOR);
+    }
+
 }

@@ -71,12 +71,12 @@ class MenuCategoryAdapter(
                     text = menuCategory.getName(LocaleUtil.getInstance().language)
                     if(isSelected) {
                         setTypeface(
-                            ResourcesCompat.getFont(itemView.context, R.font.inter_semi_bold),
+                            ResourcesCompat.getFont(itemView.context, com.herfy.commonstyles.R.font.inter_semi_bold),
                             Typeface.BOLD
                         )
                     } else {
                         setTypeface(
-                            ResourcesCompat.getFont(itemView.context, R.font.inter_regular),
+                            ResourcesCompat.getFont(itemView.context, com.herfy.commonstyles.R.font.inter_regular),
                             Typeface.NORMAL
                         )
                     }

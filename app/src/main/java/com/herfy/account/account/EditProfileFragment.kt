@@ -218,7 +218,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                     fullName = "$firstName"
                 }
                 binding.nameEdit.setText(fullName)
-                binding.nameEdit.setBackgroundResource(R.drawable.background_common_selection)
+                binding.nameEdit.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_common_selection)
                 checkNameState()
             }
 
@@ -258,12 +258,12 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     }
 
     private fun checkNameState() {
-        binding.nameEdit.setBackgroundResource(R.drawable.background_edit_text)
+        binding.nameEdit.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_edit_text)
         if (binding.nameEdit.text.toString().isNotEmpty()) {
             isSaveName = true
             if (accountPresenter?.originalName.orEmpty() == binding.nameEdit.text.toString()) {
                 isSaveName = false
-                binding.nameEdit.setBackgroundResource(R.drawable.background_edit_filled)
+                binding.nameEdit.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_edit_filled)
             }
         } else {
             isSaveName = false
@@ -274,16 +274,16 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     private fun processGender(gender: String) {
         if (gender.equals("Male", ignoreCase = true)) {
             genderSelected = "Male"
-            binding.maleSelection.setBackgroundResource(R.drawable.background_common_selection)
-            binding.femaleSelection.setBackgroundResource(R.drawable.background_common_default)
-            binding.selectionMale.setImageResource(R.drawable.ic_store_selected)
-            binding.selectionFemale.setImageResource(R.drawable.ic_store_unselected)
+            binding.maleSelection.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_common_selection)
+            binding.femaleSelection.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_common_default)
+            binding.selectionMale.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
+            binding.selectionFemale.setImageResource(com.herfy.ordertype.R.drawable.ic_store_unselected)
         } else if (gender.equals("Female", ignoreCase = true)) {
             genderSelected = "Female"
-            binding.selectionMale.setImageResource(R.drawable.ic_store_unselected)
-            binding.selectionFemale.setImageResource(R.drawable.ic_store_selected)
-            binding.femaleSelection.setBackgroundResource(R.drawable.background_common_selection)
-            binding.maleSelection.setBackgroundResource(R.drawable.background_common_default)
+            binding.selectionMale.setImageResource(com.herfy.ordertype.R.drawable.ic_store_unselected)
+            binding.selectionFemale.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected)
+            binding.femaleSelection.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_common_selection)
+            binding.maleSelection.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_common_default)
         }
     }
 

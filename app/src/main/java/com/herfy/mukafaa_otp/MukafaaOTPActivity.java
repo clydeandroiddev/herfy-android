@@ -258,7 +258,7 @@ public class MukafaaOTPActivity extends BaseActivity implements MukafaaOTPContra
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
 
-        builder.setView(getLayoutInflater().inflate(R.layout.loading, null));
+        builder.setView(getLayoutInflater().inflate(com.herfy.common.R.layout.loading, null));
 
         loadingDialog = builder.create();
 

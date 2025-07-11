@@ -61,6 +61,7 @@ import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.theme.DynamicTheme;
 import com.skylinedynamics.solosdk.api.SoloApi;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.models.objects.Slide;
@@ -170,7 +171,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     @Override
     public void init() {
-        setStatusBarColor();
+        setStatusBarColor(DynamicTheme.getDefaultPrimaryColor());
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey("fromChangeLanguage")) {

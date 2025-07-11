@@ -352,7 +352,7 @@ class ComboItemDetailsModifierAdapter(private var itemList: List<ModifierAdapter
                 ) {
                     Glide.with(itemView.context).load(imageUrl)
                         .apply(RequestOptions.centerCropTransform())
-                        .placeholder(R.drawable.image_placeholder)
+                        .placeholder(com.herfy.common.R.drawable.image_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).into(image)
                     image.visible()
                 } else {

@@ -380,7 +380,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             markerOptionsList.clear()
             var currentMarkerIcon =
                 com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                    this, R.drawable.user_current_location
+                    this, com.herfy.ordertype.R.drawable.user_current_location
                 )
             val storeLat = store.attributes.lat
             val storeLon = store.attributes.lng
@@ -388,7 +388,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val markerOptions = MarkerOptions()
             val supportMapFragment =
-                supportFragmentManager.findFragmentById(R.id.checkout_map) as OrderSupportMapFragment?
+                supportFragmentManager.findFragmentById(com.herfy.checkout.R.id.checkout_map) as OrderSupportMapFragment?
             supportMapFragment?.setListener {
                 binding?.nestedScrollView?.requestDisallowInterceptTouchEvent(
                     true
@@ -403,7 +403,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 if (orderType == OrderType.DELIVERY) {
                     currentMarkerIcon =
                         com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                            this, R.drawable.ic_address_user_home
+                            this, com.herfy.common.R.drawable.ic_address_user_home
                         )
                     if (CacheUtil.getInstance().orderAddress.attributes.label.equals(
                             "work",
@@ -412,16 +412,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     ) {
                         currentMarkerIcon =
                             com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                                this, R.drawable.ic_address_user_work
+                                this, com.herfy.common.R.drawable.ic_address_user_work
                             )
                     }
                     val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
                     val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
                     val addressLocation = LatLng(lat, lon)
-                    val view = inflater.inflate(R.layout.marker_store_new, null)
-                    val textView = view.findViewById<TextView>(R.id.kmAway)
+                    val view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null)
+                    val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                     val image = view.findViewById<ImageView>(R.id.icon)
-                    image.setImageResource(R.drawable.delivery_marker_selected)
+                    image.setImageResource(com.herfy.checkout.R.drawable.delivery_marker_selected)
                     val currentLocation =
                         LatLng(addressLocation.latitude, addressLocation.longitude)
                     val currentDistance = DistanceCalculator.calculateDistance(
@@ -489,10 +489,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     }
                 } else {
                     markerOptions.position(storeLocation)
-                    val view = inflater.inflate(R.layout.marker_store_new, null)
-                    val textView = view.findViewById<TextView>(R.id.kmAway)
+                    val view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null)
+                    val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                     val imageView = view.findViewById<AppCompatImageView>(R.id.icon)
-                    imageView.setImageResource(R.drawable.ic_marker_red)
+                    imageView.setImageResource(com.herfy.productpagedetails.R.drawable.ic_marker_red)
                     lifecycleScope.launchWithTimber {
                         val task = fusedLocationProviderClient?.lastLocation
                         task?.addOnSuccessListener { location ->
@@ -677,7 +677,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             OrderType.DELIVERY -> {
                 binding!!.tvOrderType.text = CacheUtil.getInstance()
                     .getTranslations(Text.DELIVERY_ADDRESS, "Delivery Address")
-                binding!!.ivOrderType.setImageResource(R.drawable.ic_delivery_medium)
+                binding!!.ivOrderType.setImageResource(com.herfy.checkout.R.drawable.ic_delivery_medium)
             }
 
             OrderType.CURBSIDE -> {
@@ -689,7 +689,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             OrderType.DRIVE_THRU -> {
                 binding!!.tvOrderType.text =
                     CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
-                binding!!.ivOrderType.setImageResource(R.drawable.ic_pickup_drive_thru)
+                binding!!.ivOrderType.setImageResource(com.herfy.checkout.R.drawable.ic_pickup_drive_thru)
             }
 
             else -> {}
@@ -1014,7 +1014,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         binding!!.layoutPayment.tvSelectedPayment.text =
             CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
-        binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_payment_cash)
+        binding!!.layoutPayment.ivSelectedPayment.setImageResource(com.herfy.checkout.R.drawable.ic_payment_cash)
 
         if (paymentPresenter!!.hasMukafaaTransactionId()) {
         } else {
@@ -1464,7 +1464,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             if (selectedPayment == PaymentType.CASH) {
                 binding!!.layoutPayment.tvSelectedPayment.text =
                     CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cash)
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(com.herfy.common.R.drawable.ic_common_payment_type_cash)
             } else if (selectedPayment == PaymentType.CARD) {
                 if (selectedCard != null) {
                     val cardPair = setupSaveCard(selectedCard)
@@ -1474,7 +1474,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 } else {
                     binding!!.layoutPayment.tvSelectedPayment.text =
                         CacheUtil.getInstance().getTranslations(Text.CARD, "Card")
-                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_card)
+                    binding!!.layoutPayment.ivSelectedPayment.setImageResource(com.herfy.common.R.drawable.ic_common_payment_type_card)
                 }
             } else if (selectedPayment == PaymentType.CARD_ON_DELIVERY || selectedPayment == PaymentType.CARD_ON_PICKUP) {
                 binding!!.layoutPayment.tvSelectedPayment.text =
@@ -1483,7 +1483,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             .getTranslations(Text.CARD_ON_DELIVERY, "Card on delivery")
                     } else CacheUtil.getInstance()
                         .getTranslations(Text.CARD_ON_PICKUP, "Card on Pickup")
-                binding!!.layoutPayment.ivSelectedPayment.setImageResource(R.drawable.ic_common_payment_type_cod)
+                binding!!.layoutPayment.ivSelectedPayment.setImageResource(com.herfy.common.R.drawable.ic_common_payment_type_cod)
             }
         }
 
@@ -1519,16 +1519,16 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     private fun setupSaveCard(selectedCard: CustomerCard): Pair<Int, String> {
-        var res = R.drawable.ic_card_new
+        var res = com.herfy.commonstyles.R.drawable.ic_card_new
         var cardLabel = "Visa ****"
         if (selectedCard.attributes.brand.equals("visa", true)) {
-            res = R.drawable.ic_visa
+            res = com.herfy.checkout.R.drawable.ic_visa
             cardLabel = "Visa ****"
         } else if (selectedCard.attributes.brand.endsWith("mastercard", true)) {
-            res = R.drawable.ic_mastercard
+            res = com.herfy.checkout.R.drawable.ic_mastercard
             cardLabel = "Master ****"
         } else if (selectedCard.attributes.brand.endsWith("amex", true)) {
-            res = R.drawable.ic_amex_card
+            res = com.herfy.checkout.R.drawable.ic_amex_card
             cardLabel = "Amex ****"
         }
         return Pair(res, cardLabel)
@@ -1757,12 +1757,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private fun PermissionManager.RationaleCallback.showRationale() {
         DialogUtils.showConfirmDialog(
             context = this@CheckoutActivity,
-            title = getString(R.string.permission_denied),
-            body = getString(R.string.permission_read_write_denied_msg),
-            positiveButtonText = getString(R.string.try_again),
-            negativeButtonText = getString(R.string.cancel),
+            title = getString(com.herfy.common.R.string.permission_denied),
+            body = getString(com.herfy.common.R.string.permission_read_write_denied_msg),
+            positiveButtonText = getString(com.herfy.common.R.string.try_again),
+            negativeButtonText = CacheUtil.getInstance().getTranslations(Text.CANCEL),
             positiveClickListener = { onRationaleRequested() },
-            message = getString(R.string.permission_read_write_denied_msg)
+            message = getString(com.herfy.common.R.string.permission_read_write_denied_msg)
         )
     }
 

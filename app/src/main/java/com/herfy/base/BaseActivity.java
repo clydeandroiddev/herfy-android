@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Insets;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -129,12 +132,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         ImageView conceptImage = findViewById(R.id.concept_image);
         if (conceptImage != null) {
             conceptImage.setImageResource(R.drawable.header);
-            String appKey = BuildUtil.soloAppKey();
-            if (appKey.equalsIgnoreCase("UKFQD1wwUBev4PRP") || appKey.equalsIgnoreCase("dYJux5BNAwTbEwEE")) {
-                conceptImage.setImageResource(R.drawable.notification_large);
-            } else {
-                conceptImage.setImageResource(R.drawable.splash);
-            }
+            conceptImage.setImageResource(R.drawable.splash);
         }
         if (BuildUtil.soloAppKey().equalsIgnoreCase("7r5YQwmSgZCtM0ux")) {
             TextView title = findViewById(R.id.title);
@@ -206,12 +204,12 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
             colorMain = defaultColor;
         }
 
+        setStatusBarColor(DynamicTheme.getDefaultPrimaryColor());
+
         try {
-            setStatusBarColor(colorMain);
             setDynamicTheme(colorMain);
         } catch (Exception e) {
             e.printStackTrace();
-            setStatusBarColor(defaultColor);
             setDynamicTheme(defaultColor);
         }
 
@@ -244,14 +242,27 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
         ViewUtil.overrideFonts(findViewById(android.R.id.content));
     }
 
-    public void setStatusBarColor(String color) {
+    public void setStatusBarColor(int statusBarColor) {
         try {
             Window window = getWindow();
             if(window != null) {
-                int statusBarColor = Color.parseColor(color);
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.setStatusBarColor(statusBarColor);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
+                    window.getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                        @NonNull
+                        @Override
+                        public WindowInsets onApplyWindowInsets(@NonNull View view, @NonNull WindowInsets insets) {
+                            Insets statusBarInsets = insets.getInsets(WindowInsets.Type.statusBars());
+                            view.setBackgroundColor(statusBarColor);
+                            view.setPadding(0, statusBarInsets.top, 0, 0);
+                            return insets;
+                        }
+                    });
+                } else {
+                    // For Android 14 and below
+                    window.setStatusBarColor(statusBarColor);
+                }
                 if (!ViewUtil.isColorDark(statusBarColor)) {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                 }
@@ -538,16 +549,16 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
         try {
             dismissDialogs();
-            View view = getLayoutInflater().inflate(R.layout.loading, null);
+            View view = getLayoutInflater().inflate(com.herfy.common.R.layout.loading, null);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(false);
             builder.setView(view);
 
-            ImageView ivLoader = view.findViewById(R.id.ivLoader);
+            ImageView ivLoader = view.findViewById(com.herfy.common.R.id.ivLoader);
             Glide.with(this)
                     .asGif()
-                    .load(R.drawable.loader)
+                    .load(com.herfy.commonstyles.R.drawable.loader)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(ivLoader);
 
@@ -978,13 +989,6 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 }
             });
         }
-    }
-
-    public void setStatusBarColor() {
-        Window window = getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

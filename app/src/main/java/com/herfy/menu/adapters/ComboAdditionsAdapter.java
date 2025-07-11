@@ -62,7 +62,7 @@ public class ComboAdditionsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (modifierItem.getAttributes().isSelected()) {
             holder.check.setImageResource(R.drawable.modifier_item_selected);
         } else {
-            holder.check.setImageResource(R.drawable.modifier_item_unselected);
+            holder.check.setImageResource(com.herfy.productpagedetails.R.drawable.modifier_item_unselected);
         }
 
         holder.checkLayout.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +78,7 @@ public class ComboAdditionsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         String imageUrl = modifierItem.getAttributes().getImage();
         holder.image.setVisibility(View.VISIBLE);
-        Glide.with(context).load(imageUrl).apply(RequestOptions.centerInsideTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.image);
+        Glide.with(context).load(imageUrl).apply(RequestOptions.centerInsideTransform()).placeholder(com.herfy.common.R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.image);
 
         String price;
         if(LocaleUtil.getInstance().isArabic()){

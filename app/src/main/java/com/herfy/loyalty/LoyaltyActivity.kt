@@ -342,25 +342,25 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     if(LocaleUtil.getInstance().isEnglish) {
                         loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                     }
-                    var tierBackground = com.herfy.home.R.drawable.background_bronze_tier
+                    var tierBackground = com.herfy.commonstyles.R.drawable.background_bronze_tier
                     if (loyaltyTier.equals(
                             "Silver",
                             ignoreCase = true
                         ) || loyaltyTier.equals("فضي")
                     ) {
-                        tierBackground = com.herfy.home.R.drawable.background_silver_tier
+                        tierBackground = com.herfy.commonstyles.R.drawable.background_silver_tier
                     } else if (loyaltyTier.equals(
                             "Gold",
                             ignoreCase = true
                         ) || loyaltyTier.equals("ذهبي")
                     ) {
-                        tierBackground = com.herfy.home.R.drawable.background_gold_tier
+                        tierBackground = com.herfy.commonstyles.R.drawable.background_gold_tier
                     } else if (loyaltyTier.equals(
                             "Diamond",
                             ignoreCase = true
                         ) || loyaltyTier.equals("البلاتين")
                     ) {
-                        tierBackground = com.herfy.home.R.drawable.background_diamond_tier
+                        tierBackground = com.herfy.commonstyles.R.drawable.background_diamond_tier
                     }
                     tvTier.text = loyaltyTier
                     tvTier.setBackgroundResource(tierBackground)
@@ -384,7 +384,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                                         super.setResource(resource)
                                         binding.layoutCard.apply {
                                             if (resource == null) {
-                                                ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                                                ivLoyaltyCard.setImageResource(com.herfy.commonstyles.R.drawable.background_loyalty_card)
                                             }
                                             fmShimmerLoyalty.gone()
                                             clCardMain.visible()
@@ -395,7 +395,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         }
                     }else {
                         binding.layoutCard.apply {
-                            ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                            ivLoyaltyCard.setImageResource(com.herfy.commonstyles.R.drawable.background_loyalty_card)
                             fmShimmerLoyalty.gone()
                             clCardMain.visible()
                         }

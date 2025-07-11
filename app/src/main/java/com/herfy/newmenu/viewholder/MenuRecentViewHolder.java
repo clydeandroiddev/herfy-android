@@ -209,7 +209,7 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
     @Override
     public void setFavorite(MenuItem menuItem) {
         if (isSignedIn && CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-            favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+            favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
             favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
             //cardFav.setImageResource(R.drawable.ic_heart);
             //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));
@@ -422,7 +422,7 @@ public class MenuRecentViewHolder extends RecyclerView.ViewHolder implements Men
                         //cardFav.setImageResource(R.drawable.ic_heart_empty);
                         //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#CCCCCC")));
                     } else {
-                        favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+                        favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
                         favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
                         //cardFav.setImageResource(R.drawable.ic_heart);
                         //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));

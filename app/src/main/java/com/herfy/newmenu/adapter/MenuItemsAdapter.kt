@@ -75,7 +75,7 @@ class MenuItemsAdapter(
             val primaryColorStateList = ColorStateList.valueOf(primaryColor)
             val disabledStateList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context, R.color.disabled_tint))
             val soldOutColor = ContextCompat.getColor(itemView.context, R.color.soldout)
-            val notSoldOutColor = ContextCompat.getColor(itemView.context, R.color.transparent)
+            val notSoldOutColor = ContextCompat.getColor(itemView.context, android.R.color.transparent)
 
             binding.root.setOnLongClickListener { false }
 
@@ -217,7 +217,7 @@ class MenuItemsAdapter(
 
         private fun fetchAccentColor(): Int {
             val typedValue = TypedValue()
-            val a = itemView.context.obtainStyledAttributes(typedValue.data, intArrayOf(R.attr.colorPrimary))
+            val a = itemView.context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.colorPrimary))
             val color = a.getColor(0, 0)
             a.recycle()
             return color

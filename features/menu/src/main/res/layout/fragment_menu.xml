@@ -7,17 +7,11 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<com.herfy.common.toolbar.OrderTypeToolbar
-			android:id="@+id/orderTypeToolbar"
-			android:layout_width="match_parent"
-			android:layout_height="60dp"
-			app:layout_constraintTop_toTopOf="parent"
-			android:background="@color/color_background"/>
-
 		<androidx.coordinatorlayout.widget.CoordinatorLayout
+			android:id="@+id/coordinatorLayout"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			app:layout_constraintTop_toBottomOf="@+id/orderTypeToolbar"
+			app:layout_constraintTop_toTopOf="parent"
 			app:layout_constraintBottom_toTopOf="@+id/layoutFooter">
 
 			<com.google.android.material.appbar.AppBarLayout
@@ -228,6 +222,13 @@
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
 		</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+		<com.herfy.common.toolbar.OrderTypeToolbar
+			android:id="@+id/orderTypeToolbar"
+			android:layout_width="match_parent"
+			android:layout_height="60dp"
+			app:layout_constraintTop_toTopOf="parent"
+			android:background="@color/color_background"/>
 
 		<RelativeLayout
 			android:id="@+id/layoutFooter"

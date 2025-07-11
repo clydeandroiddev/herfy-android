@@ -414,9 +414,9 @@ public class PickupBranchActivity extends BaseActivity implements OrderContract.
 
                     LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                    View view = inflater.inflate(R.layout.marker_store_new, null);
+                    View view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null);
 
-                    MaterialButton open = view.findViewById(R.id.open);
+                    /*MaterialButton open = view.findViewById(R.id.open);
                     open.setText(CacheUtil.getInstance().getTranslations(Text.OPEN_IN_GOOGLE_MAPS, "Open in Google Maps"));
                     open.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -437,7 +437,7 @@ public class PickupBranchActivity extends BaseActivity implements OrderContract.
 
                             startActivity(new Intent(Intent.ACTION_VIEW, directionsBuilder.build()));
                         }
-                    });
+                    });*/
 
                     storeMarker.setIcon(BitmapDescriptorFactory.fromBitmap(ViewUtil.createDrawableFromView(this, view)));
                     storeMarker.setAnchor(0.1f, 1.0f);

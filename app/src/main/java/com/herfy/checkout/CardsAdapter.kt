@@ -23,27 +23,27 @@ class CardsAdapter(private val cards: List<CustomerCard>, private var selectedPo
             var res = R.drawable.ic_saved_card
             var cardLabel = "Visa ****"
             if (card.attributes.brand.equals("visa", true)) {
-                res = R.drawable.ic_visa
+                res = com.herfy.checkout.R.drawable.ic_visa
                 cardLabel = "Visa ****"
             } else if (card.attributes.brand.endsWith("mastercard", true)){
-                res = R.drawable.ic_mastercard
+                res = com.herfy.checkout.R.drawable.ic_mastercard
                 cardLabel = "Master ****"
             } else if (card.attributes.brand.endsWith("amex", true)){
-                res = R.drawable.ic_amex_card
+                res = com.herfy.checkout.R.drawable.ic_amex_card
                 cardLabel = "Amex ****"
             }
 
 
             if (selectedPos == position) {
                 Log.e("Selected", "selectedPos bai  "+selectedPos+"---"+position)
-                binding.rbCard.setImageResource(R.drawable.ic_payment_radio_selected)
-                binding.cardsContainer.strokeColor = ContextCompat.getColor(binding.root.context,R.color.border_color_light)
-                binding.cardsContainer.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.border_color_light))
+                binding.rbCard.setImageResource(com.herfy.checkout.R.drawable.ic_payment_radio_selected)
+                binding.cardsContainer.strokeColor = ContextCompat.getColor(binding.root.context, com.herfy.commonstyles.R.color.border_color_light)
+                binding.cardsContainer.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, com.herfy.commonstyles.R.color.border_color_light))
 
             } else {
                 Log.e("Selected22222", "selectedPos "+selectedPos+"---"+position)
-                binding.rbCard.setImageResource(R.drawable.ic_payment_radio_unselected)
-                binding.cardsContainer.strokeColor = ContextCompat.getColor(binding.root.context, R.color.card_stroke_color)
+                binding.rbCard.setImageResource(com.herfy.checkout.R.drawable.ic_payment_radio_unselected)
+                binding.cardsContainer.strokeColor = ContextCompat.getColor(binding.root.context, com.herfy.commonstyles.R.color.card_stroke_color)
                 binding.cardsContainer.setCardBackgroundColor(Color.WHITE)
             }
 

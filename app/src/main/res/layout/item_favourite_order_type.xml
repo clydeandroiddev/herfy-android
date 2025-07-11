@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favouriteOrderContainer"
+    android:layout_width="match_parent"
+    android:padding="@dimen/_4sdp"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/txtOrderType"
+        android:layout_width="wrap_content"
+        style="@style/Styles.Text.Footnote.Medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center"
+        tools:text="Pick up"
+        android:background="@drawable/bg_favourite_order_types_unselected"
+        android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

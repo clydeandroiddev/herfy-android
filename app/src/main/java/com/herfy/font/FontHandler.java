@@ -21,11 +21,11 @@ public class FontHandler {
         mediumFont = ResourcesCompat.getFont(context, R.font.poppins_medium);
         semiboldFont = ResourcesCompat.getFont(context, R.font.poppins_semibold);
         extraboldFont = ResourcesCompat.getFont(context, R.font.poppins_extrabold);*/
-        lightFont = ResourcesCompat.getFont(context, R.font.inter_light);
-        regularFont = ResourcesCompat.getFont(context, R.font.inter_regular);
-        mediumFont = ResourcesCompat.getFont(context, R.font.inter_bold);
-        semiboldFont = ResourcesCompat.getFont(context, R.font.inter_semi_bold);
-        extraboldFont = ResourcesCompat.getFont(context, R.font.inter_black);
+        lightFont = ResourcesCompat.getFont(context, com.herfy.commonstyles.R.font.inter_light);
+        regularFont = ResourcesCompat.getFont(context, com.herfy.commonstyles.R.font.inter_regular);
+        mediumFont = ResourcesCompat.getFont(context, com.herfy.commonstyles.R.font.inter_bold);
+        semiboldFont = ResourcesCompat.getFont(context, com.herfy.commonstyles.R.font.inter_semi_bold);
+        extraboldFont = ResourcesCompat.getFont(context, com.herfy.commonstyles.R.font.inter_black);
     }
 
     public static void init(Context context) {

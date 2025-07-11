@@ -11,6 +11,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,7 +50,6 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.SnackBarUtils
 import com.herfy.utils.helper.ViewUtil
 import com.herfy.utils.menu.MenuUtil
-import com.skylinedynamics.solosdk.api.models.objects.EventType
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
@@ -136,6 +136,17 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
         activity?.let {
             binding.apply {
+
+                coordinatorLayout.apply {
+                    layoutParams.cast<MarginLayoutParams> { params ->
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) { // Android 15+
+                            params.topMargin = 0
+                        } else {
+                            // For Android 14 and below
+                            params.topMargin = ViewUtil.dpToPx(it, 70)
+                        }
+                    }
+                }
 
                 orderTypeToolbar.apply {
                     setNavButton {
@@ -310,7 +321,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             if (CacheUtil.getInstance().orderStore != null) {
                                 icon = ContextCompat.getDrawable(
                                     this,
-                                    R.drawable.ic_walk_in_pickup_small
+                                    com.herfy.ordertype.R.drawable.ic_walk_in_pickup_small
                                 )
                                 type = CacheUtil.getInstance()
                                     .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
@@ -321,7 +332,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         OrderType.DRIVE_THRU -> {
                             if (CacheUtil.getInstance().orderStore != null) {
                                 icon =
-                                    ContextCompat.getDrawable(this, R.drawable.ic_drive_thru_small)
+                                    ContextCompat.getDrawable(this, com.herfy.ordertype.R.drawable.ic_drive_thru_small)
                                 type = CacheUtil.getInstance()
                                     .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
                                 address = CacheUtil.getInstance().orderStore.attributes.name
@@ -330,7 +341,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
 
                         OrderType.DINE_IN -> {
                             if (CacheUtil.getInstance().orderStore != null) {
-                                icon = ContextCompat.getDrawable(this, R.drawable.ic_dine_in_small)
+                                icon = ContextCompat.getDrawable(this, com.herfy.ordertype.R.drawable.ic_dine_in_small)
                                 type =
                                     CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In")
                                 address = CacheUtil.getInstance().orderStore.attributes.name
@@ -338,7 +349,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         }
 
                         OrderType.DELIVERY -> {
-                            icon = ContextCompat.getDrawable(this, R.drawable.ic_delivery_small)
+                            icon = ContextCompat.getDrawable(this, com.herfy.ordertype.R.drawable.ic_delivery_small)
                             if (CacheUtil.getInstance().orderAddress != null) {
                                 type = CacheUtil.getInstance()
                                     .getTranslations(Text.DELIVERY, "Delivery")
@@ -365,7 +376,7 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                             if (CacheUtil.getInstance().orderStore != null) {
                                 icon = ContextCompat.getDrawable(
                                     this,
-                                    R.drawable.ic_curbside_pickup_small
+                                    com.herfy.ordertype.R.drawable.ic_curbside_pickup_small
                                 )
                                 type = CacheUtil.getInstance()
                                     .getTranslations(Text.CURBSIDE_PICKUP, "Curbside Pickup")

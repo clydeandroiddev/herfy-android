@@ -122,7 +122,7 @@ public class PopularMenuItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         holder.favoriteCard.setVisibility(isSignedIn && !menuItem.isCombo ? View.VISIBLE : View.GONE);
 
         if (isSignedIn && CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-            holder.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+            holder.favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
             holder.favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
         } else {
             holder.favoriteIcon.setImageResource(R.drawable.ic_heart_empty);
@@ -139,7 +139,7 @@ public class PopularMenuItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         holder.favoriteIcon.setImageResource(R.drawable.ic_heart_empty);
                         holder.favoriteIcon.setColorFilter(Color.parseColor("#CCCCCC"));
 					} else {
-                        holder.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+                        holder.favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
                         holder.favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
 					}
 					presenter.setMenuItem(menuItem);

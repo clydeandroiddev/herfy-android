@@ -24,6 +24,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
@@ -326,12 +327,12 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
             paymentSummaryFrame.setOnClickListener {
                 if (isSummaryHidden) {
-                    imageOpenAndCloseSumamry.setImageResource(R.drawable.ic_close_summary)
+                    imageOpenAndCloseSumamry.setImageResource(com.herfy.ordertracker.R.drawable.ic_close_summary)
                     orderPaymentDetailsFrame.isVisible = true
                     isSummaryHidden = false
                 } else {
                     isSummaryHidden = true
-                    imageOpenAndCloseSumamry.setImageResource(R.drawable.ic_open_summary)
+                    imageOpenAndCloseSumamry.setImageResource(com.herfy.ordertracker.R.drawable.ic_open_summary)
                     orderPaymentDetailsFrame.isVisible = false
                 }
             }
@@ -448,7 +449,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 val activity: Activity? = activity
                 if (activity != null) {
                     val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                        activity, R.drawable.user_current_location
+                        activity, com.herfy.ordertype.R.drawable.user_current_location
                     )
                     markerOptions.icon(icon)
                 }
@@ -514,7 +515,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 store?.let {
                     val inflater =
                         act.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    val view = inflater.inflate(R.layout.order_store_marker, null)
+                    val view = inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
                     val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                     textView.isInvisible = true
                     addStoreMarker(store, view)
@@ -532,7 +533,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     store?.let {
                         val inflater =
                             act.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                        val view = inflater.inflate(R.layout.order_store_marker, null)
+                        val view = inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
                         val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                         textView.isInvisible = true
 
@@ -603,7 +604,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     val activity: Activity? = activity
                     val inflater =
                         activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    val view = inflater.inflate(R.layout.order_store_marker, null)
+                    val view = inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
                     val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                     val distanceValue: String
                     try {
@@ -621,14 +622,14 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     }
 
                                 var currentMarkerIcon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                                    binding.mapFrame.context, R.drawable.ic_address_user_home
+                                    binding.mapFrame.context, com.herfy.common.R.drawable.ic_address_user_home
                                 )
                                 if (orderAddress!!.attributes.label.equals(
                                         "work", ignoreCase = true
                                     )
                                 ) {
                                     currentMarkerIcon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                                        binding.mapFrame.context, R.drawable.ic_address_user_work
+                                        binding.mapFrame.context, com.herfy.common.R.drawable.ic_address_user_work
                                     )
                                 }
 
@@ -1160,142 +1161,152 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             CacheUtil.getInstance().getTranslations(Text.PICKED, "Picked")
                     }
 
-                    statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
-                    statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_done))
+                    activity?.let {
+                        val statusDoneColor = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.status_done)
+                        val statusNotColor = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.status_not)
+                        val textStatusColorCurrent = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.text_status_color_current)
+                        val timeStatusColorCurrent = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.time_status_color_current)
+                        val textStatusColorPast = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.text_status_color_past)
+                        val timeStatusColorPast = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.time_status_color_past)
 
-                    if (ot == OrderType.DELIVERY) {
-                        if (status.sequence <= OrderStatusType.DISPATCHED.value) {
-                            updateStatusGIF(R.drawable.make_order)
+                        statusViewSecond.setBackgroundColor(statusDoneColor)
+                        statusViewThird.setBackgroundColor(statusDoneColor)
 
-                            statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
-                            statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
+                        if (ot == OrderType.DELIVERY) {
+                            if (status.sequence <= OrderStatusType.DISPATCHED.value) {
+                                updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
 
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
-                            imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_not_yet)
-                            preparingLayout.setBackgroundResource(R.drawable.background_current_status)
-                            preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
-                            preparingTime.setTextColor(resources.getColor(R.color.time_status_color_current))
+                                statusViewSecond.setBackgroundColor(statusNotColor)
+                                statusViewThird.setBackgroundColor(statusNotColor)
 
-                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_done)
-                            onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
-                            onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
+                                frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                                imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_not_yet)
+                                preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
+                                preparingLabel.setTextColor(textStatusColorCurrent)
+                                preparingTime.setTextColor(timeStatusColorCurrent)
 
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
-                            finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
-                            finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
+                                frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_done)
+                                onWayLayout.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_cards)
+                                onWayLabel.setTextColor(textStatusColorPast)
+                                onWayTime.setTextColor(timeStatusColorPast)
 
-                        } else if (status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                            updateStatusGIF(R.drawable.delivered_order)
+                                frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
+                                finishedLayout.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_cards)
+                                finishedLabel.setTextColor(textStatusColorPast)
+                                finishedTime.setTextColor(timeStatusColorPast)
 
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
-                            preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
-                            preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
+                            } else if (status.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                                updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
 
-                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_not_yet)
-                            onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
-                            onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
-                            onWayTime.setTextColor(resources.getColor(R.color.time_status_color_current))
+                                frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
+                                preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
+                                preparingLabel.setTextColor(textStatusColorPast)
+                                preparingTime.setTextColor(timeStatusColorPast)
 
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
-                            finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
-                            finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
+                                frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                                imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_not_yet)
+                                onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
+                                onWayLabel.setTextColor(textStatusColorCurrent)
+                                onWayTime.setTextColor(timeStatusColorCurrent)
 
+                                frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
+                                finishedLayout.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_cards)
+                                finishedLabel.setTextColor(textStatusColorPast)
+                                finishedTime.setTextColor(timeStatusColorPast)
+
+                            } else {
+                                binding.cookingImage.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
+
+                                frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
+                                preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
+                                preparingLabel.setTextColor(textStatusColorPast)
+                                preparingTime.setTextColor(timeStatusColorPast)
+
+                                frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_done)
+                                onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
+                                onWayLabel.setTextColor(textStatusColorPast)
+                                onWayTime.setTextColor(timeStatusColorPast)
+
+                                frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                                imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
+                                finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
+                                finishedLabel.setTextColor(textStatusColorCurrent)
+                                finishedTime.setTextColor(timeStatusColorCurrent)
+
+                            }
                         } else {
-                            binding.cookingImage.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
+                            if (status.sequence <= OrderStatusType.IN_KITCHEN.value) {
+                                updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
+                                statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
+                                statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
 
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
-                            preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
-                            preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
+                                frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                                imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_not_yet)
+                                preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
+                                preparingLabel.setTextColor(textStatusColorCurrent)
+                                preparingTime.setTextColor(timeStatusColorCurrent)
 
-                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_delivery_done)
-                            onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
-                            onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
+                                frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
+                                onWayLayout.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_cards)
+                                onWayLabel.setTextColor(textStatusColorPast)
+                                onWayTime.setTextColor(timeStatusColorPast)
 
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
-                            imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
-                            finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
-                            finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
-                            finishedTime.setTextColor(resources.getColor(R.color.time_status_color_current))
+                                frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
+                                finishedLayout.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_cards)
+                                finishedLabel.setTextColor(textStatusColorPast)
+                                finishedTime.setTextColor(timeStatusColorPast)
 
+                            } else if (status.sequence >= OrderStatusType.READY.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
+                                updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
+                                frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
+                                preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
+                                preparingLabel.setTextColor(textStatusColorPast)
+                                preparingTime.setTextColor(timeStatusColorPast)
+
+                                frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                                imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready)
+                                onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
+                                onWayLabel.setTextColor(textStatusColorCurrent)
+                                onWayTime.setTextColor(timeStatusColorCurrent)
+
+                                frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
+                                finishedLayout.setBackgroundResource(com.herfy.commonstyles.R.drawable.background_cards)
+                                finishedLabel.setTextColor(textStatusColorPast)
+                                finishedTime.setTextColor(timeStatusColorPast)
+
+                            } else {
+                                binding.cookingImage.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
+                                frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
+                                preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
+                                preparingLabel.setTextColor(textStatusColorPast)
+                                preparingTime.setTextColor(timeStatusColorPast)
+
+                                frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
+                                imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
+                                onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
+                                onWayLabel.setTextColor(textStatusColorPast)
+                                onWayTime.setTextColor(timeStatusColorPast)
+
+                                frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
+                                imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
+                                finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
+                                finishedLabel.setTextColor(textStatusColorCurrent)
+                                finishedTime.setTextColor(timeStatusColorCurrent)
+
+                            }
                         }
-                    } else {
-                        if (status.sequence <= OrderStatusType.IN_KITCHEN.value) {
-                            updateStatusGIF(R.drawable.make_order)
-                            statusViewSecond.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
-                            statusViewThird.setBackgroundColor(resources.getColor(com.herfy.ordertracker.R.color.status_not))
 
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
-                            imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_not_yet)
-                            preparingLayout.setBackgroundResource(R.drawable.background_current_status)
-                            preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
-                            preparingTime.setTextColor(resources.getColor(R.color.time_status_color_current))
-
-                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
-                            onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
-                            onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
-
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
-                            finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
-                            finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
-
-                        } else if (status.sequence >= OrderStatusType.READY.value && status.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                            updateStatusGIF(R.drawable.collected_order)
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
-                            preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
-                            preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
-
-                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready)
-                            onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
-                            onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
-                            onWayTime.setTextColor(resources.getColor(R.color.time_status_color_current))
-
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_not_yet)
-                            finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_cards)
-                            finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            finishedTime.setTextColor(resources.getColor(R.color.time_status_color_past))
-
-                        } else {
-                            binding.cookingImage.setImageResource(R.drawable.ic_order_done)
-                            frameIconPreparing.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconPreparing.setImageResource(com.herfy.ordertracker.R.drawable.ic_preparing_done)
-                            preparingLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
-                            preparingLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            preparingTime.setTextColor(resources.getColor(R.color.time_status_color_past))
-
-                            frameIconOnWay.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_disabled_status)
-                            imageIconOnWay.setImageResource(com.herfy.ordertracker.R.drawable.ic_pickup_ready_done)
-                            onWayLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_past_status)
-                            onWayLabel.setTextColor(resources.getColor(R.color.text_status_color_past))
-                            onWayTime.setTextColor(resources.getColor(R.color.time_status_color_past))
-
-                            frameIconFinished.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_enabled_status)
-                            imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_order_done)
-                            finishedLayout.setBackgroundResource(com.herfy.ordertracker.R.drawable.background_current_status)
-                            finishedLabel.setTextColor(resources.getColor(R.color.text_status_color_current))
-                            finishedTime.setTextColor(resources.getColor(R.color.time_status_color_current))
-
-                        }
                     }
 
                     if (order.orderStatus.sequence >= OrderStatusType.CANCELLED_BY_CUSTOMER.value) {
@@ -1311,7 +1322,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             finishedLabel.text =
                                 CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed")
                         }
-                        binding.cookingImage.setImageResource(R.drawable.ic_cancelled_order)
+                        binding.cookingImage.setImageResource(com.herfy.ordertracker.R.drawable.ic_cancelled_order)
                         imageIconFinishes.setImageResource(com.herfy.ordertracker.R.drawable.ic_cancelled_order)
                         binding.estimateLayout.isVisible = false
                         binding.cancelledText.isVisible = true
@@ -1744,7 +1755,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                 )
 
                                 if (isLocationLeft) {
-                                    driverIcon.setImageResource(R.drawable.ic_delivery_right)
+                                    driverIcon.setImageResource(com.herfy.common.R.drawable.ic_delivery_right)
                                 }
                             }
 

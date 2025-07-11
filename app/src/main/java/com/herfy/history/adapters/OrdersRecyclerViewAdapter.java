@@ -25,7 +25,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrderViewHol
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new OrderViewHolder(context, ordersPresenter, LayoutInflater.from(parent.getContext()).inflate(R.layout.item_order_summary, parent, false));
+        return new OrderViewHolder(context, ordersPresenter, LayoutInflater.from(parent.getContext()).inflate(com.herfy.checkout.R.layout.item_order_summary, parent, false));
     }
 
     @Override

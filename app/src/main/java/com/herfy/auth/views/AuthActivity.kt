@@ -23,13 +23,13 @@ class AuthActivity : BaseActivity() {
         val navController = navHostFragment.navController
 
         val inflater = navController.navInflater
-        val graph = inflater.inflate(R.navigation.auth_nav)
+        val graph = inflater.inflate(com.herfy.authentication.R.navigation.auth_nav)
 
         val bundle = Bundle()
         if (intent.getBooleanExtra("checkout", false)) {
             bundle.putBoolean("fromCheckout", true)
         }
-        graph.setStartDestination(R.id.nav_login_fragment)
+        graph.setStartDestination(com.herfy.authentication.R.id.nav_login_fragment)
         navController.setGraph(graph, bundle)
 
     }

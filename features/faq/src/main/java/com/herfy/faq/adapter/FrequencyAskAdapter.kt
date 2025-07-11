@@ -57,7 +57,7 @@ class FrequencyAskAdapter(private val onFrequencyClicked: (FrequencyAskUIModel) 
                 onFrequencyClicked(item)
             }
             binding.frequentlyBackground.background = if (isSelected) ContextCompat.getDrawable(context, R.drawable.bg_faq_state_selected) else ContextCompat.getDrawable(context,R.drawable.bg_unselected_state)
-            binding.icPlus.setImageResource(if (isSelected) R.drawable.ic_common_minus  else R.drawable.ic_common_black_plus)
+            binding.icPlus.setImageResource(if (isSelected) R.drawable.ic_common_minus  else com.herfy.common.R.drawable.ic_common_black_plus)
             binding.webViewParentLayout.setVisible(isSelected)
             binding.webView.settings.javaScriptEnabled = true
             binding.webView.loadUrl(item.url)
