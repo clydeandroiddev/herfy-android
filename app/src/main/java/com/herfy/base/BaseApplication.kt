@@ -10,6 +10,7 @@ import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraConfig
 import com.capillary.hydra.android.sdk.NotificationConfig
 import com.capillary.hydra.android.sdk.utils.LogType
+import com.capillary.hydra.pushbase.HydraPushApi
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
@@ -24,6 +25,7 @@ import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
 import com.herfy.util.AppLogger
+import com.herfy.util.AppPushMessageListener
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.hmac.HmacHeaderInterceptor
 import com.herfy.util.obfuscator.Keychain
@@ -67,6 +69,9 @@ class BaseApplication : Application(), ImageLoaderFactory {
             .build()
 
         HydraAPI.instanceWithConfig(this, hydraConfig)
+
+        HydraPushApi.getInstance()
+            .registerPushNotificationListener(AppPushMessageListener())
 
 
         AppDatabase.init(this)
