@@ -18,6 +18,11 @@ import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
+import com.capillary.hydra.android.sdk.FcmConfig;
+import com.capillary.hydra.android.sdk.HydraAPI;
+import com.capillary.hydra.android.sdk.HydraConfig;
+import com.capillary.hydra.android.sdk.NotificationConfig;
+import com.capillary.hydra.android.sdk.exceptions.HydraConfigurationException;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -38,6 +43,9 @@ public class FirebaseService extends FirebaseMessagingService {
     public void onNewToken(String token) {
 
         super.onNewToken(token);
+
+
+
         AuthUtil.getInstance().setFirebase(token);
 
         String uniqueID = AuthUtil.getInstance().getUniqueId();
@@ -197,6 +205,25 @@ public class FirebaseService extends FirebaseMessagingService {
                 notificationManager.notify(String.valueOf(id), id, builder.build());
 
             }
+
+
+/*            NotificationConfig notificationConfig = new NotificationConfig(
+                    R.drawable.notification,
+                    R.color.light_red,
+                    true
+            );
+
+            HydraConfig hydraConfig = null;
+            try {
+                hydraConfig = new HydraConfig.Builder(getApplicationContext(),"rnu-282033",
+                        "","","","","",
+                        false,new FcmConfig(true),notificationConfig,false,0)
+                        .build();
+            } catch (HydraConfigurationException e) {
+              e.printStackTrace();
+            }
+
+            HydraAPI.Companion.instanceWithConfig(getApplicationContext(), hydraConfig);*/
 
         }
 

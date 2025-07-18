@@ -1,5 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+
+
     ext.kotlin_version = '1.8.20'
 
     repositories {
@@ -8,6 +10,7 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
@@ -26,6 +29,12 @@ buildscript {
 }
 
 allprojects {
+    def githubProps = new Properties()
+    def githubPropsFile = rootProject.file("github.properties")
+    if (githubPropsFile.exists()) {
+        githubProps.load(new FileInputStream(githubPropsFile))
+    }
+
     repositories {
         google()
         flatDir {
@@ -43,6 +52,14 @@ allprojects {
         maven {
             url "https://repo.spring.io/plugins-release/"
         }
+        maven {
+            url "https://maven.pkg.github.com/Capillary/hydra-sdk-android-maven"
+            credentials {
+                username githubProps['username']
+                password githubProps['token']
+            }
+        }
+
     }
 }
 
