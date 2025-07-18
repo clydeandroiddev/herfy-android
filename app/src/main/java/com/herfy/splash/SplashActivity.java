@@ -220,7 +220,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     @Override
     public void checkIfRooted() {
-        if (CommonUtils.isRooted(this)) {
+        if (CommonUtils.isRooted()) {
             showAlertDialog(
                     "",
                     CacheUtil.getInstance().getTranslations(
