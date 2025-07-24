@@ -201,25 +201,6 @@ public class FirebaseService extends FirebaseMessagingService {
 
             }
 
-
-/*            NotificationConfig notificationConfig = new NotificationConfig(
-                    R.drawable.notification,
-                    R.color.light_red,
-                    true
-            );
-
-            HydraConfig hydraConfig = null;
-            try {
-                hydraConfig = new HydraConfig.Builder(getApplicationContext(),"rnu-282033",
-                        "","","","","",
-                        false,new FcmConfig(true),notificationConfig,false,0)
-                        .build();
-            } catch (HydraConfigurationException e) {
-              e.printStackTrace();
-            }
-
-            HydraAPI.Companion.instanceWithConfig(getApplicationContext(), hydraConfig);*/
-
         }
 
     }
