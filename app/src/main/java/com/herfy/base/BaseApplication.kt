@@ -5,6 +5,12 @@ import android.content.Context
 import androidx.multidex.MultiDex
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import com.capillary.hydra.android.sdk.FcmConfig
+import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraConfig
+import com.capillary.hydra.android.sdk.NotificationConfig
+import com.capillary.hydra.android.sdk.utils.LogType
+import com.capillary.hydra.pushbase.HydraPushApi
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
@@ -14,10 +20,12 @@ import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.FirebaseApp
 import com.herfy.BuildConfig
+import com.herfy.R
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
 import com.herfy.util.AppLogger
+import com.herfy.util.AppPushMessageListener
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.hmac.HmacHeaderInterceptor
 import com.herfy.util.obfuscator.Keychain
@@ -38,8 +46,33 @@ import io.shipbook.shipbooksdk.ShipBook
 @HiltAndroidApp
 class BaseApplication : Application(), ImageLoaderFactory {
 
+
+
     override fun onCreate() {
         super.onCreate()
+
+        val notificationConfig = NotificationConfig(
+            R.drawable.notification,
+            R.color.colorPrimary,
+            true
+        )
+
+        //Hydra Config
+        val hydraConfig = HydraConfig.Builder(
+            this,
+            accountId = "rnu-282033"
+        )
+            .notificationConfig(notificationConfig)
+            .debugLevel(LogType.VERBOSE)
+            .captureViewPortDetails(true)
+            .fcmConfig(FcmConfig(true))
+            .build()
+
+        HydraAPI.instanceWithConfig(this, hydraConfig)
+
+        HydraPushApi.getInstance()
+            .registerPushNotificationListener(AppPushMessageListener())
+
 
         AppDatabase.init(this)
         FirebaseApp.initializeApp(this)
@@ -97,6 +130,10 @@ class BaseApplication : Application(), ImageLoaderFactory {
                 }
             }
         }
+
+
+
+
     }
 
     override fun attachBaseContext(base: Context) {
