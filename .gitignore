@@ -11,6 +11,7 @@
 /SingleDateAndTimePicker/build
 *output-metadata.json
 dev.props
+github.properties
 
 #amplify
 amplify/\#current-cloud-backend
