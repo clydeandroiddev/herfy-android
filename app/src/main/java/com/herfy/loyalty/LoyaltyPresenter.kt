@@ -88,7 +88,7 @@ class LoyaltyPresenter @Inject constructor(
         }
     val loyaltyObservable: Single<Loyalty>
         get() = Single.create { source: SingleEmitter<Loyalty> ->
-            CustomersApiCall.getInstance().getCustomerLoyalty(
+            CustomersApiCall.getInstance().getLoyaltyCustomerV2(
                 AuthUtil.getInstance().customer.id,
                 object : ApiRequestListener {
                     override fun onSuccess(o: Any) {
