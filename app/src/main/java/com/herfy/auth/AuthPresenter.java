@@ -21,6 +21,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerBody;
@@ -576,13 +577,13 @@ public class AuthPresenter implements AuthContract.Presenter {
     }
 
     private void getLoyalty() {
-        CustomersApiCall.getInstance().getCustomerLoyalty(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
                 } catch (JSONException e) {
                     e.printStackTrace();

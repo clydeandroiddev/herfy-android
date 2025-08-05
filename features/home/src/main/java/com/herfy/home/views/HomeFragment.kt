@@ -455,7 +455,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         val currentBalanceValue =
                             String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                         tvSarValue.text = StringUtil.localize(currentBalanceValue)
-                        var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                        var loyaltyTier = loyalty.attributes.loyaltyTier?.label?.english ?: ""
                         val tierImageUrl = loyalty.attributes.loyaltyTier?.imageUrl ?: ""
                         if (LocaleUtil.getInstance().isEnglish) {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
@@ -531,7 +531,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 CacheUtil.getInstance().setStartingPointsOfNextTier(tierProgress.startPoints)
                 binding.layoutLoyalty.apply {
                     if (tierProgress.pointsToNextTier <= 0) {
-                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.name ?: ""
+                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.label?.english ?: ""
                         if (tierProgress.isMaxTier) {
                             progress.max = 100
                             progress.progress = 100
@@ -540,7 +540,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             ).replace("(x)", tierName)
                         }
                     } else {
-                        var loyaltyTier = tierProgress.nextTier?.name ?: ""
+                        var loyaltyTier = tierProgress.nextTier?.label?.english ?: ""
                         if (!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }

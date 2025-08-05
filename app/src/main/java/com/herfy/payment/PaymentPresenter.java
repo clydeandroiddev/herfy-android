@@ -44,6 +44,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItemComponents;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
@@ -497,7 +498,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         double total = discountedSubtotal + deliveryCharge + vatAmount + promoPrice;
 
         if (loyaltyPointsUsed > 0) {
-            total -= Math.min(loyaltyPointsUsed / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion()), getMenuItemsTotalPrice());
+            total -= Math.min(loyaltyPointsUsed / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getPointConversion()) ), getMenuItemsTotalPrice());
         }
 
         if (total < 0) {
@@ -1154,7 +1155,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         double pointsSarValue = 0.0;
 
                         if (loyaltyPoints > 0) {
-                            pointsSarValue = loyaltyPoints / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
+                            pointsSarValue = loyaltyPoints / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getPointConversion()));// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                         }
                         double discountValue = orderData.getDiscount() > 0.0 ? orderData.getDiscount() : orderData.getDiscountDisplay();
 
@@ -1472,7 +1473,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
     @Override
     public void getLoyalty() {
-        CustomersApiCall.getInstance().getCustomerLoyalty(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
@@ -1486,7 +1487,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                     }*/
 
 
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
 
 //                    CustomersApiCall.getInstance().getLoyaltyTier(loyalty.getAttributes().getLoyaltyTier().getId(), new ApiRequestListener() {

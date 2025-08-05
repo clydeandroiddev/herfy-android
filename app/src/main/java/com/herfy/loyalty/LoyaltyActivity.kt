@@ -32,10 +32,10 @@ import com.herfy.utils.helper.CacheUtilHelper
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
-import com.skylinedynamics.solosdk.api.models.objects.Tier
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -246,12 +246,12 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
     override fun showNextTier(
-        tier: Tier?,
+        tier: LoyaltyTierV2,
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
         startingPointsOfNextTier: Int,
         isMaxTier: Boolean,
-        loyalty: Loyalty?
+        loyalty: LoyaltyV2
     ) {
         binding.apply {
             layoutCard.apply {
@@ -260,7 +260,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
                 CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
                 if (pointsUntilNextTier <= 0) {
-                    val tierName = loyalty?.attributes?.loyaltyTier?.name?: ""
+                    val tierName = loyalty?.attributes?.loyaltyTier?.label?.english?: ""
                     if (isMaxTier) {
                         progress.max = 100
                         progress.progress = 100
@@ -269,7 +269,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         ).replace("(x)",tierName)
                     }
                 } else {
-                    var loyaltyTier = tier?.name
+                    var loyaltyTier = tier?.label?.english
                     if(!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
                         loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                     }
@@ -306,7 +306,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     }
 
 
-    override fun showTiers(loyalty: Loyalty) {
+    override fun showTiers(loyalty: LoyaltyV2) {
         binding.apply {
             val tiers = loyaltyPresenter.tiers //loyalty.attributes.tiers
             if(tiers != null && tiers.size > 0){
@@ -325,7 +325,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     }
 
-    override fun showLoyalty(loyalty: Loyalty?, name: String) {
+    override fun showLoyalty(loyalty: LoyaltyV2, name: String) {
         binding.apply {
             loyalty?.let { loyalty ->
                 layoutCard.apply {
@@ -333,10 +333,10 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                         loyalty.attributes.loyaltyTier == null
                                 && loyaltyPresenter.tiers != null &&
                                 loyaltyPresenter.tiers.size > 0 -> {
-                            loyaltyPresenter.tiers[0]?.name?:""
+                            loyaltyPresenter.tiers[0]?.label?.english?:""
                         }
                         else -> {
-                            loyalty.attributes?.loyaltyTier?.name?: ""
+                            loyalty.attributes?.loyaltyTier?.label?.english?: ""
                         }
                     }
                     if(LocaleUtil.getInstance().isEnglish) {

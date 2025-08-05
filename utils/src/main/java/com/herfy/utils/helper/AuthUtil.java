@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.Tier;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
@@ -194,7 +196,7 @@ public class AuthUtil {
 
     }
 
-    public synchronized void setCustomerLoyalty(Loyalty loyalty) {
+    public synchronized void setCustomerLoyalty(LoyaltyV2 loyalty) {
 
         SharedPreferences.Editor editor = authSharedPreferences.edit();
 
@@ -211,12 +213,12 @@ public class AuthUtil {
         editor.apply();
     }
 
-    public synchronized Loyalty getCustomerLoyalty() {
+    public synchronized LoyaltyV2 getCustomerLoyalty() {
 
         String customerValue = authSharedPreferences.getString(CUSTOMER_LOYALTY, null);
 
         if (customerValue != null) {
-            return GsonHelper.gsonFinal().fromJson(customerValue, new TypeToken<Loyalty>(){}.getType());
+            return GsonHelper.gsonFinal().fromJson(customerValue, new TypeToken<LoyaltyV2>(){}.getType());
         }
 
         return null;
@@ -224,7 +226,7 @@ public class AuthUtil {
     }
 
 
-    public synchronized void setCustomerLoyaltyTier(Tier tier) {
+    public synchronized void setCustomerLoyaltyTier(LoyaltyTierV2 tier) {
 
         SharedPreferences.Editor editor = authSharedPreferences.edit();
 
@@ -241,12 +243,12 @@ public class AuthUtil {
         editor.apply();
     }
 
-    public synchronized Tier getCustomerLoyaltyTier() {
+    public synchronized LoyaltyTierV2 getCustomerLoyaltyTier() {
 
         String customerValue = authSharedPreferences.getString(CUSTOMER_LOYALTY_TIER, null);
 
         if (customerValue != null) {
-            return GsonHelper.gsonFinal().fromJson(customerValue, new TypeToken<Tier>(){}.getType());
+            return GsonHelper.gsonFinal().fromJson(customerValue, new TypeToken<LoyaltyTierV2>(){}.getType());
         }
 
         return null;
@@ -278,7 +280,7 @@ public class AuthUtil {
 
         String customerLoyalty = sp.getString(CUSTOMER_LOYALTY, null);
         if (customerLoyalty != null) {
-            Loyalty customerLoyaltyData = GsonHelper.gsonFinal().fromJson(customerLoyalty, Loyalty.class);
+            LoyaltyV2 customerLoyaltyData = GsonHelper.gsonFinal().fromJson(customerLoyalty, LoyaltyV2.class);
             getInstance().setCustomerLoyalty(customerLoyaltyData);
         }
 
