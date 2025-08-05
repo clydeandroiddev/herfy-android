@@ -20,8 +20,8 @@ android {
     namespace 'com.herfy'
     compileSdk 36
     defaultConfig {
-        minSdk 24
-        targetSdk 36
+        minSdkVersion 24
+        targetSdk 34
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
