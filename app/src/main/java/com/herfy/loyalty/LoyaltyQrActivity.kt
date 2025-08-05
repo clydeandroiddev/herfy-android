@@ -13,10 +13,10 @@ import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.TimeUtil
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
-import com.skylinedynamics.solosdk.api.models.objects.Tier
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -116,7 +116,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
         }
     }
 
-    override fun showLoyalty(loyalty: Loyalty?, name: String?) {
+    override fun showLoyalty(loyalty: LoyaltyV2, name: String?) {
     }
 
     override fun showLoyaltyError(message: String?) {
@@ -131,12 +131,12 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
     }
 
     override fun showNextTier(
-        tier: Tier?,
+        tier: LoyaltyTierV2,
         totalAccumulatedPoints: Int,
         pointsUntilNextTier: Int,
         startingPointsOfNextTier: Int,
         isMaxTier: Boolean,
-        loyalty: Loyalty
+        loyalty: LoyaltyV2
     ) {
     }
 
@@ -177,7 +177,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
 
     }
 
-    override fun showTiers(loyalty: Loyalty?) {
+    override fun showTiers(loyalty: LoyaltyV2) {
         TODO("Not yet implemented")
     }
 

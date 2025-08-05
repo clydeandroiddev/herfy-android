@@ -12,10 +12,10 @@ import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
-import com.skylinedynamics.solosdk.api.models.objects.Tier;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.herfy.utils.helper.CurrencyUtils;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.TimeUtil;
@@ -85,7 +85,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showLoyalty(Loyalty loyalty, String name) {
+    public void showLoyalty(LoyaltyV2 loyalty, String name) {
 
     }
 
@@ -119,7 +119,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, Loyalty loyalty) {
+    public void showNextTier(LoyaltyTierV2 tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, LoyaltyV2 loyalty) {
 
     }
 
@@ -133,7 +133,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
 
     }
     @Override
-    public void showTiers(Loyalty loyalty) {
+    public void showTiers(LoyaltyV2 loyalty) {
 
     }
 

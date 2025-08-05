@@ -26,6 +26,7 @@ import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.Ingredient;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup;
@@ -2143,18 +2144,18 @@ public class CacheUtil {
         return cacheSharedPreferences.getString(PROMISED_TIME, "");
     }
 
-    public void setLoyaltyTiers(ArrayList<Tier> tiers) {
+    public void setLoyaltyTiers(ArrayList<LoyaltyTierV2> tiers) {
         String tierJson = GsonHelper.gsonFinal().toJson(tiers);
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(LOYALTY_TIERS, tierJson);
         editor.apply();
     }
 
-    public List<Tier> getLoyaltyTiers() {
-        List<Tier> tiers = new ArrayList<>();
+    public List<LoyaltyTierV2> getLoyaltyTiers() {
+        List<LoyaltyTierV2> tiers = new ArrayList<>();
         String tierJson = cacheSharedPreferences.getString(LOYALTY_TIERS, "");
         if (!tierJson.isEmpty()) {
-            tiers = GsonHelper.gsonFinal().fromJson(tierJson, new TypeToken<List<Tier>>() {
+            tiers = GsonHelper.gsonFinal().fromJson(tierJson, new TypeToken<List<LoyaltyTierV2>>() {
             });
         }
         return tiers;

@@ -54,6 +54,8 @@ import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.ForceUpdate;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
@@ -997,19 +999,19 @@ public class SplashPresenter implements SplashContract.Presenter {
     }
 
     public void getLoyalty() {
-        CustomersApiCall.getInstance().getCustomerLoyalty(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
-                    if (data.getJSONObject("attributes").optJSONObject("tier") == null || data.getJSONObject("attributes").get("tier") instanceof JSONObject) {
+                    if (data.getJSONObject("loyalty_profile").optJSONObject("current_tier") == null || data.getJSONObject("loyalty_profile").get("current_tier") instanceof JSONObject) {
                         Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
                         if (loyalty != null && loyalty.getAttributes().getLoyaltyTier() != null && !TextUtils.isEmpty(loyalty.getAttributes().getLoyaltyTier().getImageUrl())) {
                             splashView.preloadImage(loyalty.getAttributes().getLoyaltyTier().getImageUrl(), RequestOptions.centerInsideTransform());
                         }
                     }
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1121,12 +1123,12 @@ public class SplashPresenter implements SplashContract.Presenter {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONArray tiersArray = object.getJSONArray("data");
-                    Type type = new TypeToken<List<Tier>>() {
-                    }.getType();
-                    List<Tier> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
+                    Type type = new TypeToken<List<LoyaltyTierV2>>() {}.getType();
+                    List<LoyaltyTierV2> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
                     if (tiers != null && !tiers.isEmpty()) {
+                        AppLogger.longError("AAAAAA Went here? "+tiersArray.toString());
                         CacheUtil.getInstance().setLoyaltyTiers(new ArrayList<>(tiers));
-                        for (Tier tier : tiers) {
+                        for (LoyaltyTierV2 tier : tiers) {
                             splashView.preloadImage(tier.getImageUrl(), RequestOptions.noTransformation());
                         }
                     }

@@ -90,6 +90,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
@@ -676,7 +677,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         pointsLayout.setOnClickListener(v -> {
         });
 
-        Loyalty loyalty = AuthUtil.getInstance().getCustomerLoyalty();
+        LoyaltyV2 loyalty = AuthUtil.getInstance().getCustomerLoyalty();
         if (loyalty.getAttributes() != null) {
             firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -712,7 +713,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 if (pointsText.length() > 0) {
                     double userSetPoints = Double.parseDouble(StringUtil.toEnglish(pointsText));
                     double currentBalance = AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalanceAmount();
-                    double pointConversion = Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
+                    double pointConversion = Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getPointConversion()));
                     double points = loyalty.getAttributes().getCurrentBalanceAmount() > paymentPresenter.getMenuItemsTotalPrice() ? paymentPresenter.getMenuItemsTotalPrice() * pointConversion : loyalty.getAttributes().getCurrentBalance();
 
                     etPointsInput.removeTextChangedListener(pointsInSarTextWatcher);
@@ -1685,7 +1686,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         totalValue = totalPrice;
 
 
-        Loyalty loyalty = AuthUtil.getInstance().getCustomerLoyalty();
+        LoyaltyV2 loyalty = AuthUtil.getInstance().getCustomerLoyalty();
         double finalDiscount = discount;
         double finalTotal;
         if (mukafaaAmount > 0) {

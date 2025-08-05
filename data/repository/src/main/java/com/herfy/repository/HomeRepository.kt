@@ -19,6 +19,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -154,13 +155,13 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit) {
-        CustomersApiCall.getInstance().getCustomerLoyalty(id, object : ApiRequestListener {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(id, object : ApiRequestListener {
             override fun onSuccess(o: Any) {
                 try {
                     val `object` = JSONObject(o.toString())
                     val data = `object`.getJSONObject("data")
                     val loyalty =
-                        GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty::class.java)
+                        GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2::class.java)
                     response(HomeResponse(true, loyalty, ""))
                 } catch (e: JSONException) {
                     e.printStackTrace()

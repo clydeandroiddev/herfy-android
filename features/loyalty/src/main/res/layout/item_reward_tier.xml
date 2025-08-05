@@ -7,7 +7,7 @@
     <data>
         <variable
             name="tier"
-            type="com.skylinedynamics.solosdk.api.models.objects.Tier" />
+            type="com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2" />
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
