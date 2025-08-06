@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.google.gson.Gson
 import com.herfy.common.getPromisedMinutes
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionCategoryAdapter
@@ -51,6 +52,7 @@ import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
+import com.skylinedynamics.solosdk.util.AppLogger
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -450,10 +452,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let { loyalty ->
                 binding.layoutLoyalty.apply {
                     loyalty.let {
-                        tvTotalPoints.text =
-                            StringUtil.localize(loyalty.attributes.currentBalance.toString())
-                        val currentBalanceValue =
-                            String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                        tvTotalPoints.text = StringUtil.localize(loyalty.attributes.currentBalance.toString())
+                        val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                         tvSarValue.text = StringUtil.localize(currentBalanceValue)
                         var loyaltyTier = loyalty.attributes.loyaltyTier?.label?.english ?: ""
                         val tierImageUrl = loyalty.attributes.loyaltyTier?.imageUrl ?: ""
@@ -525,8 +525,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.tierProgress.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { tierProgress ->
                 AuthUtil.getInstance().setCustomerLoyaltyTier(tierProgress.nextTier)
-                CacheUtil.getInstance()
-                    .setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
+                CacheUtil.getInstance().setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
                 CacheUtil.getInstance().setPointsUntilNextTier(tierProgress.pointsToNextTier)
                 CacheUtil.getInstance().setStartingPointsOfNextTier(tierProgress.startPoints)
                 binding.layoutLoyalty.apply {
