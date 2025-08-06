@@ -32,11 +32,16 @@ class RewardTierAdapter(private val tierList : ArrayList<LoyaltyTierV2> = arrayL
        holder.binding.apply {
            tier = tierData
 
-           var loyaltyTier = tierData.label.english
-           if(LocaleUtil.getInstance().isEnglish) {
-               loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+           try{
+               var loyaltyTier = tierData.label.english
+               if(LocaleUtil.getInstance().isEnglish) {
+                   loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+               }
+               tvRewardTier.text = loyaltyTier
+           }catch (e: Exception){
+               e.printStackTrace()
            }
-           tvRewardTier.text = loyaltyTier
+
            executePendingBindings()
        }
     }
