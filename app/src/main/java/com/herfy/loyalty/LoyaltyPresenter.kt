@@ -254,7 +254,6 @@ class LoyaltyPresenter @Inject constructor(
                     var pointsToNextTier = 0
                     if (loyalty.attributes.loyaltyTier == null){
                         val tier = tiers[0]
-                       AppLogger.longError("AAAAAAAAAAAA ${tiers[0].label.english}")
                         val loyaltyTier = LoyaltyTierV2()
                         val translated = TranslatedV2()
                         translated.english = tier.label.english
