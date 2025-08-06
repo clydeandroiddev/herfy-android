@@ -348,7 +348,7 @@ public class MainPresenter implements MainContract.Presenter {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
                     if (data.getJSONObject("loyalty_profile").optJSONObject("current_tier") == null || data.getJSONObject("loyalty_profile").get("current_tier") instanceof JSONObject) {
-                        Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                        LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                         if (loyalty != null && loyalty.getAttributes().getLoyaltyTier() != null && !TextUtils.isEmpty(loyalty.getAttributes().getLoyaltyTier().getImageUrl())) {
                             mainView.preloadImage(loyalty.getAttributes().getLoyaltyTier().getImageUrl(), RequestOptions.centerInsideTransform());
                         }

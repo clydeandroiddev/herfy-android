@@ -462,7 +462,7 @@ class HomeViewModel @Inject constructor(
                     loyalty.attributes.loyaltyTier = loyaltyTier
                 }
 
-                _loyalty.value = Event(loyalty)
+                _loyalty.value = Event(null)
                 _tiers.value = Event(tiers)
                 AuthUtil.getInstance().customerLoyalty = loyalty
 

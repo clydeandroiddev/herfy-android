@@ -1006,7 +1006,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
                     if (data.getJSONObject("loyalty_profile").optJSONObject("current_tier") == null || data.getJSONObject("loyalty_profile").get("current_tier") instanceof JSONObject) {
-                        Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                        LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                         if (loyalty != null && loyalty.getAttributes().getLoyaltyTier() != null && !TextUtils.isEmpty(loyalty.getAttributes().getLoyaltyTier().getImageUrl())) {
                             splashView.preloadImage(loyalty.getAttributes().getLoyaltyTier().getImageUrl(), RequestOptions.centerInsideTransform());
                         }
@@ -1126,7 +1126,6 @@ public class SplashPresenter implements SplashContract.Presenter {
                     Type type = new TypeToken<List<LoyaltyTierV2>>() {}.getType();
                     List<LoyaltyTierV2> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
                     if (tiers != null && !tiers.isEmpty()) {
-                        AppLogger.longError("AAAAAA Went here? "+tiersArray.toString());
                         CacheUtil.getInstance().setLoyaltyTiers(new ArrayList<>(tiers));
                         for (LoyaltyTierV2 tier : tiers) {
                             splashView.preloadImage(tier.getImageUrl(), RequestOptions.noTransformation());

@@ -202,6 +202,10 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                     loyaltyQrActivityLauncher.launch(intent)
                 }
             }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                getLoyalty()
+            }
         }
 
     }
@@ -327,6 +331,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
 
     override fun showLoyalty(loyalty: LoyaltyV2, name: String) {
         binding.apply {
+            swipeRefreshLayout.isRefreshing = false
             loyalty?.let { loyalty ->
                 layoutCard.apply {
                     var loyaltyTier: String = when {
