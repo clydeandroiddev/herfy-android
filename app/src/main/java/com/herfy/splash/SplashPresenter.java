@@ -1045,6 +1045,8 @@ public class SplashPresenter implements SplashContract.Presenter {
         } else if (!AuthUtil.getInstance().getFirebase().isEmpty()) {
             String uniqueID = AuthUtil.getInstance().getUniqueId();
 
+
+
             if (uniqueID.isEmpty()) {
                 uniqueID = UUID.randomUUID().toString();
                 AuthUtil.getInstance().setUniqueId(uniqueID);
