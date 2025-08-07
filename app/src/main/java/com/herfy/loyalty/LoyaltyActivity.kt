@@ -26,6 +26,7 @@ import com.herfy.utils.extensions.OnLayoutLoadingCompleted
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.CacheUtilHelper
@@ -333,78 +334,85 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
         binding.apply {
             swipeRefreshLayout.isRefreshing = false
             loyalty?.let { loyalty ->
-                layoutCard.apply {
-                    var loyaltyTier: String = when {
-                        loyalty.attributes.loyaltyTier == null
-                                && loyaltyPresenter.tiers != null &&
-                                loyaltyPresenter.tiers.size > 0 -> {
-                            loyaltyPresenter.tiers[0]?.label?.english?:""
+                if(loyalty.attributes.loyaltyTier != null){
+                    layoutCard.apply {
+                        var loyaltyTier: String = when {
+                            loyalty.attributes.loyaltyTier == null
+                                    && loyaltyPresenter.tiers != null &&
+                                    loyaltyPresenter.tiers.size > 0 -> {
+                                loyaltyPresenter.tiers[0]?.label?.english?:""
+                            }
+                            else -> {
+                                loyalty.attributes?.loyaltyTier?.label?.english?: ""
+                            }
                         }
-                        else -> {
-                            loyalty.attributes?.loyaltyTier?.label?.english?: ""
+                        if(LocaleUtil.getInstance().isEnglish) {
+                            loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }
-                    }
-                    if(LocaleUtil.getInstance().isEnglish) {
-                        loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
-                    }
-                    var tierBackground = com.herfy.commonstyles.R.drawable.background_bronze_tier
-                    if (loyaltyTier.equals(
-                            "Silver",
-                            ignoreCase = true
-                        ) || loyaltyTier.equals("فضي")
-                    ) {
-                        tierBackground = com.herfy.commonstyles.R.drawable.background_silver_tier
-                    } else if (loyaltyTier.equals(
-                            "Gold",
-                            ignoreCase = true
-                        ) || loyaltyTier.equals("ذهبي")
-                    ) {
-                        tierBackground = com.herfy.commonstyles.R.drawable.background_gold_tier
-                    } else if (loyaltyTier.equals(
-                            "Diamond",
-                            ignoreCase = true
-                        ) || loyaltyTier.equals("البلاتين")
-                    ) {
-                        tierBackground = com.herfy.commonstyles.R.drawable.background_diamond_tier
-                    }
-                    tvTier.text = loyaltyTier
-                    tvTier.setBackgroundResource(tierBackground)
-                    val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
-                    tvSarValue.text =
-                        StringUtil.localize(currentBalanceValue)
-                    tvTotalPoints.text =
-                        StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
-                    tvProgressTier.text = loyaltyTier
+                        var tierBackground = com.herfy.home.R.drawable.background_bronze_tier
+                        if (loyaltyTier.equals(
+                                "Silver",
+                                ignoreCase = true
+                            ) || loyaltyTier.equals("فضي")
+                        ) {
+                            tierBackground = com.herfy.home.R.drawable.background_silver_tier
+                        } else if (loyaltyTier.equals(
+                                "Gold",
+                                ignoreCase = true
+                            ) || loyaltyTier.equals("ذهبي")
+                        ) {
+                            tierBackground = com.herfy.home.R.drawable.background_gold_tier
+                        } else if (loyaltyTier.equals(
+                                "Diamond",
+                                ignoreCase = true
+                            ) || loyaltyTier.equals("البلاتين")
+                        ) {
+                            tierBackground = com.herfy.home.R.drawable.background_diamond_tier
+                        }
+                        tvTier.text = loyaltyTier
+                        tvTier.setBackgroundResource(tierBackground)
+                        val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                        tvSarValue.text =
+                            StringUtil.localize(currentBalanceValue)
+                        tvTotalPoints.text =
+                            StringUtil.localize(loyalty.attributes.currentBalance.toLong().toString())
+                        tvProgressTier.text = loyaltyTier
 
-                    val tierImageUrl = loyalty.attributes?.loyaltyTier?.imageUrl ?: ""
-                    if(tierImageUrl.isNotEmpty()){
-                        if(!isFinishing && !isDestroyed){
-                            Glide.with(this@LoyaltyActivity)
-                                .load(tierImageUrl)
-                                .skipMemoryCache(false)
-                                .apply(RequestOptions.noTransformation())
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(object : DrawableImageViewTarget(binding.layoutCard.ivLoyaltyCard) {
-                                    override fun setResource(resource: Drawable?) {
-                                        super.setResource(resource)
-                                        binding.layoutCard.apply {
-                                            if (resource == null) {
-                                                ivLoyaltyCard.setImageResource(com.herfy.commonstyles.R.drawable.background_loyalty_card)
+                        val tierImageUrl = loyalty.attributes?.loyaltyTier?.imageUrl ?: ""
+                        if(tierImageUrl.isNotEmpty()){
+                            if(!isFinishing && !isDestroyed){
+                                Glide.with(this@LoyaltyActivity)
+                                    .load(tierImageUrl)
+                                    .skipMemoryCache(false)
+                                    .apply(RequestOptions.noTransformation())
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .into(object : DrawableImageViewTarget(binding.layoutCard.ivLoyaltyCard) {
+                                        override fun setResource(resource: Drawable?) {
+                                            super.setResource(resource)
+                                            binding.layoutCard.apply {
+                                                if (resource == null) {
+                                                    ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                                                }
+                                                fmShimmerLoyalty.gone()
+                                                clCardMain.visible()
                                             }
-                                            fmShimmerLoyalty.gone()
-                                            clCardMain.visible()
-                                        }
 
-                                    }
-                                })
-                        }
-                    }else {
-                        binding.layoutCard.apply {
-                            ivLoyaltyCard.setImageResource(com.herfy.commonstyles.R.drawable.background_loyalty_card)
-                            fmShimmerLoyalty.gone()
-                            clCardMain.visible()
+                                        }
+                                    })
+                            }
+                        }else {
+                            binding.layoutCard.apply {
+                                ivLoyaltyCard.setImageResource(com.herfy.home.R.drawable.background_loyalty_card)
+                                fmShimmerLoyalty.gone()
+                                clCardMain.visible()
+                            }
                         }
                     }
+                }else{
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        showLoyaltyError(CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED))
+                    },350)
+
                 }
 
             }
