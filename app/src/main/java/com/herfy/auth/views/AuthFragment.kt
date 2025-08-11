@@ -21,6 +21,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager.widget.ViewPager
+import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 import com.daimajia.androidanimations.library.Techniques
 import com.facebook.BuildConfig
 import com.facebook.CallbackManager
@@ -46,7 +48,6 @@ import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartFragment
-import com.herfy.utils.constants.Text
 import com.herfy.databinding.FragmentAuthBinding
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
@@ -54,17 +55,19 @@ import com.herfy.main.NavigationActivity
 import com.herfy.newmenu.views.NewMenuHomePageFragment
 import com.herfy.order.views.ordertype.OrderTypeNewFragment
 import com.herfy.util.AppLogger
-import com.herfy.verification.CodeBroadcastReceiver
-import com.herfy.verification.views.VerifyCodeDialogFragment
-import com.skylinedynamics.solosdk.api.SoloAuth
-import org.json.JSONException
-import java.util.Locale
-import java.util.regex.Pattern
+import com.herfy.utils.constants.Text
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.verification.CodeBroadcastReceiver
+import com.herfy.verification.views.VerifyCodeDialogFragment
+import com.skylinedynamics.solosdk.api.SoloAuth
+import org.json.JSONException
+import java.util.Locale
+import java.util.Map
+import java.util.regex.Pattern
 
 class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginResult>,
     SignInFragment.Listener {
@@ -500,6 +503,15 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun showMain() {
+        //HYDRA SIGN IN EVENT
+        getDefaultInstance(requireContext())!!.pushUserSignin(
+            AuthUtil.getInstance().customer.id,
+            AuthUtil.getInstance().customer.attributes.firstName,
+            AuthUtil.getInstance().customer.attributes.lastName,
+            AuthUtil.getInstance().customer.attributes.email,
+            AuthUtil.getInstance().customer.attributes.mobile,
+            emptyMap())
+
         verifyCodeDialogFragment?.let {
             it.dismiss()
         }

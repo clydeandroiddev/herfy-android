@@ -65,7 +65,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
             .notificationConfig(notificationConfig)
             .debugLevel(LogType.VERBOSE)
             .captureViewPortDetails(true)
-            .fcmConfig(FcmConfig(true))
+            .fcmConfig(FcmConfig(false))
             .build()
 
         HydraAPI.instanceWithConfig(this, hydraConfig)

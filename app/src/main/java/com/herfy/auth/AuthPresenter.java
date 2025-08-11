@@ -3,6 +3,7 @@ package com.herfy.auth;
 import static com.herfy.utils.constants.AuthKt.AUTH_USERNAME_INVALID;
 import static com.herfy.utils.constants.AuthKt.AUTH_USERNAME_REQUIRED;
 
+import com.capillary.hydra.android.sdk.HydraAPI;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
@@ -41,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -715,6 +717,7 @@ public class AuthPresenter implements AuthContract.Presenter {
                             JSONObject dataObj = json.getJSONObject("data");
 
                             String customerId = dataObj.getString("id");
+
 
                             registrationMethod = "app";
                             if (BuildUtil.soloAppKey().equalsIgnoreCase("SeBwUS2G9SEnkwty")) {

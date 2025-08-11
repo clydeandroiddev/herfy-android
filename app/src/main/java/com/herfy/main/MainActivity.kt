@@ -37,6 +37,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.capillary.hydra.android.sdk.HydraAPI
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -563,6 +564,10 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         }
         setCartQuantity()
+
+        signUpHydra()
+
+        App
     }
 
     private fun setupSideBar() {
@@ -1489,5 +1494,28 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         intent.putExtra("title", title)
         startActivity(intent)
+    }
+
+    private fun signUpHydra() {
+        val auth = AuthUtil.getInstance()
+        if (!auth.isSignedIn) return
+
+        if (BuildConfig.VERSION_NAME != "3.1.2") return
+
+        val customer = auth.customer ?: return
+        val phone =customer.attributes?.mobile ?: ""
+        if (phone.isBlank()) return
+
+        if (!auth.isHydraSignedUp(phone)) {
+            HydraAPI.getDefaultInstance(this@MainActivity)?.pushUserSignup(
+                cuid = customer.id ?: "",
+                firstName = customer.attributes?.firstName,
+                lastName  = customer.attributes?.lastName,
+                email     = customer.attributes?.email,
+                phone     = phone,
+                customData = emptyMap()
+            )
+            auth.saveHydraSignUp(phone)
+        }
     }
 }
