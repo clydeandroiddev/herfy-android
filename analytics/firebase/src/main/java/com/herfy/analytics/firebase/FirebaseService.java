@@ -23,6 +23,8 @@ import com.capillary.hydra.android.sdk.HydraAPI;
 import com.capillary.hydra.android.sdk.HydraConfig;
 import com.capillary.hydra.android.sdk.NotificationConfig;
 import com.capillary.hydra.android.sdk.exceptions.HydraConfigurationException;
+import com.capillary.hydra.firebase.HydraFirebaseAPI;
+import com.capillary.hydra.pushbase.HydraPushApi;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -43,7 +45,7 @@ public class FirebaseService extends FirebaseMessagingService {
     public void onNewToken(String token) {
 
         super.onNewToken(token);
-
+        HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), token);
 
 
         AuthUtil.getInstance().setFirebase(token);
@@ -109,6 +111,10 @@ public class FirebaseService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NotNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+
+        if (HydraPushApi.getInstance().isFromHydraPlatform(remoteMessage.getData())) {
+            HydraFirebaseAPI.getInstance().passPushPayload(getApplicationContext(), remoteMessage.getData());
+        }
 
         if (remoteMessage.getNotification() != null) {
 

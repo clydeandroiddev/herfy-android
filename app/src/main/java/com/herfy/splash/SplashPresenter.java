@@ -1180,6 +1180,9 @@ public class SplashPresenter implements SplashContract.Presenter {
         } catch (IOException e) {
             return null;
         }
+
     }
+
+
 
 }

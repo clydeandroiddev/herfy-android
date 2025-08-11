@@ -169,7 +169,7 @@ android {
             minifyEnabled false
             shrinkResources false
             versionNameSuffix "-kiosk-$dateToday.$apkCountForToday"
-            buildConfigField "String", "BASE_URL", "\"https://test-kiosk-api.getsolo.io/\""
+            buildConfigField "String", "BASE_URL", "\"https://test-kiosk-api2.getsolo.io/\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
             buildConfigField "float", "FEATURE_PHASE", '1.3'
             buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""

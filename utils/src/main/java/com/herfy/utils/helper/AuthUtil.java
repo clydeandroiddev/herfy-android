@@ -34,6 +34,7 @@ public class AuthUtil {
     private String DEVICE = "device";
     private String CUSTOMER_LOYALTY = "customer_loyalty";
     private String CUSTOMER_LOYALTY_TIER = "customer_loyalty_tier";
+    private static final String HYDRA_SIGNUP = "hydra_signup_";
     private static Context mContext;
     private AuthUtil(Context context) {
         try {
@@ -250,6 +251,19 @@ public class AuthUtil {
 
         return null;
 
+    }
+
+
+    public synchronized boolean isHydraSignedUp(String phone) {
+        if (phone == null) phone = "";
+        String key = HYDRA_SIGNUP +  phone.trim();
+        return authSharedPreferences.getBoolean(key, false);
+    }
+
+    public synchronized void saveHydraSignUp(String  phone) {
+        if (phone == null) phone = "";
+        String key = HYDRA_SIGNUP + phone.trim();
+        authSharedPreferences.edit().putBoolean(key, true).apply();
     }
 
     public synchronized void migrate() {

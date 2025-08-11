@@ -33,7 +33,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.LoginFacebookBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginGoogleBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerEmailMobileBody;
-
+import com.capillary.hydra.android.sdk.HydraAPI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -254,7 +254,9 @@ public class VerificationPresenter implements VerificationContract.Presenter {
                         verificationView.logEvent("SignUp", eventAttributes, null, 0);
 
                         Customer customer = GsonHelper.gsonFinal().fromJson(data.toString(), Customer.class);
+
                         getCustomer(customer.getId());
+
 
                     } catch(JSONException e){
                         e.printStackTrace();
