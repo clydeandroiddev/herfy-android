@@ -19,6 +19,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
@@ -662,12 +663,12 @@ class HomeRepositoryImpl @Inject constructor(
                 try {
                     val `object` = JSONObject(o.toString())
                     val tiersArray = `object`.getJSONArray("data")
-                    val type = object : TypeToken<List<Tier?>?>() {}.type
+                    val type = object : TypeToken<List<LoyaltyTierV2?>?>() {}.type
                     val tiers =
-                        GsonHelper.gsonFinal().fromJson<List<Tier>>(tiersArray.toString(), type)
+                        GsonHelper.gsonFinal().fromJson<List<LoyaltyTierV2>>(tiersArray.toString(), type)
                     // TODO: Should set Tier as Comparable in SDK
                     Collections.sort(tiers,
-                        java.util.Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as java.util.Comparator<Tier>)
+                        java.util.Comparator { o1: LoyaltyTierV2, o2: LoyaltyTierV2 -> o1.startingPoints - o2.startingPoints } as java.util.Comparator<LoyaltyTierV2>)
                     response(HomeResponse(true, tiers, ""))
                 } catch (ex: JSONException) {
                     ex.printStackTrace()

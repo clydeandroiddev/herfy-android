@@ -450,11 +450,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.loyalty.observe(this) {
             val loyalty = it.getContentIfNotHandled()
-            if(loyalty == null){
-                binding.layoutLoyalty.clCustomerLoyalty.visibility = View.GONE
-            }else{
-                binding.layoutLoyalty.clCustomerLoyalty.visibility = View.VISIBLE
-                loyalty?.let { loyalty ->
+            if (loyalty?.attributes == null) {
+                binding.layoutLoyalty.clCustomerLoyalty.gone()
+                return@observe
+            }
+
+            binding.layoutLoyalty.clCustomerLoyalty.visible()
+                binding.layoutLoyalty.clCustomerLoyalty.visible()
+                loyalty.let { loyalty ->
                     binding.layoutLoyalty.apply {
                         loyalty.let {
                             tvTotalPoints.text = StringUtil.localize(loyalty.attributes.currentBalance.toString())
@@ -525,8 +528,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         }
                     }
                 }
-            }
-
         }
 
         viewModel.tierProgress.observeNonNull(this) {
