@@ -16,6 +16,7 @@ import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -127,7 +128,7 @@ class LoyaltyQrActivity : BaseActivity(), LoyaltyContract.View {
     ) {
     }
 
-    override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransaction?) {
+    override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransactionV2?) {
     }
 
     override fun showNextTier(

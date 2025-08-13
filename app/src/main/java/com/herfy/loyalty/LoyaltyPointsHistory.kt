@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.herfy.R
 import com.herfy.base.BaseActivity
 import com.herfy.databinding.ActivityLoyaltyPointsHistoryBinding
+import com.herfy.enum.HistorySortType
 import com.herfy.model.SortingCategory
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.OnLayoutLoadingCompleted
@@ -18,6 +19,7 @@ import com.herfy.utils.extensions.visible
 import com.herfy.utils.helper.AnimUtil
 import com.herfy.utils.helper.CacheUtil
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -143,7 +145,7 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
     }
 
 
-    override fun showLoyaltyPointsHistory(loyaltyTransactions: ArrayList<LoyaltyTransaction>) {
+    override fun showLoyaltyPointsHistory(loyaltyTransactions: ArrayList<LoyaltyTransactionV2>) {
         isLoadingHistory = false
         page += 1
         canLoadMoreItems = loyaltyTransactions.size != 0 && loyaltyTransactions.size % 10 == 0
@@ -168,7 +170,7 @@ class LoyaltyPointsHistory : BaseActivity(), LoyaltyHistoryContract.View {
         dismissDialogs()
     }
 
-    override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransaction) {}
+    override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransactionV2) {}
     override fun showSortingCategories(sortingCategories: ArrayList<SortingCategory>) {
         binding.rvSorting.visible()
         historySortAdapter.updateList(sortingCategories)

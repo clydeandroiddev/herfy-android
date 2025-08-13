@@ -36,6 +36,7 @@ import com.herfy.utils.helper.TimeUtil
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -265,7 +266,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
                 CacheUtil.getInstance().pointsUntilNextTier = pointsUntilNextTier
                 CacheUtil.getInstance().startingPointsOfNextTier = startingPointsOfNextTier
                 if (pointsUntilNextTier <= 0) {
-                    val tierName = loyalty?.attributes?.loyaltyTier?.label?.english?: ""
+                    val tierName = loyalty?.attributes?.loyaltyTier?.label?.getValue(LocaleUtil.getInstance().language)?: ""
                     if (isMaxTier) {
                         progress.max = 100
                         progress.progress = 100
@@ -459,7 +460,7 @@ class LoyaltyActivity : BaseActivity(), LoyaltyContract.View, RedeemLoyaltyDialo
     ) {
     }
 
-    override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransaction) {}
+    override fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransactionV2) {}
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == 1024) {
