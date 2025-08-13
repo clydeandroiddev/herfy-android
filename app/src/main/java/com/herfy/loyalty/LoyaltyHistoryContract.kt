@@ -5,13 +5,14 @@ import com.herfy.base.BasePresenter
 import com.herfy.base.BaseView
 import com.herfy.model.SortingCategory
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2
 
 interface LoyaltyHistoryContract {
 
     interface View : BaseView<Presenter> {
 
 
-        fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransaction)
+        fun setLoyaltyHistory(loyaltyTransaction: LoyaltyTransactionV2)
         fun showSortingCategories(sortingCategories: ArrayList<SortingCategory>)
 
         fun updateSortingCategory(category: SortingCategory)
@@ -20,7 +21,7 @@ interface LoyaltyHistoryContract {
 
         fun showLoyaltyError(message: String)
 
-        fun showLoyaltyPointsHistory(loyaltyTransactions: ArrayList<LoyaltyTransaction>)
+        fun showLoyaltyPointsHistory(loyaltyTransactions: ArrayList<LoyaltyTransactionV2>)
 
 
     }

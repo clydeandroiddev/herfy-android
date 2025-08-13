@@ -5,6 +5,7 @@ import com.herfy.base.BaseView;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public interface LoyaltyContract {
 
         void showLoyaltyPointsHistory(boolean newestToOldest,  ArrayList<LoyaltyTransaction> loyaltyTransactions);
 
-        void setLoyaltyHistory(LoyaltyTransaction loyaltyTransaction);
+        void setLoyaltyHistory(LoyaltyTransactionV2 loyaltyTransaction);
 
         void showNextTier(LoyaltyTierV2 tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, LoyaltyV2 loyalty);
 

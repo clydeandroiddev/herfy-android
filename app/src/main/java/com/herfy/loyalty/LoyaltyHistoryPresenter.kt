@@ -15,6 +15,7 @@ import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionDetails
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2
 import com.skylinedynamics.solosdk.util.GsonHelper
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
@@ -34,8 +35,8 @@ class LoyaltyHistoryPresenter @Inject constructor(
     private val cacheUtilHelper: CacheUtilHelper
 ) : LoyaltyHistoryContract.Presenter {
 
-    private var filteredTransactionList = ArrayList<LoyaltyTransaction>()
-    private var transactionsList = ArrayList<LoyaltyTransaction>()
+    private var filteredTransactionList = ArrayList<LoyaltyTransactionV2>()
+    private var transactionsList = ArrayList<LoyaltyTransactionV2>()
     private var consolidatedList = ArrayList<ListItem>()
     private var sortingCategories = arrayListOf<SortingCategory>()
     private val disposables = CompositeDisposable()
@@ -50,7 +51,7 @@ class LoyaltyHistoryPresenter @Inject constructor(
                     disposable!!
                 )
             }.subscribe(
-                { transactionsList: List<LoyaltyTransaction>? ->
+                { transactionsList: List<LoyaltyTransactionV2>? ->
                     if (page == 1) {
                         this.transactionsList.clear()
                         consolidatedList.clear()
@@ -68,11 +69,11 @@ class LoyaltyHistoryPresenter @Inject constructor(
 
     private fun sortTransactionList() {
         if(transactionsList.size > 0){
-            transactionsList.sortWith { lhs: LoyaltyTransaction, rhs: LoyaltyTransaction ->
+            transactionsList.sortWith { lhs: LoyaltyTransactionV2, rhs: LoyaltyTransactionV2 ->
                 val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
-                val lhsDate = simpleDateFormat.parse(lhs.createdAt)
-                val rhsDate = simpleDateFormat.parse(rhs.createdAt)
+                val lhsDate = simpleDateFormat.parse(lhs.processedAt)
+                val rhsDate = simpleDateFormat.parse(rhs.processedAt)
                 return@sortWith rhsDate.compareTo(lhsDate)
             }
             filteredTransactionList.clear()
@@ -84,39 +85,23 @@ class LoyaltyHistoryPresenter @Inject constructor(
         disposables.clear()
     }
 
-    private fun getLoyaltyHistory(page: Int): Single<List<LoyaltyTransaction>> {
-        return Single.create { source: SingleEmitter<List<LoyaltyTransaction>> ->
-            CustomersApiCall.getInstance().getLoyaltyTransactions(
+    private fun getLoyaltyHistory(page: Int): Single<List<LoyaltyTransactionV2>> {
+        return Single.create { source: SingleEmitter<List<LoyaltyTransactionV2>> ->
+            CustomersApiCall.getInstance().getLoyaltyTransactionsV2(
                 AuthUtil.getInstance().customer.id,
-                page,
                 object : ApiRequestListener {
                     override fun onSuccess(o: Any) {
                         try {
                             val `object` = JSONObject(o.toString())
                             val array = `object`.getJSONArray("data")
-                            val list: MutableList<LoyaltyTransaction> = ArrayList()
+                            val list: MutableList<LoyaltyTransactionV2> = ArrayList()
                             for (i in 0 until array.length()) {
                                 val object1 = array.getJSONObject(i)
-                                val details = object1.opt("details")
-                                if (!object1.has("details") || object1.isNull("details") || details !is JSONObject) {
-                                    val loyaltyTransactionDetails = LoyaltyTransactionDetails()
-                                    loyaltyTransactionDetails.amount = 0.0
-                                    object1.put(
-                                        "details",
-                                        JSONObject(Gson().toJson(loyaltyTransactionDetails))
-                                    )
-                                }
                                 val transaction = GsonHelper.gsonFinal()
-                                    .fromJson(object1.toString(), LoyaltyTransaction::class.java)
+                                    .fromJson(object1.toString(), LoyaltyTransactionV2::class.java)
                                 list.add(transaction)
                             }
-                            val filteredList: MutableList<LoyaltyTransaction> = ArrayList()
-                            for (loyaltyTransaction in list) {
-                                if (loyaltyTransaction.details != null && loyaltyTransaction.details.amount != null) {
-                                    filteredList.add(loyaltyTransaction)
-                                }
-                            }
-                            source.onSuccess(filteredList)
+                            source.onSuccess(list)
                             historyView.showLoyaltyPointsHistory(filteredTransactionList)
                         } catch (e: JSONException) {
                             e.printStackTrace()
@@ -212,22 +197,23 @@ class LoyaltyHistoryPresenter @Inject constructor(
             if(category.sortType == HistorySortType.ALL){
                 filteredTransactionList.addAll(transactionsList)
             }else {
-                val selectedCategory = when(category.sortType) {
-                    HistorySortType.EARNED -> {
-                        "collection"
-                    }
-                    HistorySortType.USED -> {
-                        "redemption"
-                    }
-                    HistorySortType.ALL -> {
-                        ""
+
+                val selectedTypes: Set<String> = when (category.sortType) {
+                    HistorySortType.EARNED -> setOf("collect")
+                    HistorySortType.USED   -> setOf("redeem", "cancel")
+                    HistorySortType.ALL    -> emptySet()
+                }
+
+                val result = if (selectedTypes.isEmpty()) {
+                    transactionsList
+                } else {
+                    val allowed = selectedTypes.map { it.lowercase() }.toSet()
+                    transactionsList.filter { t ->
+                        t.type?.trim()?.lowercase() in allowed
                     }
                 }
-                filteredTransactionList.addAll(
-                    transactionsList.filter {
-                            trans -> trans.type.equals(selectedCategory, ignoreCase = true)
-                    }
-                )
+
+                filteredTransactionList.addAll(result)
             }
         }
         historyView.updateTransactions()

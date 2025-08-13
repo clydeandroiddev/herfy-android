@@ -455,79 +455,79 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 return@observe
             }
 
+
             binding.layoutLoyalty.clCustomerLoyalty.visible()
-                binding.layoutLoyalty.clCustomerLoyalty.visible()
-                loyalty.let { loyalty ->
-                    binding.layoutLoyalty.apply {
-                        loyalty.let {
-                            tvTotalPoints.text = StringUtil.localize(loyalty.attributes.currentBalance.toString())
-                            val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
-                            tvSarValue.text = StringUtil.localize(currentBalanceValue)
-                            var loyaltyTier = loyalty.attributes.loyaltyTier?.label?.english ?: ""
-                            val tierImageUrl = loyalty.attributes.loyaltyTier?.imageUrl ?: ""
-                            if (LocaleUtil.getInstance().isEnglish) {
-                                loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+            loyalty.let { loyalty ->
+                binding.layoutLoyalty.apply {
+                    loyalty.let {
+                        tvTotalPoints.text = StringUtil.localize(loyalty.attributes.currentBalance.toString())
+                        val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                        tvSarValue.text = StringUtil.localize(currentBalanceValue)
+                        var loyaltyTier = loyalty.attributes.loyaltyTier?.label?.english ?: ""
+                        val tierImageUrl = loyalty.attributes.loyaltyTier?.imageUrl ?: ""
+                        if (LocaleUtil.getInstance().isEnglish) {
+                            loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+                        }
+                        if (loyaltyTier.isNotEmpty()) {
+                            var tierBackground = R.drawable.background_bronze_tier
+                            if (loyaltyTier.equals(
+                                    "Silver", ignoreCase = true
+                                ) || loyaltyTier == "فضي"
+                            ) {
+                                tierBackground = R.drawable.background_silver_tier
+                            } else if (loyaltyTier.equals(
+                                    "Gold", ignoreCase = true
+                                ) || loyaltyTier == "ذهبي"
+                            ) {
+                                tierBackground = R.drawable.background_gold_tier
+                            } else if (loyaltyTier.equals(
+                                    "Diamond", true
+                                ) || loyaltyTier == "البلاتين"
+                            ) {
+                                tierBackground = R.drawable.background_diamond_tier
                             }
-                            if (loyaltyTier.isNotEmpty()) {
-                                var tierBackground = R.drawable.background_bronze_tier
-                                if (loyaltyTier.equals(
-                                        "Silver", ignoreCase = true
-                                    ) || loyaltyTier == "فضي"
-                                ) {
-                                    tierBackground = R.drawable.background_silver_tier
-                                } else if (loyaltyTier.equals(
-                                        "Gold", ignoreCase = true
-                                    ) || loyaltyTier == "ذهبي"
-                                ) {
-                                    tierBackground = R.drawable.background_gold_tier
-                                } else if (loyaltyTier.equals(
-                                        "Diamond", true
-                                    ) || loyaltyTier == "البلاتين"
-                                ) {
-                                    tierBackground = R.drawable.background_diamond_tier
-                                }
-                                tvTier.setBackgroundResource(tierBackground)
-                                tvTier.text = loyaltyTier
-                                tvProgressTier.text = loyaltyTier
-                            }
+                            tvTier.setBackgroundResource(tierBackground)
+                            tvTier.text = loyaltyTier
+                            tvProgressTier.text = loyaltyTier
+                        }
 
-                            if (tierImageUrl.isNotEmpty()) {
-                                binding.layoutLoyalty.ivLoyaltyCard.apply {
-                                    this@HomeFragment.context?.let {
-                                        Glide.with(it).load(tierImageUrl).skipMemoryCache(false)
-                                            .apply(RequestOptions.noTransformation())
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .into(object : DrawableImageViewTarget(this) {
-                                                override fun setResource(resource: Drawable?) {
-                                                    super.setResource(resource)
-                                                    binding.layoutLoyalty.apply {
-                                                        if (resource == null) {
-                                                            ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
-                                                        }
-                                                        Handler(Looper.getMainLooper()).postDelayed(
-                                                            {
-                                                                cvEmptyState.gone()
-                                                                cvShimmerLoyalty.gone()
-                                                                cvLoyaltyDetails.visible()
-                                                            }, 500
-                                                        )
+                        if (tierImageUrl.isNotEmpty()) {
+                            binding.layoutLoyalty.ivLoyaltyCard.apply {
+                                this@HomeFragment.context?.let {
+                                    Glide.with(it).load(tierImageUrl).skipMemoryCache(false)
+                                        .apply(RequestOptions.noTransformation())
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .into(object : DrawableImageViewTarget(this) {
+                                            override fun setResource(resource: Drawable?) {
+                                                super.setResource(resource)
+                                                binding.layoutLoyalty.apply {
+                                                    if (resource == null) {
+                                                        ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
                                                     }
-
+                                                    Handler(Looper.getMainLooper()).postDelayed(
+                                                        {
+                                                            cvEmptyState.gone()
+                                                            cvShimmerLoyalty.gone()
+                                                            cvLoyaltyDetails.visible()
+                                                        }, 500
+                                                    )
                                                 }
-                                            })
-                                    }
+
+                                            }
+                                        })
                                 }
-                            } else {
-                                binding.layoutLoyalty.apply {
-                                    ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
-                                    cvEmptyState.gone()
-                                    cvShimmerLoyalty.gone()
-                                    cvLoyaltyDetails.visible()
-                                }
+                            }
+                        } else {
+                            binding.layoutLoyalty.apply {
+                                ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                                cvEmptyState.gone()
+                                cvShimmerLoyalty.gone()
+                                cvLoyaltyDetails.visible()
                             }
                         }
                     }
                 }
+            }
         }
 
         viewModel.tierProgress.observeNonNull(this) {
