@@ -36,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.fragment.app.FragmentManager;
@@ -253,9 +254,9 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                         @NonNull
                         @Override
                         public WindowInsets onApplyWindowInsets(@NonNull View view, @NonNull WindowInsets insets) {
-                            Insets statusBarInsets = insets.getInsets(WindowInsets.Type.statusBars());
+                            Insets navigationInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                             view.setBackgroundColor(statusBarColor);
-                            view.setPadding(0, statusBarInsets.top, 0, 0);
+                            view.setPadding(0, navigationInsets.top, 0, navigationInsets.bottom);
                             return insets;
                         }
                     });
