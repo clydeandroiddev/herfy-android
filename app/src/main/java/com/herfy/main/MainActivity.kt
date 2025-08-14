@@ -567,7 +567,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         signUpHydra()
 
-        App
     }
 
     private fun setupSideBar() {
