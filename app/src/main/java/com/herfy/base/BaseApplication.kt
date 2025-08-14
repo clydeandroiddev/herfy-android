@@ -9,6 +9,7 @@ import com.capillary.hydra.android.sdk.FcmConfig
 import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraConfig
 import com.capillary.hydra.android.sdk.NotificationConfig
+import com.capillary.hydra.android.sdk.exceptions.HydraConfigurationException
 import com.capillary.hydra.android.sdk.utils.LogType
 import com.capillary.hydra.pushbase.HydraPushApi
 import com.chuckerteam.chucker.api.ChuckerCollector
@@ -50,7 +51,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
-
+        FirebaseApp.initializeApp(this)
         val notificationConfig = NotificationConfig(
             R.drawable.notification,
             R.color.colorPrimary,
@@ -68,21 +69,22 @@ class BaseApplication : Application(), ImageLoaderFactory {
             .fcmConfig(FcmConfig(false))
             .build()
 
-        HydraAPI.instanceWithConfig(this, hydraConfig)
+        try {
+            HydraAPI.instanceWithConfig(this, hydraConfig)
+        } catch (e: HydraConfigurationException) {
+            AppLogger.error("Hydra init failed $e")
+        }
 
-        HydraPushApi.getInstance()
-            .registerPushNotificationListener(AppPushMessageListener())
+
 
 
         AppDatabase.init(this)
-        FirebaseApp.initializeApp(this)
         sdkInitialize(this)
         AppEventsLogger.activateApp(this)
         if(BuildConfig.DEBUG) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
         }
-        AppDatabase.init(this)
         AuthUtil.init(this)
         CacheUtil.init(this)
         LocaleUtil.init(this)
