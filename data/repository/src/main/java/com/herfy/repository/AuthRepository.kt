@@ -1,6 +1,7 @@
 package com.herfy.repository
 
 import android.util.Log
+import com.capillary.hydra.android.sdk.HydraAPI
 import com.google.gson.Gson
 import com.herfy.model.auth.CustomerResponse
 import com.herfy.model.auth.GoogleResponse
@@ -37,7 +38,7 @@ import java.util.LinkedList
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
-
+import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 interface AuthRepository {
 
     suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit)
@@ -485,6 +486,9 @@ class AuthRepositoryImpl @Inject constructor(
                             uniqueID = UUID.randomUUID().toString()
                             AuthUtil.getInstance().uniqueId = uniqueID
                         }
+
+
+
                         UtilitiesApiCall.getInstance().postIdentify(AuthUtil.getInstance().firebase,
                             uniqueID,
                             customer.attributes.mobile,

@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -50,7 +51,6 @@ public class FirebaseService extends FirebaseMessagingService {
         super.onNewToken(token);
 
         HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), token);
-
 
         AuthUtil.getInstance().setFirebase(token);
 
@@ -64,6 +64,19 @@ public class FirebaseService extends FirebaseMessagingService {
         String customerId = null;
         String customerMobileNumber = null;
         if (AuthUtil.getInstance().isSignedIn()) {
+
+
+            //HYDRA SIGN IN EVENT
+            HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
+                    pushUserSignin(
+                            AuthUtil.getInstance().getCustomer().getId(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                            Collections.emptyMap());
+
+
             customerId = AuthUtil.getInstance().getCustomer().getId();
             String key = CacheUtil.getInstance().getConceptKey();
             if(key.equalsIgnoreCase("CQcFAwgLDA0")) {

@@ -22,6 +22,7 @@ import androidx.credentials.exceptions.GetCredentialException
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.capillary.hydra.android.sdk.HydraAPI
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -38,6 +39,7 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.loadSliderImage
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.helper.AppLogger
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import com.skylinedynamics.solosdk.api.models.objects.Customer
@@ -242,6 +244,15 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     )
                     requireActivity().setResult(Activity.RESULT_OK)
                     requireActivity().finish()
+
+                    //HYDRA SIGN IN EVENT
+                   HydraAPI.getDefaultInstance(requireContext())!!.pushUserSignin(
+                        AuthUtil.getInstance().customer.id,
+                        AuthUtil.getInstance().customer.attributes.firstName,
+                        AuthUtil.getInstance().customer.attributes.lastName,
+                        AuthUtil.getInstance().customer.attributes.email,
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        emptyMap())
                 }
 
                 is LoginViewState.ShowLoading -> {
