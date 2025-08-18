@@ -23,6 +23,7 @@ import com.capillary.hydra.android.sdk.HydraAPI;
 import com.capillary.hydra.android.sdk.HydraConfig;
 import com.capillary.hydra.android.sdk.NotificationConfig;
 import com.capillary.hydra.android.sdk.exceptions.HydraConfigurationException;
+import com.capillary.hydra.android.sdk.utils.LogType;
 import com.capillary.hydra.firebase.HydraFirebaseAPI;
 import com.capillary.hydra.pushbase.HydraPushApi;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -35,6 +36,8 @@ import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
 import com.herfy.utils.helper.LocaleUtil;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -45,6 +48,7 @@ public class FirebaseService extends FirebaseMessagingService {
     public void onNewToken(String token) {
 
         super.onNewToken(token);
+
         HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), token);
 
 
@@ -111,9 +115,85 @@ public class FirebaseService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NotNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-
+        
         if (HydraPushApi.getInstance().isFromHydraPlatform(remoteMessage.getData())) {
             HydraFirebaseAPI.getInstance().passPushPayload(getApplicationContext(), remoteMessage.getData());
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), getResources().getString(R.string.app_name));
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (notificationManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                NotificationChannel channel = notificationManager.getNotificationChannel(getResources().getString(R.string.app_name));
+
+                if (channel == null) {
+
+                    channel = new NotificationChannel(getResources().getString(R.string.app_name), getResources().getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH);
+                    channel.setDescription(getResources().getString(R.string.app_name));
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                            .build();
+                    channel.setSound(defaultSoundUri, audioAttributes);
+                    channel.enableLights(true);
+                    channel.enableVibration(true);
+                    channel.setLightColor(Color.parseColor(String.format("#FF%06X", (0xFFFFFF & ViewUtil.getColorMain(this)))));
+                    channel.setShowBadge(true);
+                    channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                    channel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
+                    notificationManager.createNotificationChannel(channel);
+
+                }
+
+            }
+
+            builder.setSmallIcon(R.drawable.notification);
+
+            String bodyJson = remoteMessage.getData().get("body");
+            String expandableDetailsJson = remoteMessage.getData().get("expandableDetails");
+
+            try {
+                JSONObject bodyObj = new JSONObject(bodyJson);
+                String title = bodyObj.optString("title");
+                String message = bodyObj.optString("message");
+
+                JSONObject expandableDetailsObj = new JSONObject(expandableDetailsJson);
+                String expandableDetailMessage = expandableDetailsObj.optString("message");
+
+                builder.setStyle(new NotificationCompat.BigTextStyle().bigText(expandableDetailMessage));
+                builder.setContentTitle(title);
+                builder.setContentText(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            builder.setSound(defaultSoundUri)
+                    .setAutoCancel(true)
+                    .setLights(Color.parseColor(String.format("#FF%06X", (0xFFFFFF & ViewUtil.getColorMain(this)))), 200, 200)
+                    .setPriority(Notification.PRIORITY_MAX)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
+            Intent mainIntent = new Intent();
+            mainIntent.setClassName(this, Navigation.SPLASH_ACTIVITY);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            builder.setContentIntent(pendingIntent);
+
+            int id = getNextNotificationId();
+
+
+            if (notificationManager != null) {
+
+                notificationManager.notify(String.valueOf(id), id, builder.build());
+
+            }
         }
 
         if (remoteMessage.getNotification() != null) {
