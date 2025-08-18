@@ -39,9 +39,12 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.capillary.hydra.android.sdk.HydraAPI;
+import com.capillary.hydra.firebase.HydraFirebaseAPI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
+import com.google.gson.Gson;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.animation.ActivitySwitcher;
@@ -49,6 +52,7 @@ import com.herfy.base.BaseActivity;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
+import com.herfy.util.AppLogger;
 import com.herfy.util.obfuscator.Keychain;
 import com.herfy.util.obfuscator.ObfuscatorKt;
 import com.herfy.utils.helper.CacheHelper;
@@ -68,6 +72,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Slide;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -148,6 +153,23 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             } else {
                 checkAlarmPermission();
             }
+        }
+
+        if(!AuthUtil.getInstance().getFirebase().isEmpty() && AuthUtil.getInstance().isSignedIn()) {
+            //HYDRA SIGN IN EVENT
+            HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
+                    pushUserSignin(
+                            AuthUtil.getInstance().getCustomer().getId(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                            Collections.emptyMap());
+
+            HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
+
+            AppLogger.longError("FCM TOKEN "+AuthUtil.getInstance().getFirebase());
+            AppLogger.longError("Customer Data "+new Gson().toJson(AuthUtil.getInstance().getCustomer()));
         }
     }
 
