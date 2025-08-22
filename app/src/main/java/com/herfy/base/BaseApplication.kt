@@ -66,6 +66,8 @@ class BaseApplication : Application(), ImageLoaderFactory {
             .notificationConfig(notificationConfig)
             .debugLevel(LogType.VERBOSE)
             .captureViewPortDetails(true)
+            .sslPublicKey("jyuoLOfuVQyA6a9iGJ5k/m0MoMDDh9+dEjqZkIb1Afs=")
+            .baseURL("https://mapp-eucrm.api.capillarytech.com/")
             .fcmConfig(FcmConfig(false))
             .build()
 
