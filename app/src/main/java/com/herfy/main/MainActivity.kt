@@ -38,10 +38,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.firebase.HydraFirebaseAPI
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.BuildConfig
 import com.herfy.R
@@ -74,6 +77,7 @@ import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.splash.SplashActivity
+import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.util.obfuscator.Keychain
@@ -567,6 +571,24 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         signUpHydra()
 
+        //HYDRA LOGS
+
+        if (!AuthUtil.getInstance().firebase.isEmpty() && AuthUtil.getInstance().isSignedIn) {
+            //HYDRA SIGN IN EVENT
+            getDefaultInstance(applicationContext)!!.pushUserSignin(
+            AuthUtil.getInstance().customer.id,
+            AuthUtil.getInstance().customer.attributes.firstName,
+            AuthUtil.getInstance().customer.attributes.lastName,
+            AuthUtil.getInstance().customer.attributes.email,
+            AuthUtil.getInstance().customer.attributes.mobile,
+            emptyMap<String, Any>())
+
+            HydraFirebaseAPI.getInstance()
+                .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
+
+            AppLogger.longError("HYDRA CAPILLARY FCM TOKEN " + AuthUtil.getInstance().firebase)
+            AppLogger.longError("HYDRA CAPILLARY Customer Data " + Gson().toJson(AuthUtil.getInstance().customer))
+        }
     }
 
     private fun setupSideBar() {
