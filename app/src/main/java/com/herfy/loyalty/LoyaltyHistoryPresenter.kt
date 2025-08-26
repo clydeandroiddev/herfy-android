@@ -70,8 +70,8 @@ class LoyaltyHistoryPresenter @Inject constructor(
     private fun sortTransactionList() {
         if(transactionsList.size > 0){
             transactionsList.sortWith { lhs: LoyaltyTransactionV2, rhs: LoyaltyTransactionV2 ->
-                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT+0")
+                val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+                simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
                 val lhsDate = simpleDateFormat.parse(lhs.processedAt)
                 val rhsDate = simpleDateFormat.parse(rhs.processedAt)
                 return@sortWith rhsDate.compareTo(lhsDate)
