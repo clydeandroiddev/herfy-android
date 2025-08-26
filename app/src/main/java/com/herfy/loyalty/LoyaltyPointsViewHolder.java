@@ -103,7 +103,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     @Override
     public void setLoyaltyHistory(LoyaltyTransactionV2 loyaltyTransaction) {
         Concept concept = CacheUtil.getInstance().getConcept();
-        tvDate.setText(TimeUtil.formatDate(loyaltyTransaction.getProcessedAt()));
+        tvDate.setText(TimeUtil.formatDateWithUTC(loyaltyTransaction.getProcessedAt()));
         DecimalFormat formatter = new DecimalFormat("#,###");
         if (loyaltyTransaction.getType() != null && loyaltyTransaction.getType().equalsIgnoreCase("collect")) {
             tvPoints.setText("+" + formatter.format(loyaltyTransaction.getPoints()));
