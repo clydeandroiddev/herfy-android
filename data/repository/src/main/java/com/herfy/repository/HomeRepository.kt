@@ -161,8 +161,7 @@ class HomeRepositoryImpl @Inject constructor(
                 try {
                     val `object` = JSONObject(o.toString())
                     val data = `object`.getJSONObject("data")
-                    val loyalty =
-                        GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2::class.java)
+                    val loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2::class.java)
                     response(HomeResponse(true, loyalty, ""))
                 } catch (e: JSONException) {
                     e.printStackTrace()

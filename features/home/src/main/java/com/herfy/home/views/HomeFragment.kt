@@ -450,8 +450,21 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.loyalty.observe(this) {
             val loyalty = it.getContentIfNotHandled()
-            AppLogger.longError("AAAAAAAAA loyalty = ${loyalty}")
-            if (loyalty?.attributes == null) {
+            if (loyalty == null) {
+                if (!AuthUtil.getInstance().isSignedIn) {
+                    binding.layoutLoyalty.clCustomerLoyalty.gone()
+                } else {
+                    binding.layoutLoyalty.apply {
+                        clCustomerLoyalty.visible()
+                        cvShimmerLoyalty.visible()
+                        cvLoyaltyDetails.gone()
+                        cvEmptyState.gone()
+                    }
+                }
+                return@observe
+            }
+
+            if (loyalty.attributes == null) {
                 binding.layoutLoyalty.clCustomerLoyalty.gone()
                 return@observe
             }
