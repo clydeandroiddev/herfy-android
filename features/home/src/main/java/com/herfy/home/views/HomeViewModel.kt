@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.herfy.analytics.kochava.KochavaEventType
@@ -623,10 +624,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getLoyaltyObservable(): Single<LoyaltyV2?>? {
-        AuthUtil.getInstance().customerLoyalty?.let {
-            return Single.just(it)
-        }
-
         return Single.create<LoyaltyV2?> { source: SingleEmitter<LoyaltyV2?> ->
             invoke {
                 homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
@@ -638,9 +635,17 @@ class HomeViewModel @Inject constructor(
                             }
                         } ?: run {
                             _loyalty.value = Event(null)
+                            source.onError(Throwable("Loyalty data is null"))
+
                         }
                     } else {
-                        _loyalty.value = Event(null)
+                        if (AuthUtil.getInstance().customerLoyalty != null) {
+                            _loyalty.value = Event(AuthUtil.getInstance().customerLoyalty)
+                        } else {
+                            _loyalty.value = Event(null)
+                            source.onError(Throwable("Loyalty data is null"))
+
+                        }
                         //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }
