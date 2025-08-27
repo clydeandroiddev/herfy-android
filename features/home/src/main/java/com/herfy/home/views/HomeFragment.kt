@@ -450,6 +450,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.loyalty.observe(this) {
             val loyalty = it.getContentIfNotHandled()
+            AppLogger.longError("AAAAAAAAA loyalty = ${loyalty}")
             if (loyalty?.attributes == null) {
                 binding.layoutLoyalty.clCustomerLoyalty.gone()
                 return@observe

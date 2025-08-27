@@ -449,7 +449,7 @@ class HomeViewModel @Inject constructor(
                     .filter { tier: LoyaltyTierV2 -> totalPointsAccumulated <= tier.endingPoints }.toList()
                     .blockingGet()
                 var pointsToNextTier = 0
-                /*if (loyalty.attributes.loyaltyTier == null) {
+                if (loyalty.attributes.loyaltyTier == null) {
                     val tier = tiers[0]
                     val loyaltyTier = LoyaltyTierV2()
                     val translated = TranslatedV2()
@@ -460,7 +460,7 @@ class HomeViewModel @Inject constructor(
                     loyaltyTier.id = tier.id
                     loyaltyTier.imageUrl = tier.imageUrl
                     loyalty.attributes.loyaltyTier = loyaltyTier
-                }*/
+                }
 
                 _loyalty.value = Event(loyalty)
                 _tiers.value = Event(tiers)
@@ -623,6 +623,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getLoyaltyObservable(): Single<LoyaltyV2?>? {
+        AuthUtil.getInstance().customerLoyalty?.let {
+            return Single.just(it)
+        }
+
         return Single.create<LoyaltyV2?> { source: SingleEmitter<LoyaltyV2?> ->
             invoke {
                 homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->

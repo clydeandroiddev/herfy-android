@@ -498,7 +498,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         double total = discountedSubtotal + deliveryCharge + vatAmount + promoPrice;
 
         if (loyaltyPointsUsed > 0) {
-            total -= Math.min(loyaltyPointsUsed / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getPointConversion()) ), getMenuItemsTotalPrice());
+            total -= Math.min(loyaltyPointsUsed / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getRedemptionRatio()) ), getMenuItemsTotalPrice());
         }
 
         if (total < 0) {
@@ -1155,7 +1155,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         double pointsSarValue = 0.0;
 
                         if (loyaltyPoints > 0) {
-                            pointsSarValue = loyaltyPoints / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getPointConversion()));// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
+                            pointsSarValue = loyaltyPoints / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getRedemptionRatio()));// / Double.parseDouble(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getPointConversion());
                         }
                         double discountValue = orderData.getDiscount() > 0.0 ? orderData.getDiscount() : orderData.getDiscountDisplay();
 

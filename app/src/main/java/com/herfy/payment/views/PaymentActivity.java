@@ -713,7 +713,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
                 if (pointsText.length() > 0) {
                     double userSetPoints = Double.parseDouble(StringUtil.toEnglish(pointsText));
                     double currentBalance = AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getCurrentBalanceAmount();
-                    double pointConversion = Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getPointConversion()));
+                    double pointConversion = Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getRedemptionRatio()));
                     double points = loyalty.getAttributes().getCurrentBalanceAmount() > paymentPresenter.getMenuItemsTotalPrice() ? paymentPresenter.getMenuItemsTotalPrice() * pointConversion : loyalty.getAttributes().getCurrentBalance();
 
                     etPointsInput.removeTextChangedListener(pointsInSarTextWatcher);

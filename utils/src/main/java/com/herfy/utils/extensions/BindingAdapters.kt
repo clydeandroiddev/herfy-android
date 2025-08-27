@@ -187,8 +187,8 @@ fun ImageView.setIconWith(resource : Int){
 }
 @BindingAdapter("app:rewardDescription")
 fun TextView.setRewardTierDescription(tier : LoyaltyTierV2){
-    val earnPoint = tier.pointConversion
-    val perSar = tier.pointConversion
+    val earnPoint = tier.collectionRatio
+    val perSar = tier.redemptionRatio
     //text = CacheUtil.getInstance().getTranslations(Text.SAR_ORDER_VALUE_TO_POINTS, "(x) SAR of your order value converts to (y) points").replace("(x)", perSar.toString()).replace("(y)", earnPoint.toString())
     text = tier.description.getValue(LocaleUtil.getInstance().language)
 }

@@ -765,10 +765,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     val currentPoints =
                         AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
                     val pointConversion =
-                        AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.pointConversion.toDouble()
+                        AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.redemptionRatio.toDouble()
                     val roundedTotal = floor((finalTotal - finalDiscount))
                     val orderTotalPoints =
-                        if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal * AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.pointConversion.toDouble() else loyalty!!.attributes.currentBalance.toDouble()
+                        if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal * AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.redemptionRatio.toDouble() else loyalty!!.attributes.currentBalance.toDouble()
 
                     if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
 
