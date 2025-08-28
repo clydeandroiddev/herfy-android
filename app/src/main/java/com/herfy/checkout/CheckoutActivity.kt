@@ -787,7 +787,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     }
 
                     loyaltySarAmount = Math.min(
-                        userSetPoints / pointConversion, paymentPresenter!!.menuItemsTotalPrice
+                        userSetPoints * pointConversion, paymentPresenter!!.menuItemsTotalPrice
                     )
 
                     val formattedSarAmount = String.format("%.2f", loyaltySarAmount)

@@ -170,7 +170,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
             //HYDRA SIGN IN EVENT
             HydraAPI.getDefaultInstance(requireContext())!!.pushUserSignin(
-                AuthUtil.getInstance().customer.id,
+                AuthUtil.getInstance().customer.attributes.mobile,
                 AuthUtil.getInstance().customer.attributes.firstName,
                 AuthUtil.getInstance().customer.attributes.lastName,
                 AuthUtil.getInstance().customer.attributes.email,

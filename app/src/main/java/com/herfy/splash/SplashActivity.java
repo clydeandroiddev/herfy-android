@@ -159,7 +159,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             //HYDRA SIGN IN EVENT
             HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
                     pushUserSignin(
-                            AuthUtil.getInstance().getCustomer().getId(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
                             AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
                             AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
                             AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),

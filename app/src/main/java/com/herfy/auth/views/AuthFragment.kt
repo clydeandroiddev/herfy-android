@@ -505,7 +505,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     override fun showMain() {
         //HYDRA SIGN IN EVENT
         getDefaultInstance(requireContext())!!.pushUserSignin(
-            AuthUtil.getInstance().customer.id,
+            AuthUtil.getInstance().customer.attributes.mobile,
             AuthUtil.getInstance().customer.attributes.firstName,
             AuthUtil.getInstance().customer.attributes.lastName,
             AuthUtil.getInstance().customer.attributes.email,
