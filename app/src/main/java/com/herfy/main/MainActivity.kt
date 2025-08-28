@@ -576,7 +576,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         if (!AuthUtil.getInstance().firebase.isEmpty() && AuthUtil.getInstance().isSignedIn) {
             //HYDRA SIGN IN EVENT
             getDefaultInstance(applicationContext)!!.pushUserSignin(
-            AuthUtil.getInstance().customer.id,
+            AuthUtil.getInstance().customer.attributes.mobile,
             AuthUtil.getInstance().customer.attributes.firstName,
             AuthUtil.getInstance().customer.attributes.lastName,
             AuthUtil.getInstance().customer.attributes.email,
@@ -1529,7 +1529,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         if (!auth.isHydraSignedUp(phone)) {
             HydraAPI.getDefaultInstance(this@MainActivity)?.pushUserSignup(
-                cuid = customer.id ?: "",
+                cuid = phone ?: "",
                 firstName = customer.attributes?.firstName,
                 lastName  = customer.attributes?.lastName,
                 email     = customer.attributes?.email,

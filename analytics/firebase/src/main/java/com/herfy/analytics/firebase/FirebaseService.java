@@ -69,7 +69,7 @@ public class FirebaseService extends FirebaseMessagingService {
             //HYDRA SIGN IN EVENT
             HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
                     pushUserSignin(
-                            AuthUtil.getInstance().getCustomer().getId(),
+                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
                             AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
                             AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
                             AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
@@ -172,16 +172,52 @@ public class FirebaseService extends FirebaseMessagingService {
                 JSONObject bodyObj = new JSONObject(bodyJson);
                 String title = bodyObj.optString("title");
                 String message = bodyObj.optString("message");
+                String imageUri = "";
+
+                if(bodyObj.has("image")){
+                    imageUri = bodyObj.optString("image");
+                }
 
                 JSONObject expandableDetailsObj = new JSONObject(expandableDetailsJson);
                 String expandableDetailMessage = expandableDetailsObj.optString("message");
 
-                builder.setStyle(new NotificationCompat.BigTextStyle().bigText(expandableDetailMessage));
+                Bitmap bitmap = null;
+                if(!imageUri.isEmpty()) {
+                    FutureTarget<Bitmap> futureTarget = Glide.with(this)
+                            .asBitmap()
+                            .load(imageUri)
+                            .submit();
+                    try {
+                        bitmap = futureTarget.get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(bitmap != null) {
+                    NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle()
+                            .bigLargeIcon(bitmap)
+                            .bigPicture(bitmap);
+
+                    if (!expandableDetailMessage.isEmpty()) {
+                        style.setSummaryText(expandableDetailMessage);
+                    }
+
+                    builder.setLargeIcon(bitmap)
+                            .setStyle(style);
+                }else if (!expandableDetailMessage.isEmpty()) {
+                    builder.setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(expandableDetailMessage));
+                }
+
                 builder.setContentTitle(title);
                 builder.setContentText(message);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+
 
 
             builder.setSound(defaultSoundUri)
