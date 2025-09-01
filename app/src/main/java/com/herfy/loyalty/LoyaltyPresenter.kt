@@ -281,7 +281,8 @@ class LoyaltyPresenter @Inject constructor(
                     }
                     if (eligibleTiers.size > 1) {
                         nextTier = eligibleTiers[1]
-                        pointsToNextTier = nextTier.startingPoints - loyalty.attributes.currentBalance
+                        //pointsToNextTier = nextTier.startingPoints - loyalty.attributes.currentBalance
+                        pointsToNextTier = loyalty.attributes.pointsRequiredForNextTier
                     }
                     var startPoints = 0
                     if (nextTier != null) {
@@ -362,8 +363,8 @@ class LoyaltyPresenter @Inject constructor(
                         .blockingGet()
                     val nextTier =
                         if (eligibleTiers.isEmpty()) tiers[tiers.size - 1] else eligibleTiers[0]
-                    val pointsToNextTier =
-                        if (eligibleTiers.size > 1) nextTier.startingPoints - totalPointsAccumulated else 0
+                    //val pointsToNextTier = if (eligibleTiers.size > 1) nextTier.startingPoints - totalPointsAccumulated else 0
+                    val pointsToNextTier = if (eligibleTiers.size > 1) loyalty.attributes.pointsRequiredForNextTier else 0
                     val startPoints = nextTier.startingPoints
                     loyaltyView.showNextTier(
                         nextTier,
