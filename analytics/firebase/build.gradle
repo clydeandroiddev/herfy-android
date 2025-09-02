@@ -137,8 +137,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf'
     implementation "com.google.firebase:firebase-config:21.2.0"
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-dynamic-links'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-dynamic-links'
 
     //Retrofit & OKHTTP
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'

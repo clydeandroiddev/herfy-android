@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.firebase-perf'
-apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'dagger.hilt.android.plugin'
 
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
@@ -346,10 +347,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-perf'
-    implementation "com.google.firebase:firebase-config:21.2.0"
+    implementation "com.google.firebase:firebase-config"
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-dynamic-links'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-dynamic-links'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.google.android.libraries.places:places:2.6.0'
@@ -518,7 +519,8 @@ dependencies {
     implementation("com.capillary:hydra-core:1.9.12")
     // Hydra Sdk
     implementation("com.capillary:hydra-pushbase:1.9.12")
-    implementation("com.capillary:hydra-firebase-push:1.9.12")
+    //implementation("com.capillary:hydra-firebase-push:1.9.12")
+    implementation("com.capillary:hydra-firebase:1.9.12")
 
 }
 

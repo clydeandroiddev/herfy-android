@@ -158,17 +158,15 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation platform('com.google.firebase:firebase-bom:32.7.2')
 
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-appindexing'
+    implementation 'com.google.firebase:firebase-analytics:21.2.0'
     implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-perf'
-    implementation "com.google.firebase:firebase-config:21.2.0"
+    implementation 'com.google.firebase:firebase-config'
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-dynamic-links'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-dynamic-links'
 
     //Kochava Events
     def kochava_tracker_version = "5.4.0"
