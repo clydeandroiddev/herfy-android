@@ -171,6 +171,7 @@ public class CacheUtil {
     private static final String IN_APP_REVIEW_ENABLE = "enable_in_app_review";
     private static final String DEVICE_USED_PROMOTIONS = "device_used_promotions";
     private static final String SHARED_STRING_CONFIG = "SharedStringConfig";
+    private static final String CAPILLARY_URL_SSL = "capillary_url_ssl";
 
     private CacheUtil(Context context) {
 
@@ -2199,6 +2200,43 @@ public class CacheUtil {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putString(SHARED_STRING_CONFIG, sharedStringConfig);
         editor.apply();
+    }
+
+    public String getCapillaryConfig() {
+        return cacheSharedPreferences.getString(CAPILLARY_URL_SSL, "");
+    }
+
+    public void setCapillaryHydraConfig(String sharedStringConfig) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(CAPILLARY_URL_SSL, sharedStringConfig);
+        editor.apply();
+    }
+
+    // Get hydra_base_url from JSON
+    public String getCapillaryBaseUrl() {
+        try {
+            String jsonStr = getCapillaryConfig();
+            JSONObject json = new JSONObject(jsonStr);
+            return json.optString("hydra_base_url", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    // Get hydra_ssl_public_key from JSON (decoded from Base64)
+    public String getCapillarySslPublicKey() {
+        try {
+            String jsonStr = getCapillaryConfig();
+            JSONObject json = new JSONObject(jsonStr);
+            String encodedKey = json.optString("hydra_ssl_public_key", "");
+            if (!encodedKey.isEmpty()) {
+                return new String(Base64.decode(encodedKey, Base64.DEFAULT));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }

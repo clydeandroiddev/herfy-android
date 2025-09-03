@@ -59,15 +59,23 @@ class BaseApplication : Application(), ImageLoaderFactory {
         )
 
         //Hydra Config
+        var accountId: String = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
+            "ayk-113123"
+        } else {
+            "rnu-282033"
+        }
+
         val hydraConfig = HydraConfig.Builder(
             this,
-            accountId = "rnu-282033"
+            accountId = accountId
         )
             .notificationConfig(notificationConfig)
             .debugLevel(LogType.VERBOSE)
             .captureViewPortDetails(true)
             .sslPublicKey("jyuoLOfuVQyA6a9iGJ5k/m0MoMDDh9+dEjqZkIb1Afs=")
             .baseURL("https://mapp-eucrm.api.capillarytech.com/")
+            //.sslPublicKey(CacheUtil.getInstance().capillarySslPublicKey)
+            //.baseURL(CacheUtil.getInstance().capillaryBaseUrl)
             .fcmConfig(FcmConfig(false))
             .build()
 

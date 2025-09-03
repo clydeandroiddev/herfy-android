@@ -252,6 +252,9 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                         try {
 
+                            CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config"));
+                            
+
                             String inAppReviewEnableKey = "android_enable_in_app_review";
                             boolean inAppReviewEnable = firebaseRemoteConfig.getBoolean(inAppReviewEnableKey);
                             CacheUtil.getInstance().setInAppReviewEnable(inAppReviewEnable);
@@ -311,6 +314,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                         String sharedStringRemoteConfigKey = HmacUtil.getSharedStringRemoteConfigKey();
                         String sharedConfigString = sharedRemoteConfig.getString(sharedStringRemoteConfigKey);
                         CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
+                        CacheUtil.getInstance().setCapillaryHydraConfig(sharedRemoteConfig.getString("capillary_hydra_sdk_config"));
+
 
                     }
 
