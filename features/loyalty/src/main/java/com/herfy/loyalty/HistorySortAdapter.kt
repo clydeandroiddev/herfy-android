@@ -33,9 +33,7 @@ class HistorySortAdapter(private val sortCategoryList : ArrayList<SortingCategor
     @SuppressLint("NotifyDataSetChanged")
     fun updateCategoryList(category: SortingCategory){
         sortCategoryList.forEach {
-            if(category.sortType != it.sortType){
-                it.isSelected = false
-            }
+            it.isSelected = (it.sortType == category.sortType)
         }
         notifyDataSetChanged()
     }

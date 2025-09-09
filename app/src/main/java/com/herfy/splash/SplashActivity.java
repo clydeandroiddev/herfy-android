@@ -168,8 +168,6 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
             HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
 
-            AppLogger.longError("FCM TOKEN "+AuthUtil.getInstance().getFirebase());
-            AppLogger.longError("Customer Data "+new Gson().toJson(AuthUtil.getInstance().getCustomer()));
         }
     }
 
