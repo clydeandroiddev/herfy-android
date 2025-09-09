@@ -37,7 +37,6 @@ class LoyaltyHistoryPresenter @Inject constructor(
 
     private var filteredTransactionList = ArrayList<LoyaltyTransactionV2>()
     private var transactionsList = ArrayList<LoyaltyTransactionV2>()
-    private var consolidatedList = ArrayList<ListItem>()
     private var sortingCategories = arrayListOf<SortingCategory>()
     private val disposables = CompositeDisposable()
     init {
@@ -52,12 +51,27 @@ class LoyaltyHistoryPresenter @Inject constructor(
                 )
             }.subscribe(
                 { transactionsList: List<LoyaltyTransactionV2>? ->
+                    if (transactionsList == null) return@subscribe
+
                     if (page == 1) {
                         this.transactionsList.clear()
-                        consolidatedList.clear()
                     }
                     this.transactionsList.addAll(transactionsList!!)
+
+                    val distinctList = this.transactionsList.distinctBy { it.id }
+                    this.transactionsList.clear()
+                    this.transactionsList.addAll(distinctList)
+
+
                     sortTransactionList()
+
+                    val currentFilter = sortingCategories.firstOrNull { it.isSelected }
+                    if (currentFilter != null) {
+                        filterTransactions(currentFilter)
+                    } else {
+                        // Fallback in case no filter is selected (should not happen if initialized properly)
+                        historyView.updateTransactions()
+                    }
                 }) { error: Throwable? ->
                 historyView.showLoyaltyError(
                     CacheUtil.getInstance().getTranslations(
@@ -76,6 +90,7 @@ class LoyaltyHistoryPresenter @Inject constructor(
                 val rhsDate = simpleDateFormat.parse(rhs.processedAt)
                 return@sortWith rhsDate.compareTo(lhsDate)
             }
+
             filteredTransactionList.clear()
             filteredTransactionList.addAll(transactionsList)
         }
@@ -102,6 +117,7 @@ class LoyaltyHistoryPresenter @Inject constructor(
                                 list.add(transaction)
                             }
                             source.onSuccess(list)
+
                             historyView.showLoyaltyPointsHistory(filteredTransactionList)
                         } catch (e: JSONException) {
                             e.printStackTrace()
@@ -193,29 +209,28 @@ class LoyaltyHistoryPresenter @Inject constructor(
 
     private fun filterTransactions(category: SortingCategory){
         filteredTransactionList.clear()
-        if(transactionsList.size > 0){
-            if(category.sortType == HistorySortType.ALL){
-                filteredTransactionList.addAll(transactionsList)
-            }else {
-
-                val selectedTypes: Set<String> = when (category.sortType) {
-                    HistorySortType.EARNED -> setOf("collect")
-                    HistorySortType.USED   -> setOf("redeem", "cancel")
-                    HistorySortType.ALL    -> emptySet()
+       if (transactionsList.isNotEmpty()) {
+            val result = when (category.sortType) {
+                HistorySortType.ALL -> transactionsList
+                HistorySortType.EARNED -> transactionsList.filter {
+                    it.type?.trim()?.lowercase() == "collect"
                 }
-
-                val result = if (selectedTypes.isEmpty()) {
-                    transactionsList
-                } else {
-                    val allowed = selectedTypes.map { it.lowercase() }.toSet()
-                    transactionsList.filter { t ->
-                        t.type?.trim()?.lowercase() in allowed
-                    }
+                HistorySortType.USED -> transactionsList.filter {
+                    it.type?.trim()?.lowercase() in setOf("redeem", "cancel")
                 }
-
-                filteredTransactionList.addAll(result)
             }
+
+            // Ensure no duplicates by ID
+            val distinctResult = result.distinctBy { it.id }
+
+            AppLogger.longError(
+                "AAAAAAAAAAAA Result size: ${distinctResult.size}, transactions: ${distinctResult.map { it.id }}"
+            )
+
+           filteredTransactionList.addAll(distinctResult)
         }
+
+        // Notify adapter through the view
         historyView.updateTransactions()
     }
 

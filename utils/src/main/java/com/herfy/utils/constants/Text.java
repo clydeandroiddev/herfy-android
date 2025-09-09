@@ -1249,5 +1249,6 @@ public class Text {
     public static final String MOKAFAA_DISABLED = "mokafaa_disabled";
     public static final String LOYALTY_DISABLED = "loyalty_disabled";
     public static final String CHOOSE_LABEL = "choose_label";
+    public static final String MINIMUM_REDEMPTION_ERROR = "minimum_redemption_points";
 
 }

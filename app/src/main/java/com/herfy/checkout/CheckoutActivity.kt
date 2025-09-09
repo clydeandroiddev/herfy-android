@@ -760,58 +760,104 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     DurationUnit.MILLISECONDS
                 )
             ).map { it.toString() }.collectLatest { pointsText ->
+
                 if (pointsText.isNotEmpty()) {
-                    var userSetPoints = StringUtil.toEnglish(pointsText).toDouble()
-                    val currentPoints =
-                        AuthUtil.getInstance().customerLoyalty.attributes.currentBalance
-                    val pointConversion =
-                        AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.redemptionRatio.toDouble()
+                    var userSetPoints = StringUtil.toEnglish(pointsText).toDoubleOrNull() ?: 0.0 // Safer parsing
+                    val currentPoints = loyalty.attributes.currentBalance.toDouble()
+                    val pointConversion = loyalty.attributes.loyaltyTier.redemptionRatio
                     val roundedTotal = floor((finalTotal - finalDiscount))
                     val orderTotalPoints =
-                        if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal * AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.redemptionRatio.toDouble() else loyalty!!.attributes.currentBalance.toDouble()
+                        if (loyalty.attributes.currentBalanceAmount > roundedTotal) roundedTotal / pointConversion else loyalty.attributes.currentBalance.toDouble()
+                    val minimumRedemptionPoints = loyalty.attributes.loyaltyTier.minRedemptionPoints
 
-                    if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
+                    if (minimumRedemptionPoints > 0) {
+                        if (userSetPoints >= minimumRedemptionPoints) {
+                            if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
+                                userSetPoints = orderTotalPoints
+                            }
 
-                        userSetPoints = orderTotalPoints
+                            binding?.layoutLoyalty?.etPoints?.setText(
+                                StringUtil.localize(
+                                    userSetPoints.toInt().toString()
+                                )
+                            )
+                            binding!!.layoutLoyalty.etPoints.error = null
+
+                        } else {
+                            binding!!.layoutLoyalty.etPoints.error = CacheUtil.getInstance().getTranslations(
+                                Text.MINIMUM_REDEMPTION_ERROR,
+                                "Minimum points to redeem is $minimumRedemptionPoints"
+                            ).replace("(x)", minimumRedemptionPoints.toString())
+
+                            binding!!.layoutLoyalty.etSarAmount.setText("")
+                            paymentPresenter!!.setLoyaltyPointsUsed(0)
+                            return@collectLatest
+                        }
+
+                    } else if (minimumRedemptionPoints == 0) {
+
+                        if (userSetPoints >= currentPoints || userSetPoints >= orderTotalPoints) {
+                            userSetPoints = orderTotalPoints
+                        }
+
                         binding?.layoutLoyalty?.etPoints?.setText(
                             StringUtil.localize(
                                 userSetPoints.toInt().toString()
                             )
                         )
+                        binding!!.layoutLoyalty.etPoints.error = null
+
                     } else {
-                        binding!!.layoutLoyalty.etPoints.setText(
-                            StringUtil.localize(
-                                userSetPoints.toInt().toString()
-                            )
-                        )
+                        binding!!.layoutLoyalty.etPoints.error = CacheUtil.getInstance().getTranslations(
+                            Text.MINIMUM_REDEMPTION_ERROR,
+                            "Minimum points to redeem is $minimumRedemptionPoints"
+                        ).replace("(x)", minimumRedemptionPoints.toString())
+
+                        binding!!.layoutLoyalty.etSarAmount.setText("")
+                        paymentPresenter!!.setLoyaltyPointsUsed(0)
+                        return@collectLatest
                     }
+
 
                     loyaltySarAmount = Math.min(
                         userSetPoints * pointConversion, paymentPresenter!!.menuItemsTotalPrice
                     )
 
+                    )
+                    AppLogger.longError("AAAAAAAAAAAAA roundedTotal "+roundedTotal)
+                    AppLogger.longError("AAAAAAAAAAAAA orderTotalPoints "+orderTotalPoints)
+                    AppLogger.longError("AAAAAAAAAAAAA loyaltySarAmount "+loyaltySarAmount)
+                    AppLogger.longError("AAAAAAAAAAAAA userSetPoints "+userSetPoints)
+                    AppLogger.longError("AAAAAAAAAAAAA loyaltySarAmount "+loyaltySarAmount)
+
+
                     val formattedSarAmount = String.format("%.2f", loyaltySarAmount)
-                    if (loyaltySarAmount >= 1) {
+                    if (loyaltySarAmount > 0) {
                         validateLoyalty = true
                         binding?.layoutLoyalty?.etSarAmount?.text = formattedSarAmount
+                    } else {
+                        binding?.layoutLoyalty?.etSarAmount?.text = ""
                     }
 
-                    binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
                     loyaltypointsInput = userSetPoints.toInt()
-                    if (loyaltySarAmount >= 1) {
-                        paymentPresenter!!.validateOrder(
-                            false,
-                            CacheUtil.getInstance().orderStore,
-                            null,
-                            loyaltypointsInput,
-                            false
-                        )
-                    }
+                    binding!!.layoutLoyalty.etPoints.setSelection(binding!!.layoutLoyalty.etPoints.text.toString().length)
+                    paymentPresenter!!.validateOrder(
+                        false,
+                        CacheUtil.getInstance().orderStore,
+                        null,
+                        loyaltypointsInput,
+                        false
+                    )
                 } else {
+
                     binding!!.layoutLoyalty.etSarAmount.setText("")
                     binding!!.layoutLoyalty.etPoints.setSelection(0)
                     paymentPresenter!!.setLoyaltyPointsUsed(0)
+                    loyaltypointsInput = 0
+                    paymentPresenter!!.validateOrder(false, CacheUtil.getInstance().orderStore, null, 0, false)
+
                 }
+
             }
         }
 
@@ -1500,6 +1546,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     loyaltyPayment.alpha = 0.5f
                     binding!!.layoutLoyalty.loyaltySwitch.isChecked = false
                     binding!!.layoutAlrahji.switchAlrahji.isChecked = false
+
+
+                    //test only
+                    /*loyaltyPayment.alpha = 1f
+                    loyaltyBlocker.isVisible = false*/
                 } else {
                     alrhajiPayment.alpha = 1f
                     loyaltyPayment.alpha = 1f

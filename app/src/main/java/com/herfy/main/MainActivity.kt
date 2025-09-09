@@ -586,8 +586,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             HydraFirebaseAPI.getInstance()
                 .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
 
-            AppLogger.longError("HYDRA CAPILLARY FCM TOKEN " + AuthUtil.getInstance().firebase)
-            AppLogger.longError("HYDRA CAPILLARY Customer Data " + Gson().toJson(AuthUtil.getInstance().customer))
         }
     }
 
