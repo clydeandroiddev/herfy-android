@@ -483,22 +483,22 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }
                         if (loyaltyTier.isNotEmpty()) {
-                            var tierBackground = R.drawable.background_bronze_tier
+                            var tierBackground = com.herfy.commonstyles.R.drawable.background_bronze_tier
                             if (loyaltyTier.equals(
                                     "Silver", ignoreCase = true
                                 ) || loyaltyTier == "فضي"
                             ) {
-                                tierBackground = R.drawable.background_silver_tier
+                                tierBackground = com.herfy.commonstyles.R.drawable.background_silver_tier
                             } else if (loyaltyTier.equals(
                                     "Gold", ignoreCase = true
                                 ) || loyaltyTier == "ذهبي"
                             ) {
-                                tierBackground = R.drawable.background_gold_tier
+                                tierBackground = com.herfy.commonstyles.R.drawable.background_gold_tier
                             } else if (loyaltyTier.equals(
                                     "Diamond", true
                                 ) || loyaltyTier == "البلاتين"
                             ) {
-                                tierBackground = R.drawable.background_diamond_tier
+                                tierBackground = com.herfy.commonstyles.R.drawable.background_diamond_tier
                             }
                             tvTier.setBackgroundResource(tierBackground)
                             tvTier.text = loyaltyTier
@@ -516,7 +516,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                                                 super.setResource(resource)
                                                 binding.layoutLoyalty.apply {
                                                     if (resource == null) {
-                                                        ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                                                        ivLoyaltyCard.setImageResource(com.herfy.commonstyles.R.drawable.background_loyalty_card)
                                                     }
                                                     Handler(Looper.getMainLooper()).postDelayed(
                                                         {
@@ -533,7 +533,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             }
                         } else {
                             binding.layoutLoyalty.apply {
-                                ivLoyaltyCard.setImageResource(R.drawable.background_loyalty_card)
+                                ivLoyaltyCard.setImageResource(com.herfy.commonstyles.R.drawable.background_loyalty_card)
                                 cvEmptyState.gone()
                                 cvShimmerLoyalty.gone()
                                 cvLoyaltyDetails.visible()
@@ -699,22 +699,22 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             Text.YOUR_DELIVERY_ORDER, "Your delivery order from Herfy"
                         )
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
-                            updateStatusGIF(R.drawable.make_order)
+                            updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
                         } else if (orderDetails.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                            updateStatusGIF(R.drawable.delivered_order)
+                            updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
                         } else {
-                            updateStatusGIF(R.drawable.delivered_order)
+                            updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
                         }
                     } else {
                         tvOrderTypeLabel.text = CacheUtil.getInstance().getTranslations(
                             Text.YOUR_ORDER, "Your order from Herfy"
                         )
                         if (orderDetails.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
-                            updateStatusGIF(R.drawable.make_order)
+                            updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
                         } else if (orderDetails.orderStatus.sequence >= OrderStatusType.READY.value && orderDetails.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                            updateStatusGIF(R.drawable.collected_order)
+                            updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
                         } else {
-                            updateStatusGIF(R.drawable.collected_order)
+                            updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
                         }
                     }
 
@@ -772,25 +772,25 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     )
                 ) {
                     if (orderData.orderStatus.sequence <= OrderStatusType.DISPATCHED.value) {
-                        updateStatusGIF(R.drawable.make_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.DELIVERY_IN_PROGRESS.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        updateStatusGIF(R.drawable.delivered_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
                     } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
                         removeTimer()
                         binding.layoutBanner.orderTracker.tvEstimateValue.isVisible = false
                         binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
-                        updateStatusGIF(R.drawable.delivered_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.delivered_order)
                     }
                 } else {
                     if (orderData.orderStatus.sequence <= OrderStatusType.IN_KITCHEN.value) {
-                        updateStatusGIF(R.drawable.make_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.make_order)
                     } else if (orderData.orderStatus.sequence >= OrderStatusType.READY.value && orderData.orderStatus.sequence <= OrderStatusType.ARRIVED_AT_CUSTOMER.value) {
-                        updateStatusGIF(R.drawable.collected_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
                     } else if (orderData.orderStatus.sequence == OrderStatusType.FINISHED.value) {
                         binding.layoutBanner.orderTracker.ivOrderNotif.setImageResource(R.drawable.ic_full_order_done)
                     } else {
-                        updateStatusGIF(R.drawable.collected_order)
+                        updateStatusGIF(com.herfy.commonstyles.R.drawable.collected_order)
                     }
                 }
             }

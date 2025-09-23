@@ -823,12 +823,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         userSetPoints * pointConversion, paymentPresenter!!.menuItemsTotalPrice
                     )
 
-                    )
-                    AppLogger.longError("AAAAAAAAAAAAA roundedTotal "+roundedTotal)
-                    AppLogger.longError("AAAAAAAAAAAAA orderTotalPoints "+orderTotalPoints)
-                    AppLogger.longError("AAAAAAAAAAAAA loyaltySarAmount "+loyaltySarAmount)
-                    AppLogger.longError("AAAAAAAAAAAAA userSetPoints "+userSetPoints)
-                    AppLogger.longError("AAAAAAAAAAAAA loyaltySarAmount "+loyaltySarAmount)
 
 
                     val formattedSarAmount = String.format("%.2f", loyaltySarAmount)

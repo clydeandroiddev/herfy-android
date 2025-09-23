@@ -39,7 +39,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.capillary.hydra.android.sdk.FcmConfig;
 import com.capillary.hydra.android.sdk.HydraAPI;
+import com.capillary.hydra.android.sdk.HydraConfig;
+import com.capillary.hydra.android.sdk.utils.LogType;
 import com.capillary.hydra.firebase.HydraFirebaseAPI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -49,6 +52,7 @@ import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.animation.ActivitySwitcher;
 import com.herfy.base.BaseActivity;
+import com.herfy.base.BaseApplication;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
@@ -724,4 +728,14 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         }
     }
 
+    @Override
+    public void initializeHydraSdk() {
+        String baseUrl = CacheUtil.getInstance().getCapillaryBaseUrl();
+        String publicKey = CacheUtil.getInstance().getCapillarySslPublicKey();
+
+        if (baseUrl != null && !baseUrl.isEmpty() && publicKey != null && !publicKey.isEmpty()) {
+            ((BaseApplication) getApplicationContext()).initializeHydraSdk(getApplicationContext());
+        }
+
+    }
 }

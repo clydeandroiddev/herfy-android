@@ -16,6 +16,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
+import com.herfy.base.BaseApplication;
 import com.herfy.database.AppDatabase;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.IngredientDb;
@@ -253,6 +254,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                         try {
 
                             CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config"));
+                            splashView.initializeHydraSdk();
                             
 
                             String inAppReviewEnableKey = "android_enable_in_app_review";
@@ -314,9 +316,6 @@ public class SplashPresenter implements SplashContract.Presenter {
                         String sharedStringRemoteConfigKey = HmacUtil.getSharedStringRemoteConfigKey();
                         String sharedConfigString = sharedRemoteConfig.getString(sharedStringRemoteConfigKey);
                         CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
-                        CacheUtil.getInstance().setCapillaryHydraConfig(sharedRemoteConfig.getString("capillary_hydra_sdk_config"));
-
-
                     }
 
                     splashView.init();
