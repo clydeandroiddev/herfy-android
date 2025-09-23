@@ -7,6 +7,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: "com.google.devtools.ksp"
 
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
 
@@ -334,9 +335,9 @@ dependencies {
     def multidex_version = "2.0.1"
     implementation "androidx.multidex:multidex:$multidex_version"
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.fragment:fragment:1.6.2'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation "androidx.core:core-ktx:1.17.0"
+    implementation "androidx.fragment:fragment:1.5.0-rc01"
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
@@ -351,6 +352,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-dynamic-links'
+    implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.google.android.libraries.places:places:2.6.0'
@@ -472,7 +474,6 @@ dependencies {
 
     //Moyasar SDK
     implementation 'com.moyasar:android-sdk:0.5.1'
-    def dagger_version = "2.48"
     implementation "com.google.dagger:hilt-android:$dagger_version"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_version"
     kapt('org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0')
@@ -481,9 +482,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
 
-    def room_version = "2.5.0"
     implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
 
     def kochava_tracker_version = "5.6.0"
     implementation("com.kochava.tracker:events:$kochava_tracker_version")

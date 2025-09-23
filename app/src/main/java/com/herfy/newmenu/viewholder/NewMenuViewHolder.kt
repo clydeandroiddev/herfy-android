@@ -49,6 +49,7 @@ import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
 import com.skylinedynamics.solosdk.api.models.objects.ModifierItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderHistory
 import com.skylinedynamics.solosdk.api.models.objects.Store
+import java.util.Locale.getDefault
 
 class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Presenter, val binding: ItemMenuItemNewBinding) : RecyclerView.ViewHolder(binding.root), MenuContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -177,7 +178,10 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         }
         binding.imageItem.setOnClickListener { menuPresenter.selectMenuItem(menuCategory, menuItem) }
         var imageUrl = menuItem.image
-        imageUrl = if (imageUrl == null || imageUrl.equals("null", ignoreCase = true) || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
+        imageUrl = if (imageUrl == null || imageUrl.equals("null", ignoreCase = true) || imageUrl.isEmpty() || imageUrl.lowercase(
+                getDefault()
+            )
+                .contains("default-image.png")) {
             Values.DEFAULT_IMAGE_URL
         } else {
             StringUtil.getCloudflareUrl(Values.MENU_IMAGE_SIZE, Values.MENU_IMAGE_SIZE, imageUrl)

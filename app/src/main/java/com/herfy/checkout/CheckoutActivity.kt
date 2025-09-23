@@ -123,6 +123,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.TimeZone
 import kotlin.math.floor
 import kotlin.time.DurationUnit
@@ -431,7 +432,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     val distanceValue = StringUtil.getDistance(currentDistance)
                     textView.text =
                         CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                            .replace("(x)", distanceValue).toLowerCase()
+                           .replace("(x)", distanceValue)
+                           .lowercase(getDefault())
                     val icon = BitmapDescriptorFactory.fromBitmap(
                         ViewUtil.createDrawableFromView(
                             this@CheckoutActivity, view
@@ -506,9 +508,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 val distanceValue = StringUtil.getDistance(currentDistance)
 
                                 textView.text =
-                                    CacheUtil.getInstance()
-                                        .getTranslations(Text.KM_AWAY, "(x) away")
-                                        .replace("(x)", distanceValue).toLowerCase()
+                                    CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                       .replace("(x)", distanceValue)
+                                       .lowercase(getDefault())
                                 val icon = BitmapDescriptorFactory.fromBitmap(
                                     ViewUtil.createDrawableFromView(
                                         this@CheckoutActivity, view

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 
@@ -105,8 +105,8 @@ dependencies {
     api project(path: ':utils')
     api project(path: ':data:model')
     api 'com.github.addisonelliott:SegmentedButton:3.1.9'
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'com.google.android.material:material:1.11.0'
     api 'com.facebook.shimmer:shimmer:0.5.0'
     api 'com.nex3z:flow-layout:1.2.4'

@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.Locale.getDefault
 import java.util.TimeZone
 import kotlin.math.abs
 
@@ -51,7 +52,7 @@ fun String.orderDetailsType(sequence: Int): String {
     } else if (sequence > OrderStatusType.CANCELLED_BY_EMPLOYEE.value) {
         return CacheUtil.getInstance().getTranslations(Text.FAILED, "Failed") + ", "
     } else {
-        val type = OrderType.fromString(this.toLowerCase())
+        val type = OrderType.fromString(lowercase(getDefault()))
         return when (type) {
             OrderType.DINE_IN -> {
                 CacheUtil.getInstance().getTranslations(Text.DINE_IN, "Dine In") + ", "
@@ -86,7 +87,7 @@ fun getDisplayId(order: OrderDetails): String {
 }
 
 fun String.orderTypeStatus(): String {
-    return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+    return when (OrderType.fromString(lowercase(Locale.ROOT))) {
         OrderType.DELIVERY -> {
             CacheUtil.getInstance().getTranslations(Text.DELIVERED, "Delivered")
         }
@@ -98,7 +99,7 @@ fun String.orderTypeStatus(): String {
 }
 
 fun String.orderTypeStatusIcon(): Int {
-    return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+    return when (OrderType.fromString(lowercase(Locale.ROOT))) {
         OrderType.DELIVERY -> {
             R.drawable.ic_checkbox_input_green
         }
@@ -110,7 +111,7 @@ fun String.orderTypeStatusIcon(): Int {
 }
 
 fun String.orderTypeStatusColor(): Int {
-    return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+    return when (OrderType.fromString(lowercase(Locale.ROOT))) {
         OrderType.DELIVERY -> {
             com.herfy.commonstyles.R.color.delivered_color
         }
@@ -122,7 +123,7 @@ fun String.orderTypeStatusColor(): Int {
 }
 
 fun String.orderTypeString(): String {
-    when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
+    when (OrderType.fromString(lowercase(Locale.ROOT))) {
         OrderType.PICKUP, OrderType.DRIVE_THRU -> {
             return CacheUtil.getInstance().getTranslations(Text.PICKUP, "Pickup")
         }

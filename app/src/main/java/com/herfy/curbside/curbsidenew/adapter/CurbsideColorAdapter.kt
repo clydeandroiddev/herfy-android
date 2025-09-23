@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.herfy.commonstyles.R
 import com.herfy.ordertype.databinding.ItemVehicleColorBinding
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColor
+import java.util.Locale.getDefault
 
 class CurbsideColorAdapter(
     val curbsideList: ArrayList<CarColor> = arrayListOf(),
@@ -43,7 +44,7 @@ class CurbsideColorAdapter(
 
             brandName.text = item.attributes.name
 
-            if (item.attributes.label.toLowerCase() != "white") {
+            if (item.attributes.label.lowercase(getDefault()) != "white") {
                 curbsideColor.strokeColor =
                     curbsideColor.context.resources.getColor(android.R.color.transparent)
             } else {
