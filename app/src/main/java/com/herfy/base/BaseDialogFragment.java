@@ -71,7 +71,7 @@ public class BaseDialogFragment extends DialogFragment {
     public void loadDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(false);
-        builder.setView(getLayoutInflater().inflate(R.layout.loading, null));
+        builder.setView(getLayoutInflater().inflate(com.herfy.common.R.layout.loading, null));
         loadingDialog = builder.create();
         loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));

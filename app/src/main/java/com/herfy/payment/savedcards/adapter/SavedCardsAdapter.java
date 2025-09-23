@@ -104,7 +104,7 @@ public class SavedCardsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         int res = R.drawable.ic_saved_card;
 
         if ("visa".equalsIgnoreCase(customerCard.getAttributes().getBrand()))
-            res = R.drawable.ic_card_visa_common;
+            res = com.herfy.commonstyles.R.drawable.ic_card_visa_common;
         else if ("mastercard".equalsIgnoreCase(customerCard.getAttributes().getBrand()))
             res = R.drawable.ic_card_mastercard;
 

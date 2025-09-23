@@ -23,6 +23,7 @@ import com.herfy.onboarding.views.OnboardingActivity;
 import com.herfy.selection.SelectionActivity;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.theme.DynamicTheme;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.herfy.utils.helper.AnimUtil;
 import com.herfy.utils.helper.LocaleUtil;
@@ -89,7 +90,7 @@ public class LanguageActivity extends BaseActivity implements LanguageContract.V
     @Override
     protected void onResume() {
         super.onResume();
-        setStatusBarColor();
+        setStatusBarColor(DynamicTheme.getDefaultPrimaryColor());
     }
 
     @Override

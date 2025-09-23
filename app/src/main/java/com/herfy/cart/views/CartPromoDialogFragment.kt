@@ -211,7 +211,7 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
                     title = CacheUtil.getInstance()
                         .getTranslations(Text.INVALID_FOR_THIS_ORDER, "Invalid for this Order"),
                     message = message,
-                    icon = R.drawable.ic_dialog_error,
+                    icon = com.herfy.common.R.drawable.ic_dialog_error,
                     buttonALabel = CacheUtil.getInstance()
                         .getTranslations(Text.GOT_IT_LABEL, "Got it"),
                     buttonBLabel = CacheUtil.getInstance()

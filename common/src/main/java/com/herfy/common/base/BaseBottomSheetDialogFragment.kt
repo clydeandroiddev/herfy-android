@@ -102,7 +102,7 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
                         } else {
                             getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
                                 ContextCompat.getColor(
-                                    act, R.color.primary_text
+                                    act, com.herfy.commonstyles.R.color.primary_text
                                 )
                             )
                         }
@@ -111,7 +111,7 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
                         getButton(AlertDialog.BUTTON_NEGATIVE).setAllCaps(false)
                         getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
                             ContextCompat.getColor(
-                                act, R.color.secondary_text
+                                act, com.herfy.commonstyles.R.color.secondary_text
                             )
                         )
                     }
@@ -144,7 +144,7 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 val ivLoader = view.findViewById<ImageView>(R.id.ivLoader)
                 Glide.with(this)
                     .asGif()
-                    .load(R.drawable.loader)
+                    .load(com.herfy.commonstyles.R.drawable.loader)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(ivLoader)
                 loadingDialog = builder.create()

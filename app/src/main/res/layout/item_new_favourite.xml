@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/optionCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_large"
+        android:padding="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/radius_large"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/_4sdp"
+        app:strokeColor="#D9E8F3"
+        app:strokeWidth="@dimen/_1sdp">
+
+        <LinearLayout
+            android:id="@+id/clickable_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image_item"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_120sdp"
+                android:layout_gravity="center"
+                android:padding="@dimen/padding_micro"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Corner12dp"
+                app:strokeColor="@color/card_selected_bg"
+                app:strokeWidth="@dimen/_1sdp"
+                tools:src="@tools:sample/avatars"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/layoutCalories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/ic_common_calories" />
+
+                    <TextView
+                        android:id="@+id/tvCalories"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="@font/inter_semi_bold"
+                        android:includeFontPadding="false"
+                        android:textColor="#55667B"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        tools:text="1120" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:includeFontPadding="false"
+                        android:text="Kcal"
+                        android:textColor="#55667B"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/favorite_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:src="@drawable/ic_favourites_selected"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtModifierItemName"
+                    style="@style/Styles.Text.Caption.Semibold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="start|center_vertical"
+                    android:paddingEnd="4dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="#0C0C0C"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toStartOf="@+id/favorite_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layoutCalories"
+                    tools:text="Marinara" />
+
+                <TextView
+                    android:id="@+id/txtFavouriteDescription"
+                    style="@style/Styles.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="start"
+                    android:maxLines="3"
+                    android:paddingBottom="10dp"
+                    android:textAlignment="viewStart"
+                    android:textColor="#1e1e1e"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toTopOf="@id/txtFavouritePrice"
+                    app:layout_constraintEnd_toEndOf="@+id/txtModifierItemName"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtModifierItemName"
+                    tools:text="Dive into a flavor" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txtFavouritePrice"
+                    style="@style/Styles.Text.Footnote.Semi.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#2266A7"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/txtModifierItemName"
+                    tools:text="SAR 78.00" />
+
+                <ImageView
+                    android:id="@+id/icAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_marginBottom="4dp"
+                    android:src="@drawable/ic_common_quantity_up_blue"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:visibility="visible" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/favouriteQuantityLayout"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/bg_favourite_quantity"
+                    android:gravity="center_vertical"
+                    android:textAlignment="center"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtQuantity"
+                        style="@style/Styles.Text.Headline1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:padding="4dp"
+                        android:textColor="#0064AC"
+                        android:textSize="18sp"
+                        app:autoSizeMaxTextSize="18sp"
+                        app:autoSizeMinTextSize="12sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="88" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

@@ -190,7 +190,7 @@ public class ModifierItemOptionViewHolder extends BaseModifierItemViewHolder imp
         });
         String imageUrl = modifierItem.getAttributes().getImage();
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierOptionImage);
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(com.herfy.common.R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(modifierOptionImage);
             modifierOptionImage.setVisibility(View.VISIBLE);
         } else {
             modifierOptionImage.setVisibility(View.GONE);

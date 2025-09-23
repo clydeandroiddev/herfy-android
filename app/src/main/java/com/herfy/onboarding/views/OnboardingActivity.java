@@ -22,6 +22,7 @@ import com.herfy.onboarding.OnboardingPresenter;
 import com.herfy.selection.SelectionActivity;
 import com.herfy.analytics.facebook.FacebookAppEventUtil;
 import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.theme.DynamicTheme;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class OnboardingActivity extends BaseActivity implements OnboardingContra
     @Override
     protected void onResume() {
         super.onResume();
-        setStatusBarColor();
+        setStatusBarColor(DynamicTheme.getDefaultPrimaryColor());
         initBase();
     }
 

@@ -112,11 +112,11 @@ fun String.orderTypeStatusIcon(): Int {
 fun String.orderTypeStatusColor(): Int {
     return when (OrderType.fromString(this.toLowerCase(Locale.ROOT))) {
         OrderType.DELIVERY -> {
-            R.color.delivered_color
+            com.herfy.commonstyles.R.color.delivered_color
         }
 
         else -> {
-            R.color.picked_color
+            com.herfy.commonstyles.R.color.picked_color
         }
     }
 }
@@ -447,7 +447,7 @@ fun drawArcPolyline(
     }
 
     // Styling the polyline
-    val lineColor = context.getColor(R.color.background_color_blue) ?: Color.BLUE
+    val lineColor = context.getColor(com.herfy.commonstyles.R.color.background_color_blue) ?: Color.BLUE
     polylineOptions.color(lineColor).width(8f)
 
     // Add polyline to the map

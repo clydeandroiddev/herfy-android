@@ -1138,7 +1138,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                 ).contains("default-image.png")
             ) {
                 imageUrl = Values.DEFAULT_IMAGE_URL
-                Glide.with(it).load(R.color.transparent).skipMemoryCache(false)
+                Glide.with(it).load(android.R.color.transparent).skipMemoryCache(false)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).transform(
                         CenterCrop(), RoundedCorners(
                             it.resources.getDimensionPixelSize(R.dimen.category_icon_rounded_corner)

@@ -204,10 +204,10 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
     private fun adjustViewHeight(keyboardVisible: Boolean) {
         if (keyboardVisible) {
             binding.spacing.layoutParams.height =
-                resources.getDimensionPixelSize(R.dimen.view_keyboard_shown)
+                resources.getDimensionPixelSize(com.herfy.commonstyles.R.dimen.view_keyboard_shown)
         } else {
             binding.spacing.layoutParams.height =
-                resources.getDimensionPixelSize(R.dimen.view_keyboard_regular)
+                resources.getDimensionPixelSize(com.herfy.commonstyles.R.dimen.view_keyboard_regular)
         }
         binding.spacing.requestLayout()
     }

@@ -79,7 +79,7 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
 //        Pair<String,Boolean> addedToCart = isFavoriteItemInCart(menuItem);
         addToCart.setVisibility(menuItem.isAddedToCart()  ? View.GONE : View.VISIBLE);
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(com.herfy.common.R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
             image.setVisibility(View.VISIBLE);
         } else {
             image.setVisibility(View.GONE);
@@ -105,9 +105,9 @@ public class FrequentBoughtViewHolder extends RecyclerView.ViewHolder{
         }
             if (AuthUtil.getInstance().isSignedIn()) {
                 if (menuItem.isFavorite() || CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-                    btnFavorite.setImageResource(R.drawable.ic_favorite_filled);
+                    btnFavorite.setImageResource(com.herfy.common.R.drawable.ic_favorite_filled);
                 } else {
-                    btnFavorite.setImageResource(R.drawable.ic_frequent_favourites);
+                    btnFavorite.setImageResource(com.herfy.productpagedetails.R.drawable.ic_frequent_favourites);
                 }
                 btnFavorite.setVisibility(View.VISIBLE);
             } else {

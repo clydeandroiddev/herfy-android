@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.herfy.R;
@@ -105,10 +106,10 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
         DecimalFormat formatter = new DecimalFormat("#,###");
         if (loyaltyTransaction.getType() != null && loyaltyTransaction.getType().equalsIgnoreCase("collection")) {
             tvPoints.setText("+" + formatter.format(loyaltyTransaction.getPoints()));
-            tvPoints.setTextColor(context.getResources().getColor(R.color.background_color_blue));
+            tvPoints.setTextColor(ContextCompat.getColor(context, com.herfy.commonstyles.R.color.background_color_blue));
         } else {
             tvPoints.setText("-" + formatter.format(loyaltyTransaction.getPoints()));
-            tvPoints.setTextColor(context.getResources().getColor(R.color.text_color_red_points));
+            tvPoints.setTextColor(ContextCompat.getColor(context, com.herfy.commonstyles.R.color.text_color_red_points));
         }
         if (loyaltyTransaction.getDetails() != null && loyaltyTransaction.getDetails().getAmount() != null) {
             tvSarValue.setText(StringUtil.localize(formatter.format(loyaltyTransaction.getDetails().getAmount()) + " " + CacheUtil.getInstance().getTranslations(concept.getCurrencySymbol())));

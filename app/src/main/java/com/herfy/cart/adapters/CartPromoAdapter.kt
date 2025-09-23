@@ -89,10 +89,10 @@ class CartPromoAdapter(
                         .getTranslations(Text.AVAILABLE_TO_REDEEM, "Available to Redeem")
                     val tvContext = tvFooterCoupon.context
                     val textColor =
-                        tvContext.resources.getColor(R.color.text_coupon_available, null)
+                        tvContext.resources.getColor(com.herfy.commonstyles.R.color.text_coupon_available, null)
                     tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
-                    lnFooterCoupon.setBackgroundResource(R.drawable.background_available_to_redeem)
-                    ivFooterCoupon.setImageResource(R.drawable.ic_coupon_available)
+                    lnFooterCoupon.setBackgroundResource(com.herfy.cart.R.drawable.background_available_to_redeem)
+                    ivFooterCoupon.setImageResource(com.herfy.cart.R.drawable.ic_coupon_available)
                     clCoupons.setOnClickListener { v: View? ->
                         if (CacheUtil.getInstance().checkIfUsedPromotion(campaign.promotion)) {
                             listener?.error()
@@ -106,11 +106,11 @@ class CartPromoAdapter(
                 } else {
                     val tvContext = tvFooterCoupon.context
                     val textColor =
-                        tvContext.resources.getColor(R.color.secondaryTextColor, null)
+                        tvContext.resources.getColor(com.herfy.commonstyles.R.color.secondaryTextColor, null)
                     tvFooterCoupon.text = campaign.attributes.error
                     tvFooterCoupon.setTextColor(ColorStateList.valueOf(textColor))
-                    ivFooterCoupon.setImageResource(R.drawable.ic_coupon_unavailable)
-                    lnFooterCoupon.setBackgroundResource(R.drawable.background_lock_redeem)
+                    ivFooterCoupon.setImageResource(com.herfy.cart.R.drawable.ic_coupon_unavailable)
+                    lnFooterCoupon.setBackgroundResource(com.herfy.cart.R.drawable.background_lock_redeem)
                 }
                 var imageUrl = campaign.attributes.imageUri
                 if (imageUrl == null || imageUrl.equals(

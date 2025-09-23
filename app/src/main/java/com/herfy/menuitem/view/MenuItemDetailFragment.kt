@@ -195,9 +195,9 @@ class MenuItemDetailFragment :
                 setRightButtonAction {
                     showLoading()
                     if (CacheUtil.getInstance().favorites.contains(this@MenuItemDetailFragment.viewModel.menuItem?.id)) {
-                        setRightButtonIcon(com.herfy.productpagedetails.R.drawable.ic_favorite_filled)
+                        setRightButtonIcon(com.herfy.common.R.drawable.ic_favorite_filled)
                     } else {
-                        setRightButtonIcon(com.herfy.productpagedetails.R.drawable.ic_favorite_empty)
+                        setRightButtonIcon(com.herfy.common.R.drawable.ic_favorite_empty)
                     }
                     this@MenuItemDetailFragment.viewModel.addRemoveFavorite()
                 }
@@ -335,7 +335,7 @@ class MenuItemDetailFragment :
                                 Glide.with(requireContext())
                                     .load(imageUrl)
                                     .apply(RequestOptions.centerCropTransform())
-                                    .placeholder(R.drawable.image_placeholder)
+                                    .placeholder(com.herfy.common.R.drawable.image_placeholder)
                                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .into(sizesImage)
                             } else {
@@ -744,9 +744,9 @@ class MenuItemDetailFragment :
                     menuItem.id
                 )
             ) {
-                setRightButtonIcon(com.herfy.productpagedetails.R.drawable.ic_favorite_filled)
+                setRightButtonIcon(com.herfy.common.R.drawable.ic_favorite_filled)
             } else {
-                setRightButtonIcon(com.herfy.productpagedetails.R.drawable.ic_favorite_empty)
+                setRightButtonIcon(com.herfy.common.R.drawable.ic_favorite_empty)
             }
         }
 

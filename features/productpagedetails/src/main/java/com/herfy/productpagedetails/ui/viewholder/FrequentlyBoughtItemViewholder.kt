@@ -63,7 +63,7 @@ class FrequentlyBoughtItemViewholder(val binding : ItemModifierFrequentlyBoughtB
             }
             if (AuthUtil.getInstance().isSignedIn) {
                 if (menuItem.isFavorite) {
-                    btnFavorite.setImageResource(R.drawable.ic_favorite_filled)
+                    btnFavorite.setImageResource(com.herfy.common.R.drawable.ic_favorite_filled)
                 } else {
                     btnFavorite.setImageResource(R.drawable.ic_frequent_favourites)
                 }

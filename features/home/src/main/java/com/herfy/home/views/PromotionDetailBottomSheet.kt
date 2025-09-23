@@ -132,7 +132,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
             binding.apply {
                 ivPromo.layoutParams.height = imageHeight
                 activity?.let {
-                    Glide.with(it).asGif().load(R.drawable.loader)
+                    Glide.with(it).asGif().load(com.herfy.commonstyles.R.drawable.loader)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(layoutLoading.ivLoader)
                 }
@@ -196,7 +196,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                             context, LinearLayoutManager.VERTICAL, false
                         )
                         setHasFixedSize(true)
-                        ContextCompat.getDrawable(context, R.drawable.divider_promo_rules)
+                        ContextCompat.getDrawable(context, com.herfy.commonstyles.R.drawable.divider_promo_rules)
                             ?.let { divider ->
                                 addItemDecoration(DividerItemDecorator(divider))
                             }
@@ -238,7 +238,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
 
         activity?.let {
             binding.btnClaim.backgroundTintList =
-                ContextCompat.getColorStateList(it, R.color.background_color_blue)
+                ContextCompat.getColorStateList(it, com.herfy.commonstyles.R.color.background_color_blue)
             if (!rules.isMet() && !toRemove) {
                 binding.btnClaim.isEnabled = false
                 binding.btnClaim.alpha = 0.5f
@@ -470,7 +470,7 @@ class PromotionDetailBottomSheet : BaseBottomSheetDialogFragment() {
                             .setTextColor(ViewUtil.getColorMain(act))
                     } else {
                         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                            ContextCompat.getColor(act, R.color.primary_text)
+                            ContextCompat.getColor(act, com.herfy.commonstyles.R.color.primary_text)
                         )
                     }
                 })

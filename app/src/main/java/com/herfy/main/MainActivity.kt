@@ -93,6 +93,7 @@ import com.herfy.utils.helper.CoroutineContextProvider
 import com.herfy.utils.helper.EnvUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.NavigationUtils
+import com.herfy.utils.theme.DynamicTheme
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.skylinedynamics.solosdk.api.SoloApi
 import com.skylinedynamics.solosdk.api.SoloAuth
@@ -245,10 +246,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             currentDestination = destination.id
             binding.toolbarMain.apply {
                 if (currentDestination == R.id.nav_herfy_home || currentDestination == R.id.nav_dialog_popup) {
+                    setStatusBarColor(ContextCompat.getColor(this@MainActivity, com.herfy.commonstyles.R.color.toolbar_color))
                     hide(false)
                     setCartQuantity()
                     setupSideBar()
                 } else {
+                    setStatusBarColor(DynamicTheme.getDefaultPrimaryColor())
                     hide(true)
                 }
             }

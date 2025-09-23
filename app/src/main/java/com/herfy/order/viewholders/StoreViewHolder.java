@@ -267,14 +267,14 @@ public class StoreViewHolder extends RecyclerView.ViewHolder implements OrderCon
 
             if (selected) {
                 card.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_bg_selected));
-                indicator.setImageResource(R.drawable.ic_store_selected);
-                directionsImage.setImageResource(R.drawable.ic_direction_selected);
+                indicator.setImageResource(com.herfy.ordertype.R.drawable.ic_store_selected);
+                directionsImage.setImageResource(com.herfy.ordertype.R.drawable.ic_direction_selected);
                 pickupMethodsContainer.setVisibility(View.VISIBLE);
             } else {
                 card.setCardBackgroundColor(ContextCompat.getColor(itemView.getContext(), com.herfy.ordertype.R.color.card_bg_unselected));
-                indicator.setImageResource(R.drawable.ic_store_unselected);
+                indicator.setImageResource(com.herfy.ordertype.R.drawable.ic_store_unselected);
                 pickupMethodsContainer.setVisibility(View.GONE);
-                directionsImage.setImageResource(R.drawable.ic_direction_unselected);
+                directionsImage.setImageResource(com.herfy.ordertype.R.drawable.ic_direction_unselected);
             }
 
             directionsImage.setOnClickListener(new View.OnClickListener() {

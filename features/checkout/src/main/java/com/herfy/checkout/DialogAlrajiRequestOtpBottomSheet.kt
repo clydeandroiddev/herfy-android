@@ -54,7 +54,7 @@ class DialogAlrajiRequestOtpBottomSheet: BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = DialogAlrajiRequestOtpBinding.inflate(layoutInflater)
-        setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+        setStyle(STYLE_NORMAL, com.herfy.commonstyles.R.style.AppBottomSheetDialogTheme)
         dialog?.window?.decorView?.layoutDirection = if(LocaleUtil.getInstance().isArabic) {
             View.LAYOUT_DIRECTION_RTL
         } else {

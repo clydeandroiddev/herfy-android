@@ -376,20 +376,7 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DeleteAccountDialog dialog = DeleteAccountDialog.newInstance(new DeleteAccountDialog.OnAction() {
-                    @Override
-                    public void onClose() {
 
-                    }
-
-                    @Override
-                    public void onDelete() {
-                        showLoadingDialog();
-                        accountPresenter.deleteAccount();
-                    }
-                });
-                dialog.setCancelable(true);
-                dialog.show(getSupportFragmentManager(), DeleteAccountDialog.class.toString());
             }
         });
 

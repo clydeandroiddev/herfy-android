@@ -975,7 +975,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         datePicker.setSelectorColor(android.R.color.white);
         datePicker.setDisplayYears(false);
         datePicker.setDefaultDate(minDate);
-        datePicker.setTextSize(getResources().getDimensionPixelSize(R.dimen.font_size_16sp));
+        datePicker.setTextSize(getResources().getDimensionPixelSize(company.tap.gosellapi.R.dimen.font_size_16sp));
         datePicker.setDisplayMonths(false);
         datePicker.setTextColor(this.getResources().getColor(R.color.silver_chalice));
         datePicker.setSelectedTextColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));
@@ -1174,7 +1174,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             if (paymentPresenter.hasMukafaaTransactionId()) {
                 if (!mukafaaSelected) {
                     mukafaaSelected = true;
-                    mukafaaPayment.setStrokeColor(R.attr.colorPrimary);
+                    mukafaaPayment.setStrokeColor(android.R.attr.colorPrimary);
                     mukafaaNumbers.setVisibility(View.GONE);
 
                     requestOTP.setVisibility(View.GONE);
@@ -1476,7 +1476,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
         GoSellSDK.setLocale(LocaleUtil.getInstance().getLanguageCode());
 
-        ThemeObject.getInstance().setAppearanceMode(AppearanceMode.FULLSCREEN_MODE).setSdkLanguage(LocaleUtil.getInstance().getLanguageCode()).setHeaderFont(FontHandler.getMediumTypeface()).setHeaderTextColor(ContextCompat.getColor(this, R.color.white)).setHeaderTextSize(18).setHeaderBackgroundColor(ViewUtil.getColorMain(this)).setCardInputTextColor(ContextCompat.getColor(this, R.color.black)).setCardInputInvalidTextColor(ContextCompat.getColor(this, R.color.red)).setCardInputPlaceholderTextColor(ContextCompat.getColor(this, R.color.gray)).setSaveCardSwitchOffThumbTint(ContextCompat.getColor(this, R.color.french_gray_new)).setSaveCardSwitchOnThumbTint(ContextCompat.getColor(this, R.color.vibrant_green)).setSaveCardSwitchOffTrackTint(ContextCompat.getColor(this, R.color.french_gray)).setSaveCardSwitchOnTrackTint(ContextCompat.getColor(this, R.color.vibrant_green_pressed)).setScanIconDrawable(ContextCompat.getDrawable(this, R.drawable.btn_card_scanner_normal)).setPayButtonResourceId(R.drawable.btn_pay_selector).setPayButtonFont(FontHandler.getRegularTypeface()).setPayButtonDisabledTitleColor(ContextCompat.getColor(this, R.color.white)).setPayButtonEnabledTitleColor(ContextCompat.getColor(this, R.color.white)).setPayButtonTextSize(14).setPayButtonLoaderVisible(true).setPayButtonSecurityIconVisible(true).setDialogTextColor(ContextCompat.getColor(this, R.color.black1)).setDialogTextSize(14);
+        ThemeObject.getInstance().setAppearanceMode(AppearanceMode.FULLSCREEN_MODE).setSdkLanguage(LocaleUtil.getInstance().getLanguageCode()).setHeaderFont(FontHandler.getMediumTypeface()).setHeaderTextColor(ContextCompat.getColor(this, R.color.white)).setHeaderTextSize(18).setHeaderBackgroundColor(ViewUtil.getColorMain(this)).setCardInputTextColor(ContextCompat.getColor(this, R.color.black)).setCardInputInvalidTextColor(ContextCompat.getColor(this, R.color.red)).setCardInputPlaceholderTextColor(ContextCompat.getColor(this, company.tap.gosellapi.R.color.gray)).setSaveCardSwitchOffThumbTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.french_gray_new)).setSaveCardSwitchOnThumbTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.vibrant_green)).setSaveCardSwitchOffTrackTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.french_gray)).setSaveCardSwitchOnTrackTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.vibrant_green_pressed)).setScanIconDrawable(ContextCompat.getDrawable(this, company.tap.gosellapi.R.drawable.btn_card_scanner_normal)).setPayButtonResourceId(company.tap.gosellapi.R.drawable.btn_pay_selector).setPayButtonFont(FontHandler.getRegularTypeface()).setPayButtonDisabledTitleColor(ContextCompat.getColor(this, R.color.white)).setPayButtonEnabledTitleColor(ContextCompat.getColor(this, R.color.white)).setPayButtonTextSize(14).setPayButtonLoaderVisible(true).setPayButtonSecurityIconVisible(true).setDialogTextColor(ContextCompat.getColor(this, company.tap.gosellapi.R.color.black1)).setDialogTextSize(14);
 
         if (tapSdkSession == null) {
             tapSdkSession = new SDKSession();

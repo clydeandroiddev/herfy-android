@@ -221,14 +221,14 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                     if (oT == OrderType.PICKUP) {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.WALK_IN_PICKUP, "Walk In Pickup")
-                        binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_walkin)
+                        binding.orderTypeContainer.orderTypeIcon.setImageResource(com.herfy.cart.R.drawable.ic_cart_walkin)
                     } else if (oT == OrderType.DRIVE_THRU) {
                         headerText = CacheUtil.getInstance()
                             .getTranslations(Text.DRIVE_THRU_PICKUP, "Drive Thru Pickup")
-                        binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_drivethru)
+                        binding.orderTypeContainer.orderTypeIcon.setImageResource(com.herfy.cart.R.drawable.ic_cart_drivethru)
                     } else {
                         headerText = CacheUtil.getInstance().getTranslations(Text.SELECT_ORDER_TYPE)
-                        binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_pickup_home)
+                        binding.orderTypeContainer.orderTypeIcon.setImageResource(com.herfy.common.R.drawable.ic_cart_pickup_home)
                     }
                     binding.orderTypeContainer.orderTypeText.text = headerText
 
@@ -258,7 +258,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 "Please tap here to pick an order type"
                             )
                     }
-                    binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_dine_in)
+                    binding.orderTypeContainer.orderTypeIcon.setImageResource(com.herfy.cart.R.drawable.ic_cart_dine_in)
                 }
 
                 OrderType.DELIVERY -> {
@@ -279,7 +279,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 "Please tap here to pick an order type"
                             )
                     }
-                    binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_delivery_v2)
+                    binding.orderTypeContainer.orderTypeIcon.setImageResource(com.herfy.common.R.drawable.ic_cart_delivery_v2)
                 }
 
                 OrderType.CURBSIDE -> {
@@ -299,7 +299,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                                 "Please tap here to pick an order type"
                             )
                     }
-                    binding.orderTypeContainer.orderTypeIcon.setImageResource(R.drawable.ic_cart_curbside)
+                    binding.orderTypeContainer.orderTypeIcon.setImageResource(com.herfy.cart.R.drawable.ic_cart_curbside)
                 }
 
                 OrderType.NONE -> {
@@ -1166,7 +1166,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                         .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
                     tvCouponDescription.text = ""
                     tvCouponDescription.gone()
-                    ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
+                    ivCoupon.setImageResource(com.herfy.cart.R.drawable.ic_apply_coupon)
                     viewCoupon.text = CacheUtil.getInstance()
                         .getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
                 }
@@ -1726,7 +1726,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
                             .getTranslations(Text.APPLY_A_COUPON_LABEL, "Apply a coupon")
                         tvCouponDescription.text = ""
                         tvCouponDescription.gone()
-                        ivCoupon.setImageResource(R.drawable.ic_apply_coupon)
+                        ivCoupon.setImageResource(com.herfy.cart.R.drawable.ic_apply_coupon)
                         viewCoupon.text = CacheUtil.getInstance()
                             .getTranslations(Text.VIEW_COUPONS_LABEL, "View Coupons")
                     }

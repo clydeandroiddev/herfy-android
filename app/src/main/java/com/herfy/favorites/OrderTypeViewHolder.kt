@@ -25,12 +25,12 @@ class OrderTypeViewHolder(
 
     override fun setOrderTypeSelected() {
         txtOrder.setTextColor(ContextCompat.getColor(view.context, R.color.white))
-        txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_type_selected)
+        txtOrder.setBackgroundResource(com.herfy.favourites.R.drawable.bg_favourite_order_type_selected)
     }
 
     override fun setOrderTypeUnselected() {
-        txtOrder.setTextColor(ContextCompat.getColor(view.context, R.color.color_gray))
-        txtOrder.setBackgroundResource(R.drawable.bg_favourite_order_types_unselected)
+        txtOrder.setTextColor(ContextCompat.getColor(view.context, com.herfy.commonstyles.R.color.color_gray))
+        txtOrder.setBackgroundResource(com.herfy.favourites.R.drawable.bg_favourite_order_types_unselected)
     }
 
     override fun setInitialSelectedOrderType() {

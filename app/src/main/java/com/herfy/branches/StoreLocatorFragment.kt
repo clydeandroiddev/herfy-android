@@ -248,7 +248,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                 val activity: Activity? = activity
                 if (activity != null) {
                     val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                        activity, com.herfy.R.drawable.user_current_location
+                        activity, R.drawable.user_current_location
                     )
                     markerOptions.icon(icon)
                 }
@@ -335,7 +335,7 @@ class StoreLocatorFragment : BaseFragment(), BranchesContract.View {
                         activity?.cast<MainActivity> {
                             val inflater =
                                 it.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                            val view = inflater.inflate(com.herfy.R.layout.marker_store_new, null)
+                            val view = inflater.inflate(R.layout.marker_store_new, null)
                             val textView = view.findViewById<TextView>(R.id.kmAway)
                             textView.text = CacheUtil.getInstance()
                                 .getTranslations(Text.SEE_DIRECTIONS, "See Directions")

@@ -57,7 +57,7 @@ class BottomSheetAlrhaji : BaseBottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.BottomSheetDialogStyle)
+        setStyle(DialogFragment.STYLE_NORMAL, com.herfy.commonstyles.R.style.BottomSheetDialogStyle)
 
         arguments?.let {
             try {

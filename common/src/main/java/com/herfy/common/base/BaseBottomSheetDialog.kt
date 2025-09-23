@@ -84,7 +84,7 @@ abstract class BaseBottomSheetDialog<B: ViewDataBinding>: BottomSheetDialogFragm
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheet = EdgeToEdgeBottomSheetDialog(
             requireContext(),
-            R.style.BottomSheetDialogStyle
+            com.herfy.commonstyles.R.style.BottomSheetDialogStyle
         )
         val dialogView =
             View.inflate(

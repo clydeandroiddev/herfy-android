@@ -279,7 +279,7 @@ public class SavedCardsDialog extends DialogFragment implements SavedCardsAdapte
             AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
             builder.setCancelable(false);
 
-            builder.setView(getLayoutInflater().inflate(R.layout.loading, null));
+            builder.setView(getLayoutInflater().inflate(com.herfy.common.R.layout.loading, null));
 
             loadingDialog = builder.create();
 

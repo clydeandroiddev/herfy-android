@@ -73,7 +73,7 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
     override fun setupViews() {}
     private fun fetchAccentColor(): Int {
         val typedValue = TypedValue()
-        val a = context.obtainStyledAttributes(typedValue.data, intArrayOf(R.attr.colorPrimary))
+        val a = context.obtainStyledAttributes(typedValue.data, intArrayOf(android.R.attr.colorPrimary))
         val color = a.getColor(0, 0)
         a.recycle()
         return color
@@ -367,7 +367,7 @@ class NewMenuViewHolder(val context: Context, val menuPresenter: MenuContract.Pr
         primaryColorStateList = ColorStateList.valueOf(primaryColor)
         disabledStateList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.disabled_tint))
         soldOutColor = ContextCompat.getColor(context, R.color.soldout)
-        notSoldOutColor = ContextCompat.getColor(context, R.color.transparent)
+        notSoldOutColor = ContextCompat.getColor(context, android.R.color.transparent)
         setupViews()
         setupEvents()
         setupFonts()

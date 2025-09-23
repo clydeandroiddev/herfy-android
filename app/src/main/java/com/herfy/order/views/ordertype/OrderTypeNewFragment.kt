@@ -527,15 +527,15 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
 
         binding.typeGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.deliveryButton -> {
+                com.herfy.ordertype.R.id.deliveryButton -> {
                     selectOrderType(OrderType.DELIVERY)
                 }
 
-                R.id.dineInButton -> {
+                com.herfy.ordertype.R.id.dineInButton -> {
                     selectOrderType(OrderType.DINE_IN)
                 }
 
-                R.id.pickupButton -> {
+                com.herfy.ordertype.R.id.pickupButton -> {
                     selectOrderType(OrderType.PICKUP)
                 }
             }
@@ -630,7 +630,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                         binding.pickupButton.gone()
                         binding.dineInButton.gone()
                         Handler(Looper.getMainLooper()).postDelayed({
-                            binding.typeGroup.check(R.id.deliveryButton)
+                            binding.typeGroup.check(com.herfy.ordertype.R.id.deliveryButton)
                             selectDelivery()
                         }, 800)
                     } else {
@@ -639,7 +639,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                         binding.pickupButton.visible()
                         binding.dineInButton.gone()
                         Handler(Looper.getMainLooper()).postDelayed({
-                            binding.typeGroup.check(R.id.pickupButton)
+                            binding.typeGroup.check(com.herfy.ordertype.R.id.pickupButton)
                             selectPickup()
                         }, 800)
                     }
@@ -706,26 +706,26 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 orderType = OrderType.fromInt(typeOrder)
             } else when (orderType) {
                 OrderType.DELIVERY -> {
-                    binding.typeGroup.check(R.id.deliveryButton)
+                    binding.typeGroup.check(com.herfy.ordertype.R.id.deliveryButton)
                 }
 
                 OrderType.DINE_IN -> {
-                    binding.typeGroup.check(R.id.dineInButton)
+                    binding.typeGroup.check(com.herfy.ordertype.R.id.dineInButton)
                 }
 
                 else -> {
-                    binding.typeGroup.check(R.id.pickupButton)
+                    binding.typeGroup.check(com.herfy.ordertype.R.id.pickupButton)
                 }
             }
         } else {
             if (isDeliveryAvailable) {
-                binding.typeGroup.check(R.id.deliveryButton)
+                binding.typeGroup.check(com.herfy.ordertype.R.id.deliveryButton)
             } else if (isPickupAvailable) {
-                binding.typeGroup.check(R.id.pickupButton)
+                binding.typeGroup.check(com.herfy.ordertype.R.id.pickupButton)
             } else if (isDineInAvailable) {
-                binding.typeGroup.check(R.id.dineInButton)
+                binding.typeGroup.check(com.herfy.ordertype.R.id.dineInButton)
             } else if (isCurbsideAvailable) {
-                binding.typeGroup.check(R.id.pickupButton)
+                binding.typeGroup.check(com.herfy.ordertype.R.id.pickupButton)
             }
         }
     }
@@ -878,7 +878,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 val activity: Activity? = activity
                 if (activity != null) {
                     val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                        activity, R.drawable.user_current_location
+                        activity, com.herfy.ordertype.R.drawable.user_current_location
                     )
                     markerOptions.icon(icon)
                 }
@@ -983,7 +983,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                         val activity: Activity? = activity
                         if (activity != null) {
                             val icon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                                activity, R.drawable.branch_unselected
+                                activity, com.herfy.ordertype.R.drawable.branch_unselected
                             )
                             if (icon != null) {
                                 markerOptions.icon(icon)
@@ -1131,7 +1131,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                         if (store != null) {
                             val inflater =
                                 activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                            val view = inflater.inflate(R.layout.marker_store_new, null)
+                            val view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null)
                             val textView =
                                 view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                             textView.text = CacheUtil.getInstance()
@@ -1221,7 +1221,7 @@ class OrderTypeNewFragment : BaseFragment(), OrderContract.View {
                 } else {
                     storeMarker?.setIcon(
                         ViewUtil.vectorDrawableToBitmapDescriptor(
-                            activity, R.drawable.branch_unselected
+                            activity, com.herfy.ordertype.R.drawable.branch_unselected
                         )
                     )
                     storeMarker?.setAnchor(0.5f, 1f)

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/modifierImage"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="@dimen/margin_large"
+        android:background="@color/white"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="@+id/select"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.Image.Circle"
+        app:strokeColor="@color/background_color_light_blue"
+        app:strokeWidth="2dp"
+        tools:src="@tools:sample/avatars" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/name"
+        style="@style/Styles.Text.Footnote.Semi.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_xlarge"
+        android:textAlignment="viewStart"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/modifierImage"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lineHeight="16sp"
+        tools:text="Topic Sauce" />
+
+    <TextView
+        android:id="@+id/select"
+        style="@style/Styles.Text.Footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginEnd="@dimen/margin_micro"
+        android:textColor="@color/color_gray"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/modifierImage"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:text="Select up to 2"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_large"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/select"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_modifier_option_type" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnMinimum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|end"
+            android:textAlignment="viewEnd"
+            android:layout_marginEnd="@dimen/margin_large"
+            app:cardCornerRadius="4dp"
+            android:backgroundTint="#EEF0F2"
+            app:contentPadding="@dimen/padding_micro"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/select"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/name"
+            tools:visibility="visible">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/minimum"
+                style="@style/Styles.Text.Footnote"
+                android:textSize="11sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#55667B"
+                tools:text="Required" />
+        </androidx.cardview.widget.CardView>
+
+
+    <ImageView
+        android:id="@+id/checkBox"
+        android:layout_width="34dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/margin_large"
+        android:src="@drawable/ic_modifier_group_checked_selected"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/select"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/name"
+        tools:visibility="visible" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginHorizontal="@dimen/margin_large"
+        android:background="@color/colorSeparator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -154,7 +154,7 @@ public class NewMenuViewPagerAdapter extends FragmentStateAdapter {
 
         if (imageUrl == null || imageUrl.equalsIgnoreCase("null") || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
             imageUrl = Values.DEFAULT_IMAGE_URL;
-            Glide.with(context).load(R.color.transparent)
+            Glide.with(context).load(android.R.color.transparent)
                     .skipMemoryCache(false)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .transform(new CenterCrop(), new RoundedCorners(context.getResources().getDimensionPixelSize(R.dimen.category_icon_rounded_corner)))

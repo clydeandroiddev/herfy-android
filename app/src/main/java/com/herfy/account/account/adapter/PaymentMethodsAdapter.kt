@@ -34,7 +34,7 @@ class PaymentMethodsAdapter(
                 cardListener.onSelectCard(item, position)
             }
             cardNumber.text = item.attributes.brand + " ****" + item.attributes.last4Digits
-            val res: Int = R.drawable.ic_common_payment_type_card
+            val res: Int = com.herfy.common.R.drawable.ic_common_payment_type_card
             cardImage.setImageResource(res)
         }
     }

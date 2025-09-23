@@ -156,12 +156,7 @@ public class FirebaseService extends FirebaseMessagingService {
                 builder.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap).bigLargeIcon(bitmap));
             } else{
                 builder.setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()));
-                String key = CacheUtil.getInstance().getConceptKey();
-                if (key.equalsIgnoreCase("8BekUs4iUpc") || key.equalsIgnoreCase("Ula1ziyLKOo")) {
-                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.notification_large));
-                } else {
-                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.splash));
-                }
+                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.splash));
             }
 
             builder.setContentTitle(remoteMessage.getNotification().getTitle());
@@ -226,12 +221,7 @@ public class FirebaseService extends FirebaseMessagingService {
         }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.app_name));
         builder.setSmallIcon(R.drawable.notification);
-        String key = CacheUtil.getInstance().getConceptKey();
-        if(key.equalsIgnoreCase("8BekUs4iUpc") || key.equalsIgnoreCase("Ula1ziyLKOo")) {
-            builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.notification_large));
-        } else {
-            builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.splash));
-        }
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.splash));
         builder.setContentTitle(context.getResources().getString(R.string.app_name));
         builder.setContentText(body);
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(body))
@@ -243,7 +233,7 @@ public class FirebaseService extends FirebaseMessagingService {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
         Intent mainIntent = new Intent();
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         builder.setContentIntent(pendingIntent);
         int id = CacheUtil.getInstance().getNotificationId();
         if (id == 0) {

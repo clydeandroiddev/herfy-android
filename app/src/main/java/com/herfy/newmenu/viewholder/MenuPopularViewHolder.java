@@ -207,7 +207,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
     @Override
     public void setFavorite(MenuItem menuItem) {
         if (isSignedIn && CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-            favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+            favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
             favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
             //cardFav.setImageResource(R.drawable.ic_heart);
             //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));
@@ -402,7 +402,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
                         //cardFav.setImageResource(R.drawable.ic_heart_empty);
                         //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#CCCCCC")));
                     } else {
-                        favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+                        favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
                         favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
                         //cardFav.setImageResource(R.drawable.ic_heart);
                         //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));
@@ -457,7 +457,7 @@ public class MenuPopularViewHolder extends RecyclerView.ViewHolder implements Me
             ivSoldout.setVisibility(View.GONE);
             soldout.setVisibility(View.GONE);
             addToBag.setEnabled(true);
-            image.setColorFilter(ContextCompat.getColor(context, R.color.transparent));
+            image.setColorFilter(ContextCompat.getColor(context, android.R.color.transparent));
             addToBag.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.primary_tint)));
         }
 

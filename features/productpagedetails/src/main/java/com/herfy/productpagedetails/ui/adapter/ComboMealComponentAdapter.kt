@@ -401,7 +401,7 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                     checkLayout.visible()
                     if (hasModifiers) {
                         ivRightIcon.visible()
-                        ivRightIcon.setImageResource(R.drawable.ic_arrow_right_tail_blue)
+                        ivRightIcon.setImageResource(com.herfy.commonstyles.R.drawable.ic_arrow_right_tail_blue)
                         radioButton.gone()
                         checkBox.gone()
                     } else if (isRadioButtonVisible) {
@@ -443,9 +443,9 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
 
                 if (isComponentSelected) {
                     optionCardView.strokeWidth = 1
-                    optionCardView.strokeColor = context.getColor(R.color.background_color_blue)
+                    optionCardView.strokeColor = context.getColor(com.herfy.commonstyles.R.color.background_color_blue)
                     optionCardView.backgroundTintList =
-                        ColorStateList.valueOf(context.getColor(R.color.card_selected_bg))
+                        ColorStateList.valueOf(context.getColor(com.herfy.commonstyles.R.color.card_selected_bg))
                     if (hasModifiers && hasSelectedModifiers) {
                         ivRightIcon.setImageResource(R.drawable.ic_edit_blue)
                     } else if (radioButton.isVisible()) {
@@ -456,9 +456,9 @@ class ComboMealComponentAdapter(private var itemList: List<ComboComponentAdapter
                 } else {
                     optionCardView.strokeColor = Color.WHITE
                     optionCardView.backgroundTintList =
-                        ColorStateList.valueOf(context.getColor(R.color.white))
+                        ColorStateList.valueOf(context.getColor(com.herfy.commonstyles.R.color.white))
                     if (hasModifiers) {
-                        ivRightIcon.setImageResource(R.drawable.ic_arrow_right_tail_blue)
+                        ivRightIcon.setImageResource(com.herfy.commonstyles.R.drawable.ic_arrow_right_tail_blue)
                     } else if (radioButton.isVisible()) {
                         radioButton.isChecked = false
                     } else if (checkBox.isVisible()) {

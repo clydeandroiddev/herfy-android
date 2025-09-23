@@ -111,7 +111,7 @@ public class ViewUtil {
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        theme.resolveAttribute(android.R.attr.colorPrimary, typedValue, true);
         return typedValue.data;
 
     }
@@ -119,7 +119,7 @@ public class ViewUtil {
     public static int getColorAccent(Context context){
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+        theme.resolveAttribute(android.R.attr.colorAccent, typedValue, true);
         return typedValue.data;
     }
 
@@ -134,7 +134,7 @@ public class ViewUtil {
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        theme.resolveAttribute(android.R.attr.colorPrimaryDark, typedValue, true);
         return typedValue.data;
 
     }

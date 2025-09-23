@@ -189,7 +189,7 @@ public class PreMadeStep1Activity extends BaseActivity implements PreMadeStep1Co
         datePicker.setSelectorColor(android.R.color.white);
         datePicker.setDisplayYears(false);
         datePicker.setDefaultDate(minDate);
-        datePicker.setTextSize(getResources().getDimensionPixelSize(R.dimen.font_size_16sp));
+        datePicker.setTextSize(getResources().getDimensionPixelSize(company.tap.gosellapi.R.dimen.font_size_16sp));
         datePicker.setDisplayMonths(false);
         datePicker.setTextColor(this.getResources().getColor(R.color.silver_chalice));
         datePicker.setSelectedTextColor(Color.parseColor(CacheUtil.getInstance().getColorMain()));

@@ -33,9 +33,9 @@ class PromotionRulesAdapter(val requirements: List<PromotionRequirement>) :
             holder.binding.ivRule.setImageResource(rule.icon)
             holder.binding.ivIsMet.setImageResource(
                 if (rule.isRequired) {
-                    R.drawable.ic_promotion_required
+                    com.herfy.common.R.drawable.ic_promotion_required
                 } else {
-                    R.drawable.ic_promotion_not_required
+                    com.herfy.common.R.drawable.ic_promotion_not_required
                 }
             )
         }

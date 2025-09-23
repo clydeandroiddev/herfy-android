@@ -235,7 +235,7 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
                         favoriteIcon.setImageResource(R.drawable.ic_heart_empty);
                         favoriteIcon.setColorFilter(Color.parseColor("#CCCCCC"));
                     } else {
-                        favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+                        favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
                         favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
                     }
                     menuPresenter.addRemoveFavorite(false);
@@ -286,7 +286,7 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
             ivSoldout.setVisibility(View.GONE);
             soldout.setVisibility(View.GONE);
             addToCart.setEnabled(true);
-            image.setColorFilter(ContextCompat.getColor(context, R.color.transparent));
+            image.setColorFilter(ContextCompat.getColor(context, android.R.color.transparent));
             addToCart.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.primary_tint)));
         }
     }
@@ -351,7 +351,7 @@ public class MenuFavoriteViewHolder extends RecyclerView.ViewHolder implements M
     @Override
     public void setFavorite(MenuItem menuItem) {
         if (isSignedIn && CacheUtil.getInstance().getFavorites().contains(menuItem.getId())) {
-            favoriteIcon.setImageResource(R.drawable.ic_heart_unselected);
+            favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected);
             favoriteIcon.setColorFilter(Color.parseColor("#F22424"));
             //cardFav.setImageResource(R.drawable.ic_heart);
             //cardFav.setImageTintList(ColorStateList.valueOf(Color.parseColor("#F22424")));

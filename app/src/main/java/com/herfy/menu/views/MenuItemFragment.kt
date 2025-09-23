@@ -973,9 +973,9 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                 menuItem.id
             )
         ) {
-            binding.favoriteIcon.setImageResource(R.drawable.ic_favorite_filled)
+            binding.favoriteIcon.setImageResource(com.herfy.common.R.drawable.ic_favorite_filled)
         } else {
-            binding.favoriteIcon.setImageResource(R.drawable.ic_heart_unselected)
+            binding.favoriteIcon.setImageResource(com.herfy.productpagedetails.R.drawable.ic_heart_unselected)
         }
         if (args.isFrequentlyBoughtItem) {
             val bundle = Bundle()
@@ -1026,7 +1026,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                     Glide.with(requireContext())
                         .load(imageUrl)
                         .apply(RequestOptions.centerCropTransform())
-                        .placeholder(R.drawable.image_placeholder)
+                        .placeholder(com.herfy.common.R.drawable.image_placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(binding.sizesImage)
                 } else {
@@ -1048,7 +1048,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                         if (modifierItem.getAttributes().isSelected) {
                             if (!initialSelectedEncountered) {
                                 card.strokeColor =
-                                    ContextCompat.getColor(requireContext(), R.color.color_blue)
+                                    ContextCompat.getColor(requireContext(), com.herfy.productpagedetails.R.color.color_blue)
                                 card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                                 card.radius =
                                     resources.getDimensionPixelSize(R.dimen.radius_large).toFloat()
@@ -1067,15 +1067,15 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 card.setCardBackgroundColor(
                                     ContextCompat.getColor(
                                         requireContext(),
-                                        R.color.color_blue
+                                        com.herfy.productpagedetails.R.color.color_blue
                                     )
                                 )
-                                sizesRadiButton.setImageResource(R.drawable.ic_size_drawable_checked)
+                                sizesRadiButton.setImageResource(com.herfy.productpagedetails.R.drawable.ic_size_drawable_checked)
                                 initialSelectedEncountered = true
                             } else {
                                 card.strokeColor = ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.color_light_blue_shade
+                                    com.herfy.productpagedetails.R.color.color_light_blue_shade
                                 )
                                 card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                                 card.radius =
@@ -1089,22 +1089,22 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                 txtPrice.setTextColor(
                                     ContextCompat.getColor(
                                         requireContext(),
-                                        R.color.color_gray
+                                        com.herfy.commonstyles.R.color.color_gray
                                     )
                                 )
                                 card.setCardBackgroundColor(
                                     ContextCompat.getColor(
                                         requireContext(),
-                                        R.color.color_light_blue_shade
+                                        com.herfy.productpagedetails.R.color.color_light_blue_shade
                                     )
                                 )
-                                sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
+                                sizesRadiButton.setImageResource(com.herfy.productpagedetails.R.drawable.modifier_item_radio_unselected)
                             }
 
                         } else {
                             card.strokeColor = ContextCompat.getColor(
                                 requireContext(),
-                                R.color.color_light_blue_shade
+                                com.herfy.productpagedetails.R.color.color_light_blue_shade
                             )
                             card.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                             card.radius =
@@ -1118,16 +1118,16 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                             txtPrice.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.color_gray
+                                    com.herfy.commonstyles.R.color.color_gray
                                 )
                             )
                             card.setCardBackgroundColor(
                                 ContextCompat.getColor(
                                     requireContext(),
-                                    R.color.color_light_blue_shade
+                                    com.herfy.productpagedetails.R.color.color_light_blue_shade
                                 )
                             )
-                            sizesRadiButton.setImageResource(R.drawable.modifier_item_radio_unselected)
+                            sizesRadiButton.setImageResource(com.herfy.productpagedetails.R.drawable.modifier_item_radio_unselected)
 
                         }
                         val container = view!!.findViewById<LinearLayout>(R.id.container)
@@ -1144,7 +1144,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     childView.findViewById<ImageView>(R.id.radioButton)
                                 if (childView.tag == view1.tag) {
                                     childCard.strokeColor =
-                                        ContextCompat.getColor(requireContext(), R.color.color_blue)
+                                        ContextCompat.getColor(requireContext(), com.herfy.productpagedetails.R.color.color_blue)
                                     childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                                     childCard.radius =
                                         resources.getDimensionPixelSize(R.dimen.radius_large)
@@ -1152,7 +1152,7 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     txtModifierSizes.setTextColor(
                                         ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.color_light_blue_shade
+                                            com.herfy.productpagedetails.R.color.color_light_blue_shade
                                         )
                                     )
                                     txtModifierPrice.setTextColor(
@@ -1164,17 +1164,17 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     childCard.setCardBackgroundColor(
                                         ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.color_blue
+                                            com.herfy.productpagedetails.R.color.color_blue
                                         )
                                     )
-                                    sizesRadioBtn.setImageResource(R.drawable.ic_size_drawable_checked)
+                                    sizesRadioBtn.setImageResource(com.herfy.productpagedetails.R.drawable.ic_size_drawable_checked)
                                     binding.checkBox.setVisible(true)
 
                                 } else {
 //
                                     childCard.strokeColor = ContextCompat.getColor(
                                         requireContext(),
-                                        R.color.color_light_blue_shade
+                                        com.herfy.productpagedetails.R.color.color_light_blue_shade
                                     )
                                     childCard.strokeWidth = ViewUtil.dpToPx(requireActivity(), 1)
                                     childCard.radius =
@@ -1189,16 +1189,16 @@ class MenuItemFragment : BaseFragment(), MenuContract.View {
                                     txtModifierPrice.setTextColor(
                                         ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.color_gray
+                                            com.herfy.productpagedetails.R.color.color_gray
                                         )
                                     )
                                     childCard.setCardBackgroundColor(
                                         ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.color_light_blue_shade
+                                            com.herfy.productpagedetails.R.color.color_light_blue_shade
                                         )
                                     )
-                                    sizesRadioBtn.setImageResource(R.drawable.modifier_item_radio_unselected)
+                                    sizesRadioBtn.setImageResource(com.herfy.productpagedetails.R.drawable.modifier_item_radio_unselected)
 
                                 }
                             }

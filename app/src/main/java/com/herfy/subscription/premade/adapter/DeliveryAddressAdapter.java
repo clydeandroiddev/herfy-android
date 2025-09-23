@@ -59,7 +59,7 @@ public class DeliveryAddressAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolderData(LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.item_address_delivery_new, parent, false));
+                com.herfy.ordertype.R.layout.item_address_delivery_new, parent, false));
     }
 
     @Override

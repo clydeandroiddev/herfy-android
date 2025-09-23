@@ -304,9 +304,9 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
     public void setModifierItem(ModifierGroup modifierGroup, ModifierItem modifierItem, int posTrue) {
 
         if (modifierItem.getAttributes().isSelected()) {
-            check.setImageResource(R.drawable.modifier_radio_item_selected);
+            check.setImageResource(com.herfy.productpagedetails.R.drawable.modifier_radio_item_selected);
         } else {
-            check.setImageResource(R.drawable.modifier_item_radio_unselected);
+            check.setImageResource(com.herfy.productpagedetails.R.drawable.modifier_item_radio_unselected);
         }
 
         checkLayout.setOnClickListener(new View.OnClickListener() {
@@ -337,7 +337,7 @@ public class ModifierItemViewHolderNew extends RecyclerView.ViewHolder implement
 
         String imageUrl = modifierItem.getAttributes().getImage();
         if (imageUrl != null && !imageUrl.equalsIgnoreCase("null") && !imageUrl.isEmpty() && !imageUrl.toLowerCase().contains("default-image.png")) {
-            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
+            Glide.with(context).load(imageUrl).apply(RequestOptions.centerCropTransform()).placeholder(com.herfy.common.R.drawable.image_placeholder).diskCacheStrategy(DiskCacheStrategy.ALL).into(image);
             image.setVisibility(View.VISIBLE);
         } else {
             image.setVisibility(View.GONE);
