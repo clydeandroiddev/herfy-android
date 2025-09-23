@@ -52,42 +52,7 @@ class BaseApplication : Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
-        val notificationConfig = NotificationConfig(
-            R.drawable.notification,
-            R.color.colorPrimary,
-            true
-        )
-
-        //Hydra Config
-        var accountId: String = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
-            "ayk-113123"
-        } else {
-            "rnu-282033"
-        }
-
-        val hydraConfig = HydraConfig.Builder(
-            this,
-            accountId = accountId
-        )
-            .notificationConfig(notificationConfig)
-            .debugLevel(LogType.VERBOSE)
-            .captureViewPortDetails(true)
-            .sslPublicKey("jyuoLOfuVQyA6a9iGJ5k/m0MoMDDh9+dEjqZkIb1Afs=")
-            .baseURL("https://mapp-eucrm.api.capillarytech.com/")
-            //.sslPublicKey(CacheUtil.getInstance().capillarySslPublicKey)
-            //.baseURL(CacheUtil.getInstance().capillaryBaseUrl)
-            .fcmConfig(FcmConfig(false))
-            .build()
-
-        try {
-            HydraAPI.instanceWithConfig(this, hydraConfig)
-        } catch (e: HydraConfigurationException) {
-            AppLogger.error("Hydra init failed $e")
-        }
-
-
-
-
+        CacheUtil.init(this)
         AppDatabase.init(this)
         sdkInitialize(this)
         AppEventsLogger.activateApp(this)
@@ -96,7 +61,6 @@ class BaseApplication : Application(), ImageLoaderFactory {
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
         }
         AuthUtil.init(this)
-        CacheUtil.init(this)
         LocaleUtil.init(this)
         FontHandler.init(this)
         KochavaTrackerUtil.init(applicationContext, reveal(Keychain.KOCHAVA_GUID))
@@ -157,5 +121,40 @@ class BaseApplication : Application(), ImageLoaderFactory {
         return ImageLoader.Builder(this)
             .okHttpClient(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build()
+    }
+
+    fun initializeHydraSdk(context: Context) {
+        val notificationConfig = NotificationConfig(
+            R.drawable.notification,
+            R.color.colorPrimary,
+            true
+        )
+
+        //Hydra Config
+        var accountId: String = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
+            "ayk-113123"
+        } else {
+            "rnu-282033"
+        }
+
+        val hydraConfig = HydraConfig.Builder(
+            context,
+            accountId = accountId
+        )
+            .notificationConfig(notificationConfig)
+            .debugLevel(LogType.VERBOSE)
+            .captureViewPortDetails(true)
+            //.sslPublicKey("jyuoLOfuVQyA6a9iGJ5k/m0MoMDDh9+dEjqZkIb1Afs=")
+            //.baseURL("https://mapp-eucrm.api.capillarytech.com/")
+            .sslPublicKey(CacheUtil.getInstance().capillarySslPublicKey)
+            .baseURL(CacheUtil.getInstance().capillaryBaseUrl)
+            .fcmConfig(FcmConfig(false))
+            .build()
+
+        try {
+            HydraAPI.instanceWithConfig(context, hydraConfig)
+        } catch (e: HydraConfigurationException) {
+            AppLogger.error("Hydra init failed $e")
+        }
     }
 }
