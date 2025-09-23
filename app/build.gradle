@@ -21,7 +21,7 @@ android {
     compileSdk 36
     defaultConfig {
         minSdkVersion 24
-        targetSdk 34
+        targetSdk 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
@@ -215,7 +215,7 @@ android {
         herfy {
             signingConfig signingConfigs.release
             applicationId "com.herfy.order"
-            versionCode 300025
+            versionCode 300021
             versionName "3.1.2"
             buildConfigField "String", "TAG", "\"Herfy\""
             buildConfigField "String", "SOLO_CONCEPT", "\"\""

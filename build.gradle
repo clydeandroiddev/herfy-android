@@ -26,6 +26,12 @@ buildscript {
 }
 
 allprojects {
+    def githubProps = new Properties()
+    def githubPropsFile = rootProject.file("github.properties")
+    if (githubPropsFile.exists()) {
+        githubProps.load(new FileInputStream(githubPropsFile))
+    }
+
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions {
             jvmTarget = "17"
