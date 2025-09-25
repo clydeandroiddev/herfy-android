@@ -158,21 +158,6 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                 checkAlarmPermission();
             }
         }
-
-        if(!AuthUtil.getInstance().getFirebase().isEmpty() && AuthUtil.getInstance().isSignedIn()) {
-            //HYDRA SIGN IN EVENT
-            HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
-                    pushUserSignin(
-                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                            Collections.emptyMap());
-
-            HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
-
-        }
     }
 
     @Override
@@ -735,7 +720,24 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
         if (baseUrl != null && !baseUrl.isEmpty() && publicKey != null && !publicKey.isEmpty()) {
             ((BaseApplication) getApplicationContext()).initializeHydraSdk(getApplicationContext());
+
+            if(!AuthUtil.getInstance().getFirebase().isEmpty() && AuthUtil.getInstance().isSignedIn()) {
+                //HYDRA SIGN IN EVENT
+                HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
+                        pushUserSignin(
+                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                                Collections.emptyMap());
+
+                HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
+
+            }
         }
+
+
 
     }
 }
