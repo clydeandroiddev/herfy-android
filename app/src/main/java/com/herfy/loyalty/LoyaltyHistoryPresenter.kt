@@ -58,7 +58,7 @@ class LoyaltyHistoryPresenter @Inject constructor(
                     }
                     this.transactionsList.addAll(transactionsList!!)
 
-                    val distinctList = this.transactionsList.distinctBy { it.id }
+                    val distinctList = this.transactionsList.distinctBy { Pair(it.id, it.type) }
                     this.transactionsList.clear()
                     this.transactionsList.addAll(distinctList)
 
@@ -220,11 +220,11 @@ class LoyaltyHistoryPresenter @Inject constructor(
                 }
             }
 
-            // Ensure no duplicates by ID
-            val distinctResult = result.distinctBy { it.id }
+            // Ensure no duplicates by ID and Type
+            val distinctResult = result.distinctBy { Pair(it.id, it.type) }
 
             AppLogger.longError(
-                "AAAAAAAAAAAA Result size: ${distinctResult.size}, transactions: ${distinctResult.map { it.id }}"
+                "AAAAAAAAAAAA Result size: ${distinctResult.size}, transactions: ${distinctResult.map { Pair(it.id, it.type) }}"
             )
 
            filteredTransactionList.addAll(distinctResult)

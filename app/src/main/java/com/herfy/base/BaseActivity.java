@@ -36,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
@@ -189,6 +190,8 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
     }
 
     protected void initBase() {
+
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         if (!(this instanceof MainActivity)) {
             initialLoad = false;
