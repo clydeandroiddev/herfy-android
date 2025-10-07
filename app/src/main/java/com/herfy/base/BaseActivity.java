@@ -191,7 +191,7 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
 
     protected void initBase() {
 
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        //WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         if (!(this instanceof MainActivity)) {
             initialLoad = false;

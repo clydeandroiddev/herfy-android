@@ -1,6 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = '1.8.0'
+    ext.kotlin_version = '1.8.20'
+
 
     repositories {
         google()
@@ -8,6 +9,7 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.2'
@@ -26,10 +28,17 @@ buildscript {
 }
 
 allprojects {
+
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions {
             jvmTarget = "17"
         }
+    }
+
+    def githubProps = new Properties()
+    def githubPropsFile = rootProject.file("github.properties")
+    if (githubPropsFile.exists()) {
+        githubProps.load(new FileInputStream(githubPropsFile))
     }
 
     repositories {

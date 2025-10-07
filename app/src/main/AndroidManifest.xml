@@ -51,9 +51,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="LockedOrientationActivity"
-        tools:replace="android:allowBackup"
-        >
-        <property android:name="android.window.PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY" android:value="true" />
+        tools:replace="android:allowBackup">
         <activity
             android:name="com.herfy.payment.views.MoyasarActivity"
             android:exported="false" />
