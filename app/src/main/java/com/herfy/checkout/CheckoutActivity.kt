@@ -20,9 +20,7 @@ import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
@@ -1690,6 +1688,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun userEnabledSaveCardOption(saveCardEnabled: Boolean) {}
     override fun cardTokenizedSuccessfully(token: Token, saveCardEnabled: Boolean) {}
+    override fun asyncPaymentStarted(charge: Charge) {}
+
+    override fun paymentInitiated(charge: Charge?) {}
+
+    override fun googlePayFailed(error: String?) {}
 
     private fun checkTokenGenerated(
         token: String, cvv: String?, isSave: Boolean, orderIds: String

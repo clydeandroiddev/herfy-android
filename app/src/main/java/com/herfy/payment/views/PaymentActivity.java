@@ -44,7 +44,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-
 import com.checkout.tokenization.model.TokenDetails;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -56,22 +55,13 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.herfy.analytics.firebase.FirebaseECommerceEventUtil;
-import com.herfy.analytics.firebase.FirebaseService;
-import com.herfy.utils.constants.Values;
-import com.herfy.utils.helper.AuthUtil;
-import com.herfy.utils.helper.BuildUtil;
-import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.EnvUtil;
-import com.herfy.utils.theme.DynamicTheme;
-import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.herfy.BuildConfig;
 import com.herfy.R;
+import com.herfy.analytics.facebook.FacebookAppEventUtil;
+import com.herfy.analytics.firebase.FirebaseECommerceEventUtil;
+import com.herfy.analytics.firebase.FirebaseService;
 import com.herfy.base.BaseActivity;
 import com.herfy.browser.BrowserActivity;
-import com.herfy.utils.constants.Text;
 import com.herfy.decorator.BeforeDateDecorator;
 import com.herfy.decorator.OneDayDecorator;
 import com.herfy.font.FontHandler;
@@ -84,6 +74,26 @@ import com.herfy.payment.savedcards.CVVDialogAlert;
 import com.herfy.payment.savedcards.SaveDialogAlert;
 import com.herfy.payment.savedcards.SavedCardsDialog;
 import com.herfy.ratings.AppRatingBroadcastReceiver;
+import com.herfy.summary.OrderSummaryMenuItemRecyclerViewAdapter;
+import com.herfy.util.AppLogger;
+import com.herfy.util.ShipBookLogger;
+import com.herfy.util.StringUtil;
+import com.herfy.util.ViewUtil;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.constants.Values;
+import com.herfy.utils.helper.ApiLogLevel;
+import com.herfy.utils.helper.ApiLogUtil;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.CurrencyUtils;
+import com.herfy.utils.helper.EnvUtil;
+import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.helper.TimeUtil;
+import com.herfy.utils.theme.DynamicTheme;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
@@ -96,17 +106,6 @@ import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
 import com.skylinedynamics.solosdk.api.models.objects.Store;
-import com.herfy.summary.OrderSummaryMenuItemRecyclerViewAdapter;
-import com.herfy.utils.helper.ApiLogLevel;
-import com.herfy.utils.helper.ApiLogUtil;
-import com.herfy.util.AppLogger;
-import com.herfy.utils.helper.CurrencyUtils;
-import com.herfy.analytics.facebook.FacebookAppEventUtil;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.ShipBookLogger;
-import com.herfy.util.StringUtil;
-import com.herfy.utils.helper.TimeUtil;
-import com.herfy.util.ViewUtil;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONException;
@@ -1474,7 +1473,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             GoSellSDK.init(this, BuildUtil.tapLive(), getPackageName());
         }
 
-        GoSellSDK.setLocale(LocaleUtil.getInstance().getLanguageCode());
+        GoSellSDK.setLocale(this, LocaleUtil.getInstance().getLanguageCode());
 
         ThemeObject.getInstance().setAppearanceMode(AppearanceMode.FULLSCREEN_MODE).setSdkLanguage(LocaleUtil.getInstance().getLanguageCode()).setHeaderFont(FontHandler.getMediumTypeface()).setHeaderTextColor(ContextCompat.getColor(this, R.color.white)).setHeaderTextSize(18).setHeaderBackgroundColor(ViewUtil.getColorMain(this)).setCardInputTextColor(ContextCompat.getColor(this, R.color.black)).setCardInputInvalidTextColor(ContextCompat.getColor(this, R.color.red)).setCardInputPlaceholderTextColor(ContextCompat.getColor(this, company.tap.gosellapi.R.color.gray)).setSaveCardSwitchOffThumbTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.french_gray_new)).setSaveCardSwitchOnThumbTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.vibrant_green)).setSaveCardSwitchOffTrackTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.french_gray)).setSaveCardSwitchOnTrackTint(ContextCompat.getColor(this, company.tap.gosellapi.R.color.vibrant_green_pressed)).setScanIconDrawable(ContextCompat.getDrawable(this, company.tap.gosellapi.R.drawable.btn_card_scanner_normal)).setPayButtonResourceId(company.tap.gosellapi.R.drawable.btn_pay_selector).setPayButtonFont(FontHandler.getRegularTypeface()).setPayButtonDisabledTitleColor(ContextCompat.getColor(this, R.color.white)).setPayButtonEnabledTitleColor(ContextCompat.getColor(this, R.color.white)).setPayButtonTextSize(14).setPayButtonLoaderVisible(true).setPayButtonSecurityIconVisible(true).setDialogTextColor(ContextCompat.getColor(this, company.tap.gosellapi.R.color.black1)).setDialogTextSize(14);
 
@@ -2025,6 +2024,21 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
     @Override
     public void cardTokenizedSuccessfully(@NonNull Token token, boolean saveCardEnabled) {
+
+    }
+
+    @Override
+    public void asyncPaymentStarted(@NonNull Charge charge) {
+
+    }
+
+    @Override
+    public void paymentInitiated(@Nullable Charge charge) {
+
+    }
+
+    @Override
+    public void googlePayFailed(String error) {
 
     }
 
