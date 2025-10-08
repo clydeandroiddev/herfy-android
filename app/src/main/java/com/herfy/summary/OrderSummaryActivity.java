@@ -8,9 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
@@ -24,29 +21,29 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.herfy.utils.helper.AuthUtil;
-import com.herfy.utils.helper.BuildUtil;
-import com.herfy.utils.helper.CacheUtil;
-import com.herfy.utils.helper.EnvUtil;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.base.BaseActivity;
-import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.payment.PaymentContract;
 import com.herfy.payment.PaymentPresenter;
 import com.herfy.payment.views.OrderDialogFragment;
 import com.herfy.payment.views.PaymentDialogFragment;
+import com.herfy.util.StringUtil;
+import com.herfy.util.ViewUtil;
+import com.herfy.utils.constants.Text;
+import com.herfy.utils.helper.AuthUtil;
+import com.herfy.utils.helper.BuildUtil;
+import com.herfy.utils.helper.CacheUtil;
+import com.herfy.utils.helper.EnvUtil;
+import com.herfy.utils.helper.LocaleUtil;
+import com.herfy.utils.helper.TimeUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
 import com.skylinedynamics.solosdk.api.models.objects.PrayerTime;
 import com.skylinedynamics.solosdk.api.models.objects.ServiceCharge;
-import com.herfy.utils.helper.LocaleUtil;
-import com.herfy.util.StringUtil;
-import com.herfy.utils.helper.TimeUtil;
-import com.herfy.util.ViewUtil;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -76,7 +73,6 @@ import company.tap.gosellapi.open.enums.TransactionMode;
 import company.tap.gosellapi.open.models.CardsList;
 import company.tap.gosellapi.open.models.Reference;
 import company.tap.gosellapi.open.models.TapCurrency;
-import kotlin.Pair;
 
 public class OrderSummaryActivity extends BaseActivity implements PaymentContract.View, SessionDelegate {
 
@@ -391,7 +387,7 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
             GoSellSDK.init(this, BuildUtil.tapLive(), getPackageName());
         }
 
-        GoSellSDK.setLocale(LocaleUtil.getInstance().getLanguageCode());
+        GoSellSDK.setLocale(this, LocaleUtil.getInstance().getLanguageCode());
 
         ThemeObject.getInstance()
                 .setAppearanceMode(AppearanceMode.FULLSCREEN_MODE)
@@ -726,6 +722,21 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
 
     @Override
     public void cardTokenizedSuccessfully(@NonNull Token token, boolean saveCardEnabled) {
+
+    }
+
+    @Override
+    public void asyncPaymentStarted(@NonNull Charge charge) {
+
+    }
+
+    @Override
+    public void paymentInitiated(@Nullable Charge charge) {
+
+    }
+
+    @Override
+    public void googlePayFailed(String error) {
 
     }
 }
