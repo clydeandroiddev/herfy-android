@@ -1123,7 +1123,7 @@ public class SplashPresenter implements SplashContract.Presenter {
 
     @Override
     public void getLoyaltyTiers() {
-        CustomersApiCall.getInstance().getLoyaltyTiers(new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyTiersV2(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {

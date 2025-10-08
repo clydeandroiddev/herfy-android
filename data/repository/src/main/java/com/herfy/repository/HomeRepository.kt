@@ -657,7 +657,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit) {
-        CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+        CustomersApiCall.getInstance().getLoyaltyTiersV2(object : ApiRequestListener {
             override fun onSuccess(o: Any) {
                 try {
                     val `object` = JSONObject(o.toString())

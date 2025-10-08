@@ -52,7 +52,7 @@ class LoyaltyPresenter @Inject constructor(
 
     val tiersObservable: Single<List<LoyaltyTierV2>>
         get() = Single.create { source: SingleEmitter<List<LoyaltyTierV2>> ->
-            CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+            CustomersApiCall.getInstance().getLoyaltyTiersV2(object : ApiRequestListener {
                 override fun onSuccess(o: Any) {
                     try {
                         val `object` = JSONObject(o.toString())
@@ -344,7 +344,7 @@ class LoyaltyPresenter @Inject constructor(
 
 
     private fun fetchAndShowNextTier() {
-        CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+        CustomersApiCall.getInstance().getLoyaltyTiersV2(object : ApiRequestListener {
             override fun onSuccess(o: Any) {
                 try {
                     val `object` = JSONObject(o.toString())
