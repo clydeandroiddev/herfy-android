@@ -143,7 +143,7 @@ class RedeemLoyaltyDialog(var loyalty: Loyalty?) : BaseDialogFragment() {
                         val userSetPoints = StringUtil.toEnglish(editable.toString()).toDouble()
                         val points = loyalty.attributes.currentBalance.toDouble()
                         val currentBalance = AuthUtil.getInstance().customerLoyalty.attributes.currentBalanceAmount.toInt()
-                        val pointConversion = AuthUtil.getInstance().customerLoyalty.attributes.pointConversion.toDouble()
+                        val pointConversion = AuthUtil.getInstance().customerLoyalty.attributes.loyaltyTier.redemptionRatio.toDouble()
                         binding.pointsInSar.setText(
                             StringUtil.localize(
                                 binding.pointsInSar.text.toString()

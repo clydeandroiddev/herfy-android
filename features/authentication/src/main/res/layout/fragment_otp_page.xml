@@ -5,7 +5,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/topLayout"
@@ -13,6 +14,7 @@
             android:layout_height="56dp"
             android:paddingStart="12dp"
             android:paddingEnd="16dp"
+            android:backgroundTint="@color/white"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -166,6 +168,7 @@
                 android:layout_marginEnd="2dp"
                 app:cardCornerRadius="21dp"
                 app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/otpCodeLayout"
                 app:strokeColor="#0064AC"

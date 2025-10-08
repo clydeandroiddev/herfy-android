@@ -43,6 +43,8 @@ public interface SplashContract {
 
         void saveToCache(String key, String value);
 
+        void initializeHydraSdk();
+
     }
 
     interface Presenter extends BasePresenter {

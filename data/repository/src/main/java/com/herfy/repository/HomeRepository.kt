@@ -19,6 +19,8 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
@@ -154,13 +156,12 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCustomerLoyalty(id: String, response: (HomeResponse) -> Unit) {
-        CustomersApiCall.getInstance().getCustomerLoyalty(id, object : ApiRequestListener {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(id, object : ApiRequestListener {
             override fun onSuccess(o: Any) {
                 try {
                     val `object` = JSONObject(o.toString())
                     val data = `object`.getJSONObject("data")
-                    val loyalty =
-                        GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty::class.java)
+                    val loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2::class.java)
                     response(HomeResponse(true, loyalty, ""))
                 } catch (e: JSONException) {
                     e.printStackTrace()
@@ -656,17 +657,17 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLoyaltyTiers(response: (HomeResponse) -> Unit) {
-        CustomersApiCall.getInstance().getLoyaltyTiers(object : ApiRequestListener {
+        CustomersApiCall.getInstance().getLoyaltyTiersV2(object : ApiRequestListener {
             override fun onSuccess(o: Any) {
                 try {
                     val `object` = JSONObject(o.toString())
                     val tiersArray = `object`.getJSONArray("data")
-                    val type = object : TypeToken<List<Tier?>?>() {}.type
+                    val type = object : TypeToken<List<LoyaltyTierV2?>?>() {}.type
                     val tiers =
-                        GsonHelper.gsonFinal().fromJson<List<Tier>>(tiersArray.toString(), type)
+                        GsonHelper.gsonFinal().fromJson<List<LoyaltyTierV2>>(tiersArray.toString(), type)
                     // TODO: Should set Tier as Comparable in SDK
                     Collections.sort(tiers,
-                        java.util.Comparator { o1: Tier, o2: Tier -> o1.startPoint - o2.startPoint } as java.util.Comparator<Tier>)
+                        java.util.Comparator { o1: LoyaltyTierV2, o2: LoyaltyTierV2 -> o1.startingPoints - o2.startingPoints } as java.util.Comparator<LoyaltyTierV2>)
                     response(HomeResponse(true, tiers, ""))
                 } catch (ex: JSONException) {
                     ex.printStackTrace()

@@ -14,6 +14,7 @@ import androidx.credentials.CredentialManagerCallback;
 import androidx.credentials.exceptions.ClearCredentialException;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.capillary.hydra.android.sdk.HydraAPI;
 import com.facebook.login.LoginManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -167,6 +168,10 @@ public class AccountActivity extends BaseActivity implements AccountContract.Vie
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                HydraAPI.Companion.getDefaultInstance(AccountActivity.this).
+                        pushUserSignOut(
+                            AuthUtil.getInstance().getCustomer().getId()
+                        );
                 LoginManager.getInstance().logOut();
                 CredentialManager credentialManager = CredentialManager.create(AccountActivity.this);
                 Executor clearCredentialStateAsyncExecutor = Executors.newSingleThreadExecutor();

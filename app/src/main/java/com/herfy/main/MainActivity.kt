@@ -37,10 +37,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.firebase.HydraFirebaseAPI
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.BuildConfig
 import com.herfy.R
@@ -73,6 +77,7 @@ import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.splash.SplashActivity
+import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.util.obfuscator.Keychain
@@ -563,6 +568,25 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         }
         setCartQuantity()
+
+        signUpHydra()
+
+        //HYDRA LOGS
+
+        if (!AuthUtil.getInstance().firebase.isEmpty() && AuthUtil.getInstance().isSignedIn) {
+            //HYDRA SIGN IN EVENT
+            getDefaultInstance(applicationContext)!!.pushUserSignin(
+            AuthUtil.getInstance().customer.attributes.mobile,
+            AuthUtil.getInstance().customer.attributes.firstName,
+            AuthUtil.getInstance().customer.attributes.lastName,
+            AuthUtil.getInstance().customer.attributes.email,
+            AuthUtil.getInstance().customer.attributes.mobile,
+            emptyMap<String, Any>())
+
+            HydraFirebaseAPI.getInstance()
+                .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
+
+        }
     }
 
     private fun setupSideBar() {
@@ -1489,5 +1513,28 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         intent.putExtra("title", title)
         startActivity(intent)
+    }
+
+    private fun signUpHydra() {
+        val auth = AuthUtil.getInstance()
+        if (!auth.isSignedIn) return
+
+        if (BuildConfig.VERSION_NAME != "3.1.2") return
+
+        val customer = auth.customer ?: return
+        val phone =customer.attributes?.mobile ?: ""
+        if (phone.isBlank()) return
+
+        if (!auth.isHydraSignedUp(phone)) {
+            HydraAPI.getDefaultInstance(this@MainActivity)?.pushUserSignup(
+                cuid = phone ?: "",
+                firstName = customer.attributes?.firstName,
+                lastName  = customer.attributes?.lastName,
+                email     = customer.attributes?.email,
+                phone     = phone,
+                customData = emptyMap()
+            )
+            auth.saveHydraSignUp(phone)
+        }
     }
 }

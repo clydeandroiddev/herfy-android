@@ -12,10 +12,11 @@ import com.herfy.utils.constants.Text;
 import com.herfy.font.FontHandler;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyPointsPosRedemption;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransaction;
-import com.skylinedynamics.solosdk.api.models.objects.Tier;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTransactionV2;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.herfy.utils.helper.CurrencyUtils;
 import com.herfy.util.StringUtil;
 import com.herfy.utils.helper.TimeUtil;
@@ -85,7 +86,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void showLoyalty(Loyalty loyalty, String name) {
+    public void showLoyalty(LoyaltyV2 loyalty, String name) {
 
     }
 
@@ -100,26 +101,26 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     @Override
-    public void setLoyaltyHistory(LoyaltyTransaction loyaltyTransaction) {
+    public void setLoyaltyHistory(LoyaltyTransactionV2 loyaltyTransaction) {
         Concept concept = CacheUtil.getInstance().getConcept();
-        tvDate.setText(TimeUtil.formatDate(loyaltyTransaction.getCreatedAt()));
+        tvDate.setText(TimeUtil.formatDateWithUTC(loyaltyTransaction.getProcessedAt()));
         DecimalFormat formatter = new DecimalFormat("#,###");
-        if (loyaltyTransaction.getType() != null && loyaltyTransaction.getType().equalsIgnoreCase("collection")) {
+        if (loyaltyTransaction.getType() != null && loyaltyTransaction.getType().equalsIgnoreCase("collect")) {
             tvPoints.setText("+" + formatter.format(loyaltyTransaction.getPoints()));
             tvPoints.setTextColor(ContextCompat.getColor(context, com.herfy.commonstyles.R.color.background_color_blue));
         } else {
             tvPoints.setText("-" + formatter.format(loyaltyTransaction.getPoints()));
             tvPoints.setTextColor(ContextCompat.getColor(context, com.herfy.commonstyles.R.color.text_color_red_points));
         }
-        if (loyaltyTransaction.getDetails() != null && loyaltyTransaction.getDetails().getAmount() != null) {
-            tvSarValue.setText(StringUtil.localize(formatter.format(loyaltyTransaction.getDetails().getAmount()) + " " + CacheUtil.getInstance().getTranslations(concept.getCurrencySymbol())));
+        if (loyaltyTransaction.getAmount() != 0) {
+            tvSarValue.setText(StringUtil.localize(formatter.format(loyaltyTransaction.getAmount()) + " " + CacheUtil.getInstance().getTranslations(concept.getCurrencySymbol())));
         } else {
             tvSarValue.setText(CurrencyUtils.Companion.updateCurrency(0.0, true));
         }
     }
 
     @Override
-    public void showNextTier(Tier tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, Loyalty loyalty) {
+    public void showNextTier(LoyaltyTierV2 tier, int totalAccumulatedPoints, int pointsUntilNextTier, int startingPointsOfNextTier, boolean isMaxTier, LoyaltyV2 loyalty) {
 
     }
 
@@ -133,7 +134,7 @@ public class LoyaltyPointsViewHolder extends RecyclerView.ViewHolder implements 
 
     }
     @Override
-    public void showTiers(Loyalty loyalty) {
+    public void showTiers(LoyaltyV2 loyalty) {
 
     }
 

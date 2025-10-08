@@ -95,7 +95,7 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
 
@@ -130,4 +130,10 @@ dependencies {
     //Kochava
     def kochava_tracker_version = "5.4.0"
     implementation("com.kochava.tracker:events:$kochava_tracker_version")
+
+    // Hydra Sdk
+    implementation("com.capillary:hydra-core:1.9.12")
+    // Hydra Sdk
+    implementation("com.capillary:hydra-firebase:1.9.12")
+    implementation("com.capillary:hydra-pushbase:1.9.12")
 }

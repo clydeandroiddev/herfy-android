@@ -34,12 +34,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.capillary.hydra.android.sdk.HydraAPI;
 import com.herfy.R;
 import com.herfy.auth.views.AuthFragment;
 import com.herfy.base.BaseDialogFragment;
 import com.herfy.utils.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.OrderTypeActivity;
+import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.models.objects.Concept;
 import com.herfy.utils.helper.AnimUtil;
@@ -50,8 +52,12 @@ import com.herfy.verification.VerificationPresenter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -545,6 +551,17 @@ public class VerifyCodeDialogFragment extends BaseDialogFragment implements Veri
 
     @Override
     public void showVerified() {
+
+        //HYDRA SIGN IN EVENT
+        HydraAPI.Companion.getDefaultInstance(requireContext()).
+                pushUserSignin(
+                        AuthUtil.getInstance().getCustomer().getId(),
+                        AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                        AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                        AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                        AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                        Collections.emptyMap());
+
         onDismiss(getDialog());
 
         Intent intent = new Intent(getActivity(), MainActivity.class);

@@ -39,16 +39,24 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.capillary.hydra.android.sdk.FcmConfig;
+import com.capillary.hydra.android.sdk.HydraAPI;
+import com.capillary.hydra.android.sdk.HydraConfig;
+import com.capillary.hydra.android.sdk.utils.LogType;
+import com.capillary.hydra.firebase.HydraFirebaseAPI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
+import com.google.gson.Gson;
 import com.herfy.BuildConfig;
 import com.herfy.R;
 import com.herfy.animation.ActivitySwitcher;
 import com.herfy.base.BaseActivity;
+import com.herfy.base.BaseApplication;
 import com.herfy.country.CountriesActivity;
 import com.herfy.language.LanguageNewActivity;
 import com.herfy.main.MainActivity;
+import com.herfy.util.AppLogger;
 import com.herfy.util.obfuscator.Keychain;
 import com.herfy.util.obfuscator.ObfuscatorKt;
 import com.herfy.utils.helper.CacheHelper;
@@ -68,6 +76,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Slide;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -220,7 +229,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
     @Override
     public void checkIfRooted() {
-        if (CommonUtils.isRooted(this)) {
+        if (CommonUtils.isRooted()) {
             showAlertDialog(
                     "",
                     CacheUtil.getInstance().getTranslations(
@@ -704,4 +713,31 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         }
     }
 
+    @Override
+    public void initializeHydraSdk() {
+        String baseUrl = CacheUtil.getInstance().getCapillaryBaseUrl();
+        String publicKey = CacheUtil.getInstance().getCapillarySslPublicKey();
+
+        if (baseUrl != null && !baseUrl.isEmpty() && publicKey != null && !publicKey.isEmpty()) {
+            ((BaseApplication) getApplicationContext()).initializeHydraSdk(getApplicationContext());
+
+            if(!AuthUtil.getInstance().getFirebase().isEmpty() && AuthUtil.getInstance().isSignedIn()) {
+                //HYDRA SIGN IN EVENT
+                HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
+                        pushUserSignin(
+                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                                Collections.emptyMap());
+
+                HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
+
+            }
+        }
+
+
+
+    }
 }

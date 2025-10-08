@@ -303,7 +303,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_loyalty_empty_state"

@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.firebase-perf'
-apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'dagger.hilt.android.plugin'
 
 fileTree('sub').filter { it.toString().contains(".gradle") }.each { apply from: "${it}" }
@@ -19,7 +20,7 @@ android {
     namespace 'com.herfy'
     compileSdk 36
     defaultConfig {
-        minSdk 24
+        minSdkVersion 24
         targetSdk 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -168,7 +169,7 @@ android {
             minifyEnabled false
             shrinkResources false
             versionNameSuffix "-kiosk-$dateToday.$apkCountForToday"
-            buildConfigField "String", "BASE_URL", "\"https://test-kiosk-api.getsolo.io/\""
+            buildConfigField "String", "BASE_URL", "\"https://test-kiosk-api2.getsolo.io/\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
             buildConfigField "float", "FEATURE_PHASE", '1.3'
             buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
@@ -334,22 +335,22 @@ dependencies {
     implementation "androidx.multidex:multidex:$multidex_version"
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation "androidx.core:core-ktx:1.8.0"
-    implementation "androidx.fragment:fragment:1.5.0-rc01"
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.fragment:fragment:1.6.2'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
-    implementation platform('com.google.firebase:firebase-bom:30.1.0')
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
 
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-appindexing'
+    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
     implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-core'
+    implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-perf'
-    implementation "com.google.firebase:firebase-config:21.2.0"
+    implementation "com.google.firebase:firebase-config"
     implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-dynamic-links'
     implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-dynamic-links'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation 'com.google.android.libraries.places:places:2.6.0'
@@ -396,7 +397,6 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.github.Tap-Payments:goSellSDK-AndroidX:3.19.41'
     implementation 'com.nex3z:flow-layout:1.2.4'
-    implementation 'com.android.support:design:34'
     implementation "androidx.cardview:cardview:1.0.0"
     androidTestImplementation 'androidx.test:runner:1.4.0'
     testImplementation 'junit:junit:4.13.2'
@@ -513,6 +513,14 @@ dependencies {
     implementation "androidx.media3:media3-ui:1.3.1"
 
     implementation 'com.github.dhaval2404:imagepicker:2.1'
+
+
+    // Hydra Sdk
+    implementation("com.capillary:hydra-core:1.9.12")
+    // Hydra Sdk
+    implementation("com.capillary:hydra-pushbase:1.9.12")
+    //implementation("com.capillary:hydra-firebase-push:1.9.12")
+    implementation("com.capillary:hydra-firebase:1.9.12")
 
 }
 

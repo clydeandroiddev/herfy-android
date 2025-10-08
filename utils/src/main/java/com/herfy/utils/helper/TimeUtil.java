@@ -53,6 +53,25 @@ public class TimeUtil {
         }
     }
 
+    public static String formatDateWithUTC(String selectedDate) {
+        try {
+            // Input format (ISO 8601 with 'Z' for UTC)
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+            inputFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Parse as UTC
+
+            // Parse the input date string
+            Date date = inputFormat.parse(selectedDate);
+
+            // Desired output format
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
+            outputFormat.setTimeZone(TimeZone.getDefault()); // Convert to local time if needed
+
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            return selectedDate; // return original if parsing fails
+        }
+    }
+
     public static String formatDate(String selectedDate,String pattern) {
         try {
             SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.ENGLISH);

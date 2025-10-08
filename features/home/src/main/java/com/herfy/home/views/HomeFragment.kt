@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.google.gson.Gson
 import com.herfy.common.getPromisedMinutes
 import com.herfy.home.R
 import com.herfy.home.adapter.PromotionCategoryAdapter
@@ -51,6 +52,7 @@ import com.herfy.utils.helper.ViewUtil
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
+import com.skylinedynamics.solosdk.util.AppLogger
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
 
@@ -447,15 +449,35 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.loyalty.observe(this) {
-            it.getContentIfNotHandled()?.let { loyalty ->
+            val loyalty = it.getContentIfNotHandled()
+            if (loyalty == null) {
+                if (!AuthUtil.getInstance().isSignedIn) {
+                    binding.layoutLoyalty.clCustomerLoyalty.gone()
+                } else {
+                    binding.layoutLoyalty.apply {
+                        clCustomerLoyalty.visible()
+                        cvShimmerLoyalty.visible()
+                        cvLoyaltyDetails.gone()
+                        cvEmptyState.gone()
+                    }
+                }
+                return@observe
+            }
+
+            if (loyalty.attributes == null) {
+                binding.layoutLoyalty.clCustomerLoyalty.gone()
+                return@observe
+            }
+
+
+            binding.layoutLoyalty.clCustomerLoyalty.visible()
+            loyalty.let { loyalty ->
                 binding.layoutLoyalty.apply {
                     loyalty.let {
-                        tvTotalPoints.text =
-                            StringUtil.localize(loyalty.attributes.currentBalance.toString())
-                        val currentBalanceValue =
-                            String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                        tvTotalPoints.text = StringUtil.localize(loyalty.attributes.currentBalance.toString())
+                        val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                         tvSarValue.text = StringUtil.localize(currentBalanceValue)
-                        var loyaltyTier = loyalty.attributes.loyaltyTier?.name ?: ""
+                        var loyaltyTier = loyalty.attributes.loyaltyTier?.label?.english ?: ""
                         val tierImageUrl = loyalty.attributes.loyaltyTier?.imageUrl ?: ""
                         if (LocaleUtil.getInstance().isEnglish) {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
@@ -525,13 +547,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.tierProgress.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { tierProgress ->
                 AuthUtil.getInstance().setCustomerLoyaltyTier(tierProgress.nextTier)
-                CacheUtil.getInstance()
-                    .setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
+                CacheUtil.getInstance().setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
                 CacheUtil.getInstance().setPointsUntilNextTier(tierProgress.pointsToNextTier)
                 CacheUtil.getInstance().setStartingPointsOfNextTier(tierProgress.startPoints)
                 binding.layoutLoyalty.apply {
                     if (tierProgress.pointsToNextTier <= 0) {
-                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.name ?: ""
+                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.label?.english ?: ""
                         if (tierProgress.isMaxTier) {
                             progress.max = 100
                             progress.progress = 100
@@ -540,7 +561,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             ).replace("(x)", tierName)
                         }
                     } else {
-                        var loyaltyTier = tierProgress.nextTier?.name ?: ""
+                        var loyaltyTier = tierProgress.nextTier?.label?.english ?: ""
                         if (!loyaltyTier.isNullOrEmpty() && LocaleUtil.getInstance().isEnglish) {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }

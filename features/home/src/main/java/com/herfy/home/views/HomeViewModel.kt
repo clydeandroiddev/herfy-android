@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.herfy.analytics.kochava.KochavaEventType
@@ -36,7 +37,10 @@ import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyProfile
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroup
@@ -46,6 +50,7 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Tier
+import com.skylinedynamics.solosdk.api.models.objects.TranslatedV2
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ably.lib.types.Message
@@ -98,8 +103,8 @@ class HomeViewModel @Inject constructor(
     var excludedMenu: ArrayList<MenuCategory> = ArrayList()
     private val excludedCategories = HashMap<String, HashSet<MenuCategory>>()
 
-    private val _loyalty = MutableLiveData<Event<Loyalty?>>()
-    val loyalty: LiveData<Event<Loyalty?>> = _loyalty
+    private val _loyalty = MutableLiveData<Event<LoyaltyV2?>>()
+    val loyalty: LiveData<Event<LoyaltyV2?>> = _loyalty
 
     private val _updatePromoCategoryList = MutableLiveData<Event<PromotionCategory>>()
     val updatePromoCategoryList: LiveData<Event<PromotionCategory>> = _updatePromoCategoryList
@@ -108,12 +113,12 @@ class HomeViewModel @Inject constructor(
     val orderTypes: LiveData<Set<OrderType>> = _orderTypes
 
 
-    private val _tiers = MutableLiveData<Event<List<Tier>>>()
-    val tiers: MutableLiveData<Event<List<Tier>>> = _tiers
+    private val _tiers = MutableLiveData<Event<List<LoyaltyTierV2>>>()
+    val tiers: MutableLiveData<Event<List<LoyaltyTierV2>>> = _tiers
 
 
-    private val _tier = MutableLiveData<Tier?>()
-    val tier: MutableLiveData<Tier?> = _tier
+    private val _tier = MutableLiveData<LoyaltyTierV2?>()
+    val tier: MutableLiveData<LoyaltyTierV2?> = _tier
 
     private val _totalPointsAccumulated = MutableLiveData<Int>()
     val totalPointsAccumulated: MutableLiveData<Int> = _totalPointsAccumulated
@@ -433,22 +438,26 @@ class HomeViewModel @Inject constructor(
                 _loyalty.value = Event(loyalty)
             }
 
-            Single.zip<Loyalty, List<Tier>, Pair<Loyalty, List<Tier>>>(
+            Single.zip<LoyaltyV2, List<LoyaltyTierV2>, Pair<LoyaltyV2, List<LoyaltyTierV2>>>(
                 getLoyaltyObservable(), getTiersObservable()
-            ) { loyalty: Loyalty, tiers: List<Tier> ->
+            ) { loyalty: LoyaltyV2, tiers: List<LoyaltyTierV2> ->
                 Pair(loyalty, tiers)
-            }.subscribe({ pair: Pair<Loyalty, List<Tier>> ->
+            }.subscribe({ pair: Pair<LoyaltyV2, List<LoyaltyTierV2>> ->
                 var tiers = pair.second
                 val loyalty = pair.first
                 val totalPointsAccumulated = loyalty.attributes.currentBalance
                 var eligibleTiers = Observable.fromIterable(tiers)
-                    .filter { tier: Tier -> totalPointsAccumulated <= tier.endPoint }.toList()
+                    .filter { tier: LoyaltyTierV2 -> totalPointsAccumulated <= tier.endingPoints }.toList()
                     .blockingGet()
                 var pointsToNextTier = 0
                 if (loyalty.attributes.loyaltyTier == null) {
                     val tier = tiers[0]
-                    val loyaltyTier = LoyaltyTier()
-                    loyaltyTier.name = tier.name
+                    val loyaltyTier = LoyaltyTierV2()
+                    val translated = TranslatedV2()
+                    translated.english = tier.label.english
+                    translated.arabic = tier.label.arabic
+                    translated.french = tier.label.french
+                    loyaltyTier.label = translated
                     loyaltyTier.id = tier.id
                     loyaltyTier.imageUrl = tier.imageUrl
                     loyalty.attributes.loyaltyTier = loyaltyTier
@@ -458,7 +467,7 @@ class HomeViewModel @Inject constructor(
                 _tiers.value = Event(tiers)
                 AuthUtil.getInstance().customerLoyalty = loyalty
 
-                var nextTier: Tier? = null
+                var nextTier: LoyaltyTierV2? = null
                 if (eligibleTiers.size <= 0 && tiers.isNotEmpty()) {
                     eligibleTiers = ArrayList()
                     eligibleTiers.add(tiers[tiers.size - 1])
@@ -468,14 +477,14 @@ class HomeViewModel @Inject constructor(
                 }
                 if (eligibleTiers.size > 1) {
                     nextTier = eligibleTiers[1]
-                    pointsToNextTier = nextTier.startPoint - loyalty.attributes.currentBalance
+                    pointsToNextTier = nextTier.startingPoints - loyalty.attributes.currentBalance
                 }
                 var isMaxTier = false
                 var startPoints = 0
                 if (nextTier != null) {
-                    startPoints = nextTier.startPoint
+                    startPoints = nextTier.startingPoints
                     if (loyalty.attributes.loyaltyTier != null) {
-                        isMaxTier = nextTier.name == loyalty.attributes.loyaltyTier.name
+                        isMaxTier = nextTier.label.english == loyalty.attributes.loyaltyTier.label.english
                     }
                     if (isMaxTier) {
                         pointsToNextTier = 0
@@ -494,21 +503,27 @@ class HomeViewModel @Inject constructor(
 
 
             }) { error: Throwable? ->
-                val loyalty = Loyalty()
-                val loyaltyAttributes = LoyaltyAttributes()
-                val loyaltyTier = LoyaltyTier()
-                loyaltyTier.name = "Classic"
+                val loyalty = LoyaltyV2()
+                val loyaltyAttributes = LoyaltyProfile()
+                val loyaltyTier = LoyaltyTierV2()
+                loyaltyTier.label.english = "Classic"
+                loyaltyTier.label.french = "Classic"
+                loyaltyTier.label.arabic = "Classic"
                 loyaltyAttributes.loyaltyTier = loyaltyTier
                 loyaltyAttributes.currentBalance = 0
-                val currentTier = Tier()
-                currentTier.name = "Classic"
-                currentTier.startPoint = 0
-                val nextTier = Tier()
-                nextTier.name = "Silver"
-                nextTier.startPoint = 100
+                val currentTier = LoyaltyTierV2()
+                currentTier.startingPoints = 0
+                currentTier.label.english = "Classic"
+                currentTier.label.french = "Classic"
+                currentTier.label.arabic = "Classic"
+                val nextTier = LoyaltyTierV2()
+                nextTier.label.english = "Classic"
+                nextTier.label.french = "Classic"
+                nextTier.label.arabic = "Classic"
+                nextTier.startingPoints = 100
                 loyaltyAttributes.loyaltyTier = loyaltyTier
                 loyaltyAttributes.currentBalance = 0
-                _tiers.value = Event(ArrayList<Tier>(listOf(currentTier)))
+                _tiers.value = Event(ArrayList<LoyaltyTierV2>(listOf(currentTier)))
                 loyalty.attributes = loyaltyAttributes
                 _tierProgress.value = Event(
                     TierProgress(
@@ -587,14 +602,14 @@ class HomeViewModel @Inject constructor(
     }*/*/
 
 
-    private fun getTiersObservable(): Single<List<Tier>?>? {
-        return Single.create<List<Tier>?> { source: SingleEmitter<List<Tier>?> ->
+    private fun getTiersObservable(): Single<List<LoyaltyTierV2>?>? {
+        return Single.create<List<LoyaltyTierV2>?> { source: SingleEmitter<List<LoyaltyTierV2>?> ->
 
             invoke {
                 homeRepository.getLoyaltyTiers { homeResponse ->
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
-                            it.cast<ArrayList<Tier>> {
+                            it.cast<ArrayList<LoyaltyTierV2>> {
                                 CacheUtil.getInstance().setLoyaltyTiers(it)
                                 source.onSuccess(it)
                             }
@@ -608,21 +623,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getLoyaltyObservable(): Single<Loyalty?>? {
-        return Single.create<Loyalty?> { source: SingleEmitter<Loyalty?> ->
+    fun getLoyaltyObservable(): Single<LoyaltyV2?>? {
+        return Single.create<LoyaltyV2?> { source: SingleEmitter<LoyaltyV2?> ->
             invoke {
                 homeRepository.getCustomerLoyalty(AuthUtil.getInstance().customer.id) { homeResponse ->
                     if (homeResponse.success) {
                         homeResponse.data?.let { it ->
-                            it.cast<Loyalty> {
+                            it.cast<LoyaltyV2> {
                                 AuthUtil.getInstance().customerLoyalty = it
                                 source.onSuccess(it)
                             }
                         } ?: run {
                             _loyalty.value = Event(null)
+                            source.onError(Throwable("Loyalty data is null"))
+
                         }
                     } else {
-                        _loyalty.value = Event(null)
+                        if (AuthUtil.getInstance().customerLoyalty != null) {
+                            _loyalty.value = Event(AuthUtil.getInstance().customerLoyalty)
+                        } else {
+                            _loyalty.value = Event(null)
+                            source.onError(Throwable("Loyalty data is null"))
+
+                        }
                         //_showError.value = Event(ErrorMsgItem(true, homeResponse.message))
                     }
                 }

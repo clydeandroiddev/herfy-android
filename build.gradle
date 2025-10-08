@@ -2,12 +2,14 @@
 buildscript {
     ext.kotlin_version = '1.8.20'
 
+
     repositories {
         google()
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.2'
@@ -17,7 +19,7 @@ buildscript {
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+        //classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
         classpath 'androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3'
         classpath "com.google.dagger:hilt-android-gradle-plugin:2.48"
         // NOTE: Do not place your application dependencies here; they belong
@@ -31,6 +33,13 @@ allprojects {
             jvmTarget = "17"
         }
     }
+
+    def githubProps = new Properties()
+    def githubPropsFile = rootProject.file("github.properties")
+    if (githubPropsFile.exists()) {
+        githubProps.load(new FileInputStream(githubPropsFile))
+    }
+
     repositories {
         google()
         flatDir {
@@ -48,6 +57,14 @@ allprojects {
         maven {
             url "https://repo.spring.io/plugins-release/"
         }
+        maven {
+            url "https://maven.pkg.github.com/Capillary/hydra-sdk-android-maven"
+            credentials {
+                username githubProps['username']
+                password githubProps['token']
+            }
+        }
+
     }
 }
 

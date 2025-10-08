@@ -43,6 +43,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.IngredientCdn;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategoryItem;
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupCdn;
@@ -340,19 +341,19 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     public void getLoyalty() {
-        CustomersApiCall.getInstance().getCustomerLoyalty(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
-                    if (data.getJSONObject("attributes").optJSONObject("tier") == null || data.getJSONObject("attributes").get("tier") instanceof JSONObject) {
-                        Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    if (data.getJSONObject("loyalty_profile").optJSONObject("current_tier") == null || data.getJSONObject("loyalty_profile").get("current_tier") instanceof JSONObject) {
+                        LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                         if (loyalty != null && loyalty.getAttributes().getLoyaltyTier() != null && !TextUtils.isEmpty(loyalty.getAttributes().getLoyaltyTier().getImageUrl())) {
                             mainView.preloadImage(loyalty.getAttributes().getLoyaltyTier().getImageUrl(), RequestOptions.centerInsideTransform());
                         }
                     }
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
                 } catch (JSONException e) {
                     e.printStackTrace();

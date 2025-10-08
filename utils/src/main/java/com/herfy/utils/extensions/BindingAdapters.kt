@@ -17,6 +17,8 @@ import com.bumptech.glide.request.target.Target
 import com.herfy.utils.constants.Text
 import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.CacheUtil
+import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.AppLogger
 
@@ -184,10 +186,11 @@ fun ImageView.setIconWith(resource : Int){
     }
 }
 @BindingAdapter("app:rewardDescription")
-fun TextView.setRewardTierDescription(tier : Tier){
-    val earnPoint = tier.collectRules.earnPoint
-    val perSar = tier.collectRules.perSar
-    text = CacheUtil.getInstance().getTranslations(Text.SAR_ORDER_VALUE_TO_POINTS, "(x) SAR of your order value converts to (y) points").replace("(x)", perSar.toString()).replace("(y)", earnPoint.toString())
+fun TextView.setRewardTierDescription(tier : LoyaltyTierV2){
+    val earnPoint = tier.collectionRatio
+    val perSar = tier.redemptionRatio
+    //text = CacheUtil.getInstance().getTranslations(Text.SAR_ORDER_VALUE_TO_POINTS, "(x) SAR of your order value converts to (y) points").replace("(x)", perSar.toString()).replace("(y)", earnPoint.toString())
+    text = tier.description.getValue(LocaleUtil.getInstance().language)
 }
 
 @BindingAdapter("app:isVisible")

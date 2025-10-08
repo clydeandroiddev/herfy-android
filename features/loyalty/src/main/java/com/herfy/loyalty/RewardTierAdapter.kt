@@ -7,10 +7,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.loyalty.databinding.ItemRewardTierBinding
 import com.herfy.utils.helper.LocaleUtil
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.Tier
+import com.skylinedynamics.solosdk.util.AppLogger
 import java.util.Locale
 
-class RewardTierAdapter(private val tierList : ArrayList<Tier> = arrayListOf()) :  RecyclerView.Adapter<RewardTierAdapter.ViewHolder>(){
+class RewardTierAdapter(private val tierList : ArrayList<LoyaltyTierV2> = arrayListOf()) :  RecyclerView.Adapter<RewardTierAdapter.ViewHolder>(){
     inner class ViewHolder (val binding : ItemRewardTierBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,17 +31,20 @@ class RewardTierAdapter(private val tierList : ArrayList<Tier> = arrayListOf()) 
         val tierData = tierList[position]
        holder.binding.apply {
            tier = tierData
-           var loyaltyTier = tierData.name
-           if(LocaleUtil.getInstance().isEnglish) {
-               loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
+
+           try{
+               var loyaltyTier = tierData.label
+               tvRewardTier.text = loyaltyTier.getValue(LocaleUtil.getInstance().language)
+           }catch (e: Exception){
+               e.printStackTrace()
            }
-           tvRewardTier.text = loyaltyTier
+
            executePendingBindings()
        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateList(tierList: MutableList<Tier>){
+    fun updateList(tierList: MutableList<LoyaltyTierV2>){
         this.tierList.apply {
             clear()
             addAll(tierList)

@@ -10,6 +10,7 @@ import com.skylinedynamics.solosdk.api.calls.IntegrationsApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginTwitterBody;
@@ -33,7 +34,7 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.LoginFacebookBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.LoginGoogleBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.ResendSMSBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerEmailMobileBody;
-
+import com.capillary.hydra.android.sdk.HydraAPI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -254,7 +255,9 @@ public class VerificationPresenter implements VerificationContract.Presenter {
                         verificationView.logEvent("SignUp", eventAttributes, null, 0);
 
                         Customer customer = GsonHelper.gsonFinal().fromJson(data.toString(), Customer.class);
+
                         getCustomer(customer.getId());
+
 
                     } catch(JSONException e){
                         e.printStackTrace();
@@ -575,7 +578,7 @@ public class VerificationPresenter implements VerificationContract.Presenter {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
                 } catch (JSONException e) {
                     e.printStackTrace();

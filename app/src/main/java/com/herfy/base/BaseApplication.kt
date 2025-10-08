@@ -5,6 +5,13 @@ import android.content.Context
 import androidx.multidex.MultiDex
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import com.capillary.hydra.android.sdk.FcmConfig
+import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraConfig
+import com.capillary.hydra.android.sdk.NotificationConfig
+import com.capillary.hydra.android.sdk.exceptions.HydraConfigurationException
+import com.capillary.hydra.android.sdk.utils.LogType
+import com.capillary.hydra.pushbase.HydraPushApi
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
@@ -14,10 +21,12 @@ import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.FirebaseApp
 import com.herfy.BuildConfig
+import com.herfy.R
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
 import com.herfy.util.AppLogger
+import com.herfy.util.AppPushMessageListener
 import com.herfy.util.glide.UnsafeOkHttpClient
 import com.herfy.util.hmac.HmacHeaderInterceptor
 import com.herfy.util.obfuscator.Keychain
@@ -38,20 +47,20 @@ import io.shipbook.shipbooksdk.ShipBook
 @HiltAndroidApp
 class BaseApplication : Application(), ImageLoaderFactory {
 
+
+
     override fun onCreate() {
         super.onCreate()
-
-        AppDatabase.init(this)
         FirebaseApp.initializeApp(this)
+        CacheUtil.init(this)
+        AppDatabase.init(this)
         sdkInitialize(this)
         AppEventsLogger.activateApp(this)
         if(BuildConfig.DEBUG) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
         }
-        AppDatabase.init(this)
         AuthUtil.init(this)
-        CacheUtil.init(this)
         LocaleUtil.init(this)
         FontHandler.init(this)
         KochavaTrackerUtil.init(applicationContext, reveal(Keychain.KOCHAVA_GUID))
@@ -97,6 +106,10 @@ class BaseApplication : Application(), ImageLoaderFactory {
                 }
             }
         }
+
+
+
+
     }
 
     override fun attachBaseContext(base: Context) {
@@ -108,5 +121,40 @@ class BaseApplication : Application(), ImageLoaderFactory {
         return ImageLoader.Builder(this)
             .okHttpClient(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build()
+    }
+
+    fun initializeHydraSdk(context: Context) {
+        val notificationConfig = NotificationConfig(
+            R.drawable.notification,
+            R.color.colorPrimary,
+            true
+        )
+
+        //Hydra Config
+        var accountId: String = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
+            "ayk-113123"
+        } else {
+            "rnu-282033"
+        }
+
+        val hydraConfig = HydraConfig.Builder(
+            context,
+            accountId = accountId
+        )
+            .notificationConfig(notificationConfig)
+            .debugLevel(LogType.VERBOSE)
+            .captureViewPortDetails(true)
+            //.sslPublicKey("jyuoLOfuVQyA6a9iGJ5k/m0MoMDDh9+dEjqZkIb1Afs=")
+            //.baseURL("https://mapp-eucrm.api.capillarytech.com/")
+            .sslPublicKey(CacheUtil.getInstance().capillarySslPublicKey)
+            .baseURL(CacheUtil.getInstance().capillaryBaseUrl)
+            .fcmConfig(FcmConfig(false))
+            .build()
+
+        try {
+            HydraAPI.instanceWithConfig(context, hydraConfig)
+        } catch (e: HydraConfigurationException) {
+            AppLogger.error("Hydra init failed $e")
+        }
     }
 }

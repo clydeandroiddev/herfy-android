@@ -16,6 +16,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.herfy.BuildConfig;
+import com.herfy.base.BaseApplication;
 import com.herfy.database.AppDatabase;
 import com.herfy.database.entities.AllergenDb;
 import com.herfy.database.entities.IngredientDb;
@@ -54,6 +55,8 @@ import com.skylinedynamics.solosdk.api.models.objects.Customer;
 import com.skylinedynamics.solosdk.api.models.objects.ForceUpdate;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.ModifierGroupType;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType;
@@ -250,6 +253,10 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                         try {
 
+                            CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config"));
+                            splashView.initializeHydraSdk();
+                            
+
                             String inAppReviewEnableKey = "android_enable_in_app_review";
                             boolean inAppReviewEnable = firebaseRemoteConfig.getBoolean(inAppReviewEnableKey);
                             CacheUtil.getInstance().setInAppReviewEnable(inAppReviewEnable);
@@ -309,7 +316,6 @@ public class SplashPresenter implements SplashContract.Presenter {
                         String sharedStringRemoteConfigKey = HmacUtil.getSharedStringRemoteConfigKey();
                         String sharedConfigString = sharedRemoteConfig.getString(sharedStringRemoteConfigKey);
                         CacheUtil.getInstance().setSharedStringConfig(sharedConfigString);
-
                     }
 
                     splashView.init();
@@ -997,19 +1003,19 @@ public class SplashPresenter implements SplashContract.Presenter {
     }
 
     public void getLoyalty() {
-        CustomersApiCall.getInstance().getCustomerLoyalty(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
-                    if (data.getJSONObject("attributes").optJSONObject("tier") == null || data.getJSONObject("attributes").get("tier") instanceof JSONObject) {
-                        Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    if (data.getJSONObject("loyalty_profile").optJSONObject("current_tier") == null || data.getJSONObject("loyalty_profile").get("current_tier") instanceof JSONObject) {
+                        LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                         if (loyalty != null && loyalty.getAttributes().getLoyaltyTier() != null && !TextUtils.isEmpty(loyalty.getAttributes().getLoyaltyTier().getImageUrl())) {
                             splashView.preloadImage(loyalty.getAttributes().getLoyaltyTier().getImageUrl(), RequestOptions.centerInsideTransform());
                         }
                     }
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -1042,6 +1048,8 @@ public class SplashPresenter implements SplashContract.Presenter {
 
         } else if (!AuthUtil.getInstance().getFirebase().isEmpty()) {
             String uniqueID = AuthUtil.getInstance().getUniqueId();
+
+
 
             if (uniqueID.isEmpty()) {
                 uniqueID = UUID.randomUUID().toString();
@@ -1115,18 +1123,17 @@ public class SplashPresenter implements SplashContract.Presenter {
 
     @Override
     public void getLoyaltyTiers() {
-        CustomersApiCall.getInstance().getLoyaltyTiers(new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyTiersV2(new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONArray tiersArray = object.getJSONArray("data");
-                    Type type = new TypeToken<List<Tier>>() {
-                    }.getType();
-                    List<Tier> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
+                    Type type = new TypeToken<List<LoyaltyTierV2>>() {}.getType();
+                    List<LoyaltyTierV2> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
                     if (tiers != null && !tiers.isEmpty()) {
                         CacheUtil.getInstance().setLoyaltyTiers(new ArrayList<>(tiers));
-                        for (Tier tier : tiers) {
+                        for (LoyaltyTierV2 tier : tiers) {
                             splashView.preloadImage(tier.getImageUrl(), RequestOptions.noTransformation());
                         }
                     }
@@ -1180,6 +1187,9 @@ public class SplashPresenter implements SplashContract.Presenter {
         } catch (IOException e) {
             return null;
         }
+
     }
+
+
 
 }

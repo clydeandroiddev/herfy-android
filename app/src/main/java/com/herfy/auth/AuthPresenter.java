@@ -3,6 +3,7 @@ package com.herfy.auth;
 import static com.herfy.utils.constants.AuthKt.AUTH_USERNAME_INVALID;
 import static com.herfy.utils.constants.AuthKt.AUTH_USERNAME_REQUIRED;
 
+import com.capillary.hydra.android.sdk.HydraAPI;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
 import com.herfy.utils.helper.AuthUtil;
@@ -20,6 +21,7 @@ import com.skylinedynamics.solosdk.api.models.objects.Favorite;
 import com.skylinedynamics.solosdk.api.models.objects.Integration;
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption;
 import com.skylinedynamics.solosdk.api.models.objects.Loyalty;
+import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2;
 import com.skylinedynamics.solosdk.api.models.objects.OrderType;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerAddressBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.CreateCustomerBody;
@@ -41,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -574,13 +577,13 @@ public class AuthPresenter implements AuthContract.Presenter {
     }
 
     private void getLoyalty() {
-        CustomersApiCall.getInstance().getCustomerLoyalty(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
+        CustomersApiCall.getInstance().getLoyaltyCustomerV2(AuthUtil.getInstance().getCustomer().getId(), new ApiRequestListener() {
             @Override
             public void onSuccess(Object o) {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONObject data = object.getJSONObject("data");
-                    Loyalty loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), Loyalty.class);
+                    LoyaltyV2 loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2.class);
                     AuthUtil.getInstance().setCustomerLoyalty(loyalty);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -715,6 +718,7 @@ public class AuthPresenter implements AuthContract.Presenter {
                             JSONObject dataObj = json.getJSONObject("data");
 
                             String customerId = dataObj.getString("id");
+
 
                             registrationMethod = "app";
                             if (BuildUtil.soloAppKey().equalsIgnoreCase("SeBwUS2G9SEnkwty")) {
