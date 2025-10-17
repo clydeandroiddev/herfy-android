@@ -299,8 +299,6 @@ class NewOrderDetailsFragment : BaseFragment(), OrdersContract.View {
                         if (loyaltyTransaction != null || item.loyaltyPointsRedeemed > 0) {
                             loyaltyContainer.visible()
 
-                            AppLogger.longError("AAAAAAAAAAAAAA ${Gson().toJson(loyaltyTransaction)}")
-
                             if (loyaltyTransaction != null) {
                                 tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
                                     loyaltyTransaction.attributes.amount, true, false, true

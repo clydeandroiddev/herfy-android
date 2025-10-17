@@ -223,9 +223,6 @@ class LoyaltyHistoryPresenter @Inject constructor(
             // Ensure no duplicates by ID and Type
             val distinctResult = result.distinctBy { Pair(it.id, it.type) }
 
-            AppLogger.longError(
-                "AAAAAAAAAAAA Result size: ${distinctResult.size}, transactions: ${distinctResult.map { Pair(it.id, it.type) }}"
-            )
 
            filteredTransactionList.addAll(distinctResult)
         }
