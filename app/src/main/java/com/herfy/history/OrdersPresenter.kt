@@ -2573,6 +2573,21 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
         return null
     }
 
+    override fun getCapillaryTransaction(): LoyaltyPointsTransaction? {
+        transactions?.let { transactions ->
+            for (transaction in transactions) {
+                if ((transaction.attributes != null) && transaction.attributes.provider != null && Values.CAPILLARY_PROVIDER.equals(
+                        transaction.attributes.provider,
+                        ignoreCase = true
+                    ) && transaction.attributes.type.equals("redeem", ignoreCase = true)
+                ) {
+                    return transaction
+                }
+            }
+        }
+        return null
+    }
+
     override fun getOrderItems(): List<MenuItem> {
         return menuItems
     }

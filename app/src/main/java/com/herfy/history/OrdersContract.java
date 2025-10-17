@@ -157,6 +157,8 @@ public interface OrdersContract {
 
         LoyaltyPointsTransaction getMukafaaTransaction();
 
+        LoyaltyPointsTransaction getCapillaryTransaction();
+
         ArrayList<LoyaltyPointsTransaction> getLoyaltyPointsTransaction();
 
         LoyaltyPointsTransaction getSoloLoyaltyTransaction();

@@ -537,7 +537,7 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
             }
             var loyaltyAmount = 0.0
             try {
-                val loyaltyTransaction = ordersPresenter!!.soloLoyaltyTransaction
+                val loyaltyTransaction = ordersPresenter!!.capillaryTransaction
                 if (loyaltyTransaction != null) {
                     binding.redeemedPointsLayout.visibility =
                         if (loyaltyTransaction.attributes.points > 0) View.VISIBLE else View.GONE
