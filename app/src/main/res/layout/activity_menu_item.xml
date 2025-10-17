@@ -81,6 +81,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:paddingBottom="8dp"
+        android:background="@color/white"
         android:visibility="gone">
 
         <View
