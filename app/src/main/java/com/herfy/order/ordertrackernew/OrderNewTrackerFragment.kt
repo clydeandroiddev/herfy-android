@@ -1510,21 +1510,25 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 orderPaymentDetails.apply {
                     if (item.loyaltyActualPointsRedeemed > 0) {
                         orderPresenter?.let {
-                            val loyaltyTransaction = it.soloLoyaltyTransaction
+                            val loyaltyTransaction = it.capillaryTransaction //it.soloLoyaltyTransaction
                             if (loyaltyTransaction != null || item.loyaltyPointsRedeemed > 0) {
                                 loyaltyContainer.visible()
-                                tvRedeemPointsLabel.text = CacheUtil.getInstance()
-                                    .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
-                                    .replace("x", item.loyaltyActualPointsRedeemed.toString())
                                 if (loyaltyTransaction != null) {
                                     tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
                                         loyaltyTransaction.attributes.amount, true, false, true
                                     )
+                                    tvRedeemPointsLabel.text = CacheUtil.getInstance()
+                                        .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                                        .replace("x", loyaltyTransaction.attributes.points.toString())
                                 } else {
                                     tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
                                         item.loyaltyPointsRedeemed, true, false, true
                                     )
+                                    tvRedeemPointsLabel.text = CacheUtil.getInstance()
+                                        .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
+                                        .replace("x", item.loyaltyActualPointsRedeemed.toString())
                                 }
+
                             } else {
                                 loyaltyContainer.gone()
                             }

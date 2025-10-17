@@ -84,6 +84,7 @@ object Values {
     const val MUKAFA_ENABLED = true
     const val MUKAFAA_PROVIDER = "alrajhi"
     const val LOYALTY_PROVIDER = "solo-loyalty"
+    const val CAPILLARY_PROVIDER = "capillary"
     const val MIXPANEL_TOKEN = "3a172b606e1bd18abfad3bd6f511bbd5"
     const val HOME_PAGE_TOP_BANNER_LABEL = "Home Page Top Banner"
     const val HOME_PAGE_BOTTOM_BANNER_LABEL = "Home Page Bottom Banner"
