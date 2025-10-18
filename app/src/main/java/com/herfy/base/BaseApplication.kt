@@ -131,10 +131,12 @@ class BaseApplication : Application(), ImageLoaderFactory {
         )
 
         //Hydra Config
-        var accountId: String = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
-            "ayk-113123"
+        val accountId: String = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
+            //"ayk-113123"
+            "alx-111818"
         } else {
-            "rnu-282033"
+            //"rnu-282033"
+            "qbl-117806"
         }
 
         val hydraConfig = HydraConfig.Builder(
