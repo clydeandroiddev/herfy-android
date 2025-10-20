@@ -2256,7 +2256,7 @@ public class CacheUtil {
         try {
             String jsonStr = getCapillaryConfig();
             JSONObject json = new JSONObject(jsonStr);
-            return json.optString("account_play_store_app_signing", "");
+            return json.optString("account_id_play_store_app_signing", "");
         } catch (Exception e) {
             e.printStackTrace();
             return "";
