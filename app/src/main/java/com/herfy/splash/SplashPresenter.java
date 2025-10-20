@@ -253,7 +253,11 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                         try {
 
-                            CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config"));
+                            if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release")){
+                                CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config"));
+                            }else{
+                                CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config_debug"));
+                            }
                             splashView.initializeHydraSdk();
                             
 
