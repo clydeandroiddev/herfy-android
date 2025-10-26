@@ -42,8 +42,11 @@ import com.bumptech.glide.request.target.Target;
 import com.capillary.hydra.android.sdk.FcmConfig;
 import com.capillary.hydra.android.sdk.HydraAPI;
 import com.capillary.hydra.android.sdk.HydraConfig;
+import com.capillary.hydra.android.sdk.UserPreferences;
+import com.capillary.hydra.android.sdk.UserUpdateType;
 import com.capillary.hydra.android.sdk.utils.LogType;
 import com.capillary.hydra.firebase.HydraFirebaseAPI;
+import com.capillary.hydra.pushbase.HydraPushApi;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
@@ -137,6 +140,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     checkAlarmPermission();
                 }
 
+
             });
 
     @Override
@@ -154,9 +158,11 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 isNotificationPermissionShowing = true;
                 notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                HydraPushApi.getInstance().requestPushPermission(getApplicationContext());
             } else {
                 checkAlarmPermission();
             }
+
         }
     }
 
@@ -733,6 +739,14 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                                 Collections.emptyMap());
 
                 HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
+
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    HydraAPI.Companion.getDefaultInstance(getApplicationContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(false,false));
+                }else{
+                    HydraAPI.Companion.getDefaultInstance(getApplicationContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(true,true));
+
+
+                }
 
             }
         }

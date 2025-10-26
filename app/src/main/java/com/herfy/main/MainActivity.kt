@@ -39,6 +39,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.android.sdk.UserPreferences
 import com.capillary.hydra.firebase.HydraFirebaseAPI
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -585,6 +586,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
             HydraFirebaseAPI.getInstance()
                 .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
+
+
 
         }
     }

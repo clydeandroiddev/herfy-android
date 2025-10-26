@@ -1,9 +1,11 @@
 package com.herfy.auth.views
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +15,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.clearFragmentResultListener
@@ -21,8 +24,8 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager.widget.ViewPager
-import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.android.sdk.UserPreferences
 import com.daimajia.androidanimations.library.Techniques
 import com.facebook.BuildConfig
 import com.facebook.CallbackManager
@@ -66,7 +69,6 @@ import com.herfy.verification.views.VerifyCodeDialogFragment
 import com.skylinedynamics.solosdk.api.SoloAuth
 import org.json.JSONException
 import java.util.Locale
-import java.util.Map
 import java.util.regex.Pattern
 
 class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginResult>,
@@ -511,6 +513,25 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
             AuthUtil.getInstance().customer.attributes.email,
             AuthUtil.getInstance().customer.attributes.mobile,
             emptyMap())
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            getDefaultInstance(requireContext())!!
+                .passUserPreferences(
+                    AuthUtil.getInstance().customer.attributes.mobile,
+                    UserPreferences(false, false)
+                )
+        } else {
+            getDefaultInstance(requireContext())!!
+                .passUserPreferences(
+                    AuthUtil.getInstance().customer.attributes.mobile,
+                    UserPreferences(true, true)
+                )
+        }
+
 
         verifyCodeDialogFragment?.let {
             it.dismiss()
