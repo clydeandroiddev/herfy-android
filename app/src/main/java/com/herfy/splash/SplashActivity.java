@@ -47,6 +47,7 @@ import com.capillary.hydra.android.sdk.UserUpdateType;
 import com.capillary.hydra.android.sdk.utils.LogType;
 import com.capillary.hydra.firebase.HydraFirebaseAPI;
 import com.capillary.hydra.pushbase.HydraPushApi;
+import com.capillary.hydra.pushbase.listener.NotificationPermissionListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
@@ -153,17 +154,38 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         proceesDeeplink();
         isAuthCredentialMigrated();
 
-        boolean fromChangeLanguage = getIntent().getBooleanExtra("fromChangeLanguage", false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
+        HydraPushApi.getInstance().addPermissionResponseListener(new NotificationPermissionListener() {
+            @Override
+            public void onPermissionResult(boolean b) {
+                if(isFetchingDone){
+                    boolean forceLocation = false;
+                    if (CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
+                        forceLocation = true;
+                    }
+
+                    if (CacheUtil.getInstance().isSeparatedMenus() && CacheUtil.getInstance().getCartQuantity() == 0) {
+                        forceLocation = false;
+                    }
+                    checkAlarmPermission();
+                    proceed(CacheUtil.getInstance().getLanguage(), CacheUtil.getInstance().getOnboarding(), forceLocation);
+                }else {
+                    checkAlarmPermission();
+                }
+            }
+        });
+
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 isNotificationPermissionShowing = true;
                 notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-                HydraPushApi.getInstance().requestPushPermission(getApplicationContext());
             } else {
                 checkAlarmPermission();
             }
+        }else{
+            HydraPushApi.getInstance().requestPushPermission(getApplicationContext());
+        }*/
 
-        }
     }
 
     @Override
@@ -727,6 +749,14 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         if (baseUrl != null && !baseUrl.isEmpty() && publicKey != null && !publicKey.isEmpty()) {
             ((BaseApplication) getApplicationContext()).initializeHydraSdk(getApplicationContext());
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    HydraPushApi.getInstance().requestPushPermission(getApplicationContext());
+                }else{
+                    checkAlarmPermission();
+                }
+            }
+
             if(!AuthUtil.getInstance().getFirebase().isEmpty() && AuthUtil.getInstance().isSignedIn()) {
                 //HYDRA SIGN IN EVENT
                 HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
@@ -744,7 +774,6 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     HydraAPI.Companion.getDefaultInstance(getApplicationContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(false,false));
                 }else{
                     HydraAPI.Companion.getDefaultInstance(getApplicationContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(true,true));
-
 
                 }
 

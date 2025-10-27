@@ -132,8 +132,8 @@ dependencies {
     implementation("com.kochava.tracker:events:$kochava_tracker_version")
 
     // Hydra Sdk
-    implementation("com.capillary:hydra-core:1.9.12")
+    implementation("com.capillary:hydra-core:1.9.18")
     // Hydra Sdk
-    implementation("com.capillary:hydra-firebase:1.9.12")
-    implementation("com.capillary:hydra-pushbase:1.9.12")
+    implementation("com.capillary:hydra-firebase:1.9.18")
+    implementation("com.capillary:hydra-pushbase:1.9.18")
 }
