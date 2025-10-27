@@ -526,7 +526,8 @@ public class BaseActivity extends AppCompatActivity implements BaseListeners {
                 if (!positive.equals("")) {
 
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setAllCaps(false);
-                    if (!CacheUtil.getInstance().getColorMain().equalsIgnoreCase("#FFFFFF")) {
+                    String colorMain = CacheUtil.getInstance().getColorMain();
+                    if (colorMain != null && !colorMain.equalsIgnoreCase("#FFFFFF")) {
                         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ViewUtil.getColorMain(BaseActivity.this));
                     } else {
                         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(BaseActivity.this, R.color.primary_text));

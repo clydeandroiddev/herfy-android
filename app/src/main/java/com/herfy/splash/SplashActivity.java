@@ -140,7 +140,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
         proceesDeeplink();
         isAuthCredentialMigrated();
 
-        boolean fromChangeLanguage = getIntent().getBooleanExtra("fromChangeLanguage", false);
+        /*boolean fromChangeLanguage = getIntent().getBooleanExtra("fromChangeLanguage", false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 if(isFetchingDone){
@@ -158,7 +158,7 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                     checkAlarmPermission();
                 }
             }
-        }
+        }*/
 
     }
 
