@@ -1,5 +1,6 @@
 package com.herfy.main
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
@@ -41,11 +42,12 @@ import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 import com.capillary.hydra.android.sdk.UserPreferences
 import com.capillary.hydra.firebase.HydraFirebaseAPI
+import com.capillary.hydra.pushbase.HydraPushApi
+import com.capillary.hydra.pushbase.listener.NotificationPermissionListener
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.BuildConfig
 import com.herfy.R
@@ -78,7 +80,6 @@ import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.splash.SplashActivity
-import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.util.obfuscator.Keychain
@@ -213,6 +214,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
         }
 
+
+
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("fromChangeLanguage")) {
@@ -223,6 +226,49 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 bundle.getBoolean("forceLocation", false)
             } else {
                 false
+            }
+        }
+
+        //HYDRA LOGS
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                HydraPushApi.getInstance().requestPushPermission(applicationContext)
+            }
+        }
+
+        if (AuthUtil.getInstance().firebase.isNotEmpty() && AuthUtil.getInstance().isSignedIn) {
+            //HYDRA SIGN IN EVENT
+            getDefaultInstance(applicationContext)!!.pushUserSignin(
+                AuthUtil.getInstance().customer.attributes.mobile,
+                AuthUtil.getInstance().customer.attributes.firstName,
+                AuthUtil.getInstance().customer.attributes.lastName,
+                AuthUtil.getInstance().customer.attributes.email,
+                AuthUtil.getInstance().customer.attributes.mobile,
+                emptyMap<String, Any>())
+
+            HydraFirebaseAPI.getInstance()
+                .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
+
+        }
+
+        HydraPushApi.getInstance().addPermissionResponseListener { isGranted ->
+            if (isGranted) {
+                getDefaultInstance(applicationContext)!!
+                    .passUserPreferences(
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        UserPreferences(false, false)
+                    )
+            } else {
+                getDefaultInstance(applicationContext)!!
+                    .passUserPreferences(
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        UserPreferences(true, true)
+                    )
             }
         }
 
@@ -572,24 +618,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         signUpHydra()
 
-        //HYDRA LOGS
-
-        if (!AuthUtil.getInstance().firebase.isEmpty() && AuthUtil.getInstance().isSignedIn) {
-            //HYDRA SIGN IN EVENT
-            getDefaultInstance(applicationContext)!!.pushUserSignin(
-            AuthUtil.getInstance().customer.attributes.mobile,
-            AuthUtil.getInstance().customer.attributes.firstName,
-            AuthUtil.getInstance().customer.attributes.lastName,
-            AuthUtil.getInstance().customer.attributes.email,
-            AuthUtil.getInstance().customer.attributes.mobile,
-            emptyMap<String, Any>())
-
-            HydraFirebaseAPI.getInstance()
-                .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
 
 
-
-        }
     }
 
     private fun setupSideBar() {
