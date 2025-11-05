@@ -1,6 +1,8 @@
 package com.herfy.authentication.views
 
+import android.Manifest
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +12,7 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
@@ -23,6 +26,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.android.sdk.UserPreferences
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -253,6 +258,26 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                         AuthUtil.getInstance().customer.attributes.email,
                         AuthUtil.getInstance().customer.attributes.mobile,
                         emptyMap())
+
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        getDefaultInstance(requireContext())!!
+                            .passUserPreferences(
+                                AuthUtil.getInstance().customer.attributes.mobile,
+                                UserPreferences(false, false)
+                            )
+                    } else {
+                        getDefaultInstance(requireContext())!!
+                            .passUserPreferences(
+                                AuthUtil.getInstance().customer.attributes.mobile,
+                                UserPreferences(true, true)
+                            )
+                    }
+
+
                 }
 
                 is LoginViewState.ShowLoading -> {

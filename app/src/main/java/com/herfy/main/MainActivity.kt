@@ -1,9 +1,12 @@
 package com.herfy.main
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.Dialog
 import android.content.ActivityNotFoundException
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -15,6 +18,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -39,12 +43,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.android.sdk.UserPreferences
 import com.capillary.hydra.firebase.HydraFirebaseAPI
+import com.capillary.hydra.pushbase.HydraPushApi
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.herfy.BuildConfig
 import com.herfy.R
@@ -77,7 +82,6 @@ import com.herfy.newmenu.views.NewMenuHomePageFragmentDirections
 import com.herfy.newmenu.views.PopularNowFragmentDirections
 import com.herfy.promotions.views.PromotionsFragmentDirections
 import com.herfy.splash.SplashActivity
-import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
 import com.herfy.util.ViewUtil
 import com.herfy.util.obfuscator.Keychain
@@ -108,6 +112,7 @@ import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.api.models.objects.Rating
 import com.skylinedynamics.solosdk.api.models.objects.cms.CmsPage
+import com.skylinedynamics.solosdk.util.AppLogger
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.blurry.Blurry
@@ -167,6 +172,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     var currentDestination = -1
     private var languageAdapter: LanguageAdapter? = null
     var isDrawerOpen = false
+    @Volatile
+    private var shouldCheckAlarmPermission = false
 
     private var authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -212,6 +219,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
         }
 
+
+
         val bundle = intent.extras
         if (bundle != null) {
             if (bundle.containsKey("fromChangeLanguage")) {
@@ -223,6 +232,48 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             } else {
                 false
             }
+        }
+
+        //HYDRA LOGS
+        runOnUiThread {
+
+            HydraPushApi.getInstance().addPermissionResponseListener { isGranted ->
+                if (isGranted) {
+                    shouldCheckAlarmPermission = true
+                    passUserPreferenceUpdate(true)
+                } else {
+                    passUserPreferenceUpdate(false)
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    HydraPushApi.getInstance().requestPushPermission(this)
+                }else{
+                    shouldCheckAlarmPermission = true
+                    passUserPreferenceUpdate(true)
+                }
+            }
+
+            if (AuthUtil.getInstance().firebase.isNotEmpty() && AuthUtil.getInstance().isSignedIn) {
+                //HYDRA SIGN IN EVENT
+                getDefaultInstance(applicationContext)!!.pushUserSignin(
+                    AuthUtil.getInstance().customer.attributes.mobile,
+                    AuthUtil.getInstance().customer.attributes.firstName,
+                    AuthUtil.getInstance().customer.attributes.lastName,
+                    AuthUtil.getInstance().customer.attributes.email,
+                    AuthUtil.getInstance().customer.attributes.mobile,
+                    emptyMap<String, Any>())
+
+                HydraFirebaseAPI.getInstance()
+                    .passPushToken(this, AuthUtil.getInstance().firebase)
+
+            }
+
         }
 
         val navHostFragment =
@@ -478,6 +529,20 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     override fun onResume() {
         super.onResume()
 
+        if (shouldCheckAlarmPermission) {
+
+            // We must post this.
+            // This ensures it runs AFTER onResume() has fully completed,
+            // guaranteeing it won't be dismissed by your dismissDialogs() call.
+            Handler(Looper.getMainLooper()).post {
+                if (!isFinishing && !isDestroyed) {
+                    checkAlarmPermission()
+                    // Reset the flag so it doesn't run again
+                    shouldCheckAlarmPermission = false
+                }
+            }
+        }
+
         if (fromChangeLanguage) {
             fromChangeLanguage = false
             ActivitySwitcher.animationIn(findViewById(R.id.drawer_layout), windowManager)
@@ -571,22 +636,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         signUpHydra()
 
-        //HYDRA LOGS
 
-        if (!AuthUtil.getInstance().firebase.isEmpty() && AuthUtil.getInstance().isSignedIn) {
-            //HYDRA SIGN IN EVENT
-            getDefaultInstance(applicationContext)!!.pushUserSignin(
-            AuthUtil.getInstance().customer.attributes.mobile,
-            AuthUtil.getInstance().customer.attributes.firstName,
-            AuthUtil.getInstance().customer.attributes.lastName,
-            AuthUtil.getInstance().customer.attributes.email,
-            AuthUtil.getInstance().customer.attributes.mobile,
-            emptyMap<String, Any>())
 
-            HydraFirebaseAPI.getInstance()
-                .passPushToken(applicationContext, AuthUtil.getInstance().firebase)
-
-        }
     }
 
     private fun setupSideBar() {
@@ -1535,6 +1586,58 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 customData = emptyMap()
             )
             auth.saveHydraSignUp(phone)
+        }
+    }
+
+    private fun checkAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val isArabic = LocaleUtil.getInstance().isArabic
+                val title: String
+                val message: String
+                val okay: String
+                val cancel: String
+                if (isArabic) {
+                    title = resources.getString(R.string.enable_cart_notifications_title_ar)
+                    message = resources.getString(R.string.enable_cart_notifications_message_ar)
+                    okay = resources.getString(R.string.okay_ar)
+                    cancel = resources.getString(R.string.cancel_ar)
+                } else {
+                    title = resources.getString(R.string.enable_cart_notifications_title_en)
+                    message = resources.getString(R.string.enable_cart_notifications_message_en)
+                    okay = resources.getString(R.string.okay_en)
+                    cancel = resources.getString(R.string.cancel_en)
+                }
+                showAlertDialog(
+                    title,
+                    message,
+                    okay,
+                    { dialogInterface: DialogInterface, i: Int ->
+                        dialogInterface.dismiss()
+                        val intent =
+                            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                        intent.setData(Uri.parse("package:$packageName"))
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    },
+                    cancel,
+                    { dialogInterface: DialogInterface, i: Int -> dialogInterface.dismiss() }
+                )
+            }
+        }
+    }
+
+    private fun passUserPreferenceUpdate(hasPermission: Boolean) {
+        if (AuthUtil.getInstance().isSignedIn) {
+            val mobile = AuthUtil.getInstance().customer.attributes.mobile
+
+            HydraAPI.Companion.getDefaultInstance(applicationContext)!!
+                .passUserPreferences(
+                    mobile,
+                    UserPreferences(hasPermission, hasPermission)
+                )
+
         }
     }
 }

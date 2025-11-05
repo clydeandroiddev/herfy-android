@@ -1,15 +1,20 @@
 package com.herfy.authentication.views
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.capillary.hydra.android.sdk.HydraAPI
+import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import com.capillary.hydra.android.sdk.UserPreferences
 import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
@@ -176,6 +181,26 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
                 AuthUtil.getInstance().customer.attributes.email,
                 AuthUtil.getInstance().customer.attributes.mobile,
                 emptyMap())
+
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                getDefaultInstance(requireContext())!!
+                    .passUserPreferences(
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        UserPreferences(false, false)
+                    )
+            } else {
+                getDefaultInstance(requireContext())!!
+                    .passUserPreferences(
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        UserPreferences(true, true)
+                    )
+            }
+
+
 
             KochavaTrackerUtil.trackEventWithData(
                 KochavaEventType.LOGIN.eventName,

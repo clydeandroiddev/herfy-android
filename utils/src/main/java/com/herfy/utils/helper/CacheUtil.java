@@ -2239,4 +2239,28 @@ public class CacheUtil {
         return "";
     }
 
+    // Get hydra_account_id from JSON
+    public String getCapillaryAccountId() {
+        try {
+            String jsonStr = getCapillaryConfig();
+            JSONObject json = new JSONObject(jsonStr);
+            return json.optString("account_id", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    // Get hydra_account_play_store_app_signing from JSON
+    public String getCapillaryAccountPlayStoreAppSigning() {
+        try {
+            String jsonStr = getCapillaryConfig();
+            JSONObject json = new JSONObject(jsonStr);
+            return json.optString("account_id_play_store_app_signing", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
 }

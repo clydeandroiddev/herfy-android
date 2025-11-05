@@ -42,8 +42,11 @@ import com.bumptech.glide.request.target.Target;
 import com.capillary.hydra.android.sdk.FcmConfig;
 import com.capillary.hydra.android.sdk.HydraAPI;
 import com.capillary.hydra.android.sdk.HydraConfig;
+import com.capillary.hydra.android.sdk.UserPreferences;
+import com.capillary.hydra.android.sdk.UserUpdateType;
 import com.capillary.hydra.android.sdk.utils.LogType;
 import com.capillary.hydra.firebase.HydraFirebaseAPI;
+import com.capillary.hydra.pushbase.HydraPushApi;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.crashlytics.internal.common.CommonUtils;
@@ -122,6 +125,24 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
     private final ActivityResultLauncher<String> notificationsPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 isNotificationPermissionShowing = false;
+
+
+
+            });
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
+        ButterKnife.bind(this);
+        splashPresenter = new SplashPresenter(this);
+        splashPresenter.setAreas();
+        proceesDeeplink();
+        isAuthCredentialMigrated();
+
+        /*boolean fromChangeLanguage = getIntent().getBooleanExtra("fromChangeLanguage", false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 if(isFetchingDone){
                     boolean forceLocation = false;
                     if (CacheUtil.getInstance().getApplication().getAttributes().getForceLocation() != 0) {
@@ -136,28 +157,9 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
                 }else {
                     checkAlarmPermission();
                 }
-
-            });
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
-        splashPresenter = new SplashPresenter(this);
-        splashPresenter.setAreas();
-        proceesDeeplink();
-        isAuthCredentialMigrated();
-
-        boolean fromChangeLanguage = getIntent().getBooleanExtra("fromChangeLanguage", false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                isNotificationPermissionShowing = true;
-                notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
-            } else {
-                checkAlarmPermission();
             }
-        }
+        }*/
+
     }
 
     @Override
@@ -720,21 +722,6 @@ public class SplashActivity extends BaseActivity implements SplashContract.View 
 
         if (baseUrl != null && !baseUrl.isEmpty() && publicKey != null && !publicKey.isEmpty()) {
             ((BaseApplication) getApplicationContext()).initializeHydraSdk(getApplicationContext());
-
-            if(!AuthUtil.getInstance().getFirebase().isEmpty() && AuthUtil.getInstance().isSignedIn()) {
-                //HYDRA SIGN IN EVENT
-                HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
-                        pushUserSignin(
-                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                                AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
-                                AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
-                                AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
-                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                                Collections.emptyMap());
-
-                HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), AuthUtil.getInstance().getFirebase());
-
-            }
         }
 
 

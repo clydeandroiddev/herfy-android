@@ -541,6 +541,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="@color/white"
+        android:background="@color/white"
         android:elevation="5dp"
         android:orientation="horizontal"
         android:paddingBottom="8dp"

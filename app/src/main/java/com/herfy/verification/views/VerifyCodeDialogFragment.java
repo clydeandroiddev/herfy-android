@@ -1,9 +1,11 @@
 package com.herfy.verification.views;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -31,10 +33,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.capillary.hydra.android.sdk.HydraAPI;
+import com.capillary.hydra.android.sdk.UserPreferences;
 import com.herfy.R;
 import com.herfy.auth.views.AuthFragment;
 import com.herfy.base.BaseDialogFragment;
@@ -561,6 +565,15 @@ public class VerifyCodeDialogFragment extends BaseDialogFragment implements Veri
                         AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
                         AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
                         Collections.emptyMap());
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            HydraAPI.Companion.getDefaultInstance(requireContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(false,false));
+        }else{
+            HydraAPI.Companion.getDefaultInstance(requireContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(true,true));
+
+        }
+
+
 
         onDismiss(getDialog());
 
