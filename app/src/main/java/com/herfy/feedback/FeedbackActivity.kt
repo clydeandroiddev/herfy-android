@@ -19,12 +19,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.herfy.base.BaseActivity
-import com.herfy.utils.constants.Text
 import com.herfy.databinding.ActivityFeedbackBinding
 import com.herfy.util.StringUtil
+import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.CacheUtil
 import java.io.File
 import java.io.FileOutputStream
-import com.herfy.utils.helper.*
 
 class FeedbackActivity : BaseActivity(), FeedbackContract.View {
 
@@ -128,6 +129,16 @@ class FeedbackActivity : BaseActivity(), FeedbackContract.View {
                 return@OnEditorActionListener true
             }
             false
+        })
+
+        binding.comment.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                val length = s?.length ?: 0;
+                binding.commentCounter.text = "$length/100"
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
         binding.delete.setOnClickListener(View.OnClickListener {
