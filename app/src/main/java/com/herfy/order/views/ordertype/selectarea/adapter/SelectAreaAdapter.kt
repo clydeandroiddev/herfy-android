@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.herfy.ordertype.databinding.ItemCityBinding
 import com.skylinedynamics.solosdk.api.models.objects.area.Area
-import io.shipbook.shipbooksdk.Log
+import java.util.Locale.getDefault
 
 class SelectAreaAdapter(
     val cityList: ArrayList<Area> = arrayListOf(),
@@ -32,7 +32,7 @@ class SelectAreaAdapter(
         val item = cityList[position]
         holder.binding.apply {
 
-            if (selectedId.toLowerCase() != item.name.toLowerCase()) {
+            if (selectedId.lowercase(getDefault()) != item.name.lowercase(getDefault())) {
                 chooseCurbside.setBackgroundResource(com.herfy.ordertype.R.drawable.bg_deliver)
                 selectedIdentifier.setImageResource(com.herfy.ordertype.R.drawable.ic_circle_unselected)
             } else {

@@ -38,6 +38,7 @@ import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.AllowedCountries
 import com.skylinedynamics.solosdk.api.models.objects.LoginOption
+import java.util.Locale.getDefault
 
 class SignInFragment : BaseFragment(), AuthContract.View {
 
@@ -407,12 +408,18 @@ class SignInFragment : BaseFragment(), AuthContract.View {
                 usernameLabel.text = CacheUtil.getInstance().getTranslations(Text.USERNAME_CAPS, "USERNAME")
             }
 
-            phoneNumber.hint = CacheUtil.getInstance().getTranslations(Text.ENTER_PHONE_NUMBER_CAPS, "ENTER PHONE NUMBER").toLowerCase().capitalize()
+            phoneNumber.hint = CacheUtil.getInstance().getTranslations(Text.ENTER_PHONE_NUMBER_CAPS, "ENTER PHONE NUMBER")
+                .lowercase(getDefault())
+                .capitalize()
             username.hint = CacheUtil.getInstance().getTranslations(
-                AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS, "enter_mobile_or_email_address").toLowerCase().capitalize()
+                        AUTH_ENTER_MOBILE_OR_EMAIL_ADDRESS, "enter_mobile_or_email_address")
+                .lowercase(getDefault())
+                .capitalize()
             phoneNumberLabel.text = CacheUtil.getInstance().getTranslations(Text.PHONE_NUMBER)
             passwordLabel.text = CacheUtil.getInstance().getTranslations(Text.PASSWORD)
-            password.hint = CacheUtil.getInstance().getTranslations(Text.PLEASE_TYPE_YOUR_PASSWORD_HERE, "Please type your password here").toLowerCase().capitalize()
+            password.hint = CacheUtil.getInstance().getTranslations(Text.PLEASE_TYPE_YOUR_PASSWORD_HERE, "Please type your password here")
+                .lowercase(getDefault())
+                .capitalize()
             signIn.text = CacheUtil.getInstance().getTranslations(Text.SIGN_IN)
             forgotPassword.text = CacheUtil.getInstance().getTranslations(Text.FORGOT_PASSWORD)
             or.text = CacheUtil.getInstance().getTranslations(Text.OR)

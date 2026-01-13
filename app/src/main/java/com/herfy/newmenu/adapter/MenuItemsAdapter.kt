@@ -37,6 +37,7 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
+import java.util.Locale.getDefault
 
 /**
  * [MenuItemsAdapter] adapter for displaying all the menu categories and items
@@ -91,7 +92,10 @@ class MenuItemsAdapter(
                 onSelect(menuCategory, menuItem)
             }
             var imageUrl = menuItem.image
-            imageUrl = if (imageUrl == null || imageUrl.equals("null", ignoreCase = true) || imageUrl.isEmpty() || imageUrl.toLowerCase().contains("default-image.png")) {
+            imageUrl = if (imageUrl == null || imageUrl.equals("null", ignoreCase = true) || imageUrl.isEmpty() || imageUrl.lowercase(
+                    getDefault()
+                )
+                    .contains("default-image.png")) {
                 Values.DEFAULT_IMAGE_URL
             } else {
                 StringUtil.getCloudflareUrl(Values.MENU_IMAGE_SIZE, Values.MENU_IMAGE_SIZE, imageUrl)

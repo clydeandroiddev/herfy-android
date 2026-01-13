@@ -18,7 +18,6 @@ import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
 import com.herfy.ext.cast
 import com.herfy.main.MainActivity
-import com.herfy.profile.R
 import com.herfy.profile.databinding.FragmentUserEditProfileBinding
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.gone
@@ -34,6 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.Locale.getDefault
 
 
 @AndroidEntryPoint
@@ -156,7 +156,7 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
                 firstName.trim(),
                 lastName.trim(),
                 birthdaySelected,
-                genderSelected.toLowerCase(),
+                genderSelected.lowercase(getDefault()),
                 binding.mobileNum.text.toString(),
                 AuthUtil.getInstance().customer.attributes.email,
                 "",

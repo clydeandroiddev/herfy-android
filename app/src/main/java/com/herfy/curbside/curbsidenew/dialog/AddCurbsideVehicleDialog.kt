@@ -36,6 +36,7 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CarColorAttribute
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMakerAttributes
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar
+import java.util.Locale.getDefault
 
 class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
 
@@ -122,7 +123,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                     val colorAtt = CarColorAttributes()
                     colorAtt.color = it.attributes.color
                     colorAtt.name = it.attributes.colorName
-                    colorAtt.label = it.attributes.colorName.toLowerCase()
+                    colorAtt.label = it.attributes.colorName.lowercase(getDefault())
                     cColor.attributes = colorAtt
                     carColor = cColor
                     setupColor()
@@ -390,7 +391,7 @@ class AddCurbsideVehicleDialog : DialogFragment(), CurbsideContract.View {
                 curbsideColor.isVisible = false
                 curbsideColorSelected.isVisible = true
                 curbsideColorName.text = it.attributes.name
-                if (it.attributes.label.toLowerCase() != "white") {
+                if (it.attributes.label.lowercase(getDefault()) != "white") {
                     curbsideColorSelected.strokeColor =
                         curbsideColor.context.resources.getColor(android.R.color.transparent)
                 } else {
