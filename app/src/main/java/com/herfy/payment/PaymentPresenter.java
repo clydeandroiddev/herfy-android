@@ -498,7 +498,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
         double total = discountedSubtotal + deliveryCharge + vatAmount + promoPrice;
 
         if (loyaltyPointsUsed > 0) {
-            total -= Math.min(loyaltyPointsUsed / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getRedemptionRatio()) ), getMenuItemsTotalPrice());
+            total -= Math.min(loyaltyPointsUsed / Double.parseDouble(String.valueOf(AuthUtil.getInstance().getCustomerLoyalty().getAttributes().getLoyaltyTier().getRedemptionRatio())), getMenuItemsTotalPrice());
         }
 
         if (total < 0) {
@@ -1294,16 +1294,7 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                                     return;
                                 case "checkout":
                                 case "foodics-online":
-                                    try {
-                                        boolean isUserSelectedSavedCard = CacheUtil.getInstance().getCustomCard() != null;
-                                        if (isUserSelectedSavedCard) {
-                                            paymentView.showInputCvvDialog(orderId);
-                                        } else {
-                                            paymentView.showCheckoutPaymentForm(orderId);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace(); // or log the exception
-                                    }
+                                    callPaymentSession(orderId);
                                     break;
                                 case "moneyhash":
                                 case "money-hash":
@@ -1322,6 +1313,34 @@ public class PaymentPresenter implements PaymentContract.Presenter {
                         paymentView.showError(CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT));
                     }
 
+                } else {
+                    paymentView.showError(CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT));
+                }
+            }
+
+            @Override
+            public void onError(Object o) {
+                AppLogger.printRetrofitError(o);
+                paymentView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT), null));
+            }
+        });
+
+    }
+
+    private void callPaymentSession(String orderId) {
+        OrdersApiCall.getInstance().checkoutSession(orderId, new ApiRequestListener() {
+            @Override
+            public void onSuccess(Object o) {
+                if (o instanceof JSONObject jsonObject) {
+                    try {
+                        String id = jsonObject.getString("id");
+                        String token = jsonObject.getString("token");
+                        String secret = jsonObject.getString("secret");
+                        paymentView.showCheckoutPaymentForm(orderId, id, token, secret);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        paymentView.showError(CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT));
+                    }
                 } else {
                     paymentView.showError(CacheUtil.getInstance().getTranslations(Text.SORRY_ERROR_PAYMENT));
                 }

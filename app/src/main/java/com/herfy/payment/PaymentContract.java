@@ -54,7 +54,7 @@ public interface PaymentContract {
 
         void initializeTap(String orderId, double total);
 
-        void showCheckoutPaymentForm(String orderId);
+        void showCheckoutPaymentForm(String orderId, String id, String token, String secret);
 
         void showInputCvvDialog(String orderId);
 
@@ -121,11 +121,14 @@ public interface PaymentContract {
 
         double getTotalPrice();
 
-        @Nullable Double getValidatedSubtotal();
+        @Nullable
+        Double getValidatedSubtotal();
 
-        @Nullable Double getValidatedTotal();
+        @Nullable
+        Double getValidatedTotal();
 
-        @Nullable Double getValidateDeliveryCharge();
+        @Nullable
+        Double getValidateDeliveryCharge();
 
         double getCashPresented();
 
@@ -173,7 +176,8 @@ public interface PaymentContract {
 
         String getValidatedBody();
 
-        @Nullable Double getValidatedDeliveryCharge();
+        @Nullable
+        Double getValidatedDeliveryCharge();
 
         void removeMukafaaRedemption();
 

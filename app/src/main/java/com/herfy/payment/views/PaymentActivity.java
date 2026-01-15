@@ -44,7 +44,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.checkout.tokenization.model.TokenDetails;
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -356,7 +355,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
     boolean isBranchImageAvailable = false;
     boolean mukafaaSelected = false;
-    CustomCheckoutDialog dialogCheckout;
     private PaymentContract.Presenter paymentPresenter;
     private OneDayDecorator oneDayDecorator;
     private BeforeDateDecorator beforeDateDecorator;
@@ -1315,149 +1313,8 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     }
 
-    private void checkoutForce(JSONObject data) {
-        /*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
-        intent.putExtra(CustomCheckoutActivity.EXTRA_ORDER_ID , orderId);
-        intent.putExtra(CustomCheckoutActivity.EXTRA_PAYMENT_PROVIDER, paymentPresenter.getPaymentProvider());
-        intent.putExtra(CustomCheckoutActivity.EXTRA_3DS_DATA, data.toString());
-        checkoutActivityLauncher.launch(intent);
-        isFromCheckout = true;*/
-        showCheckoutPaymentForm(orderId);
-        new Handler().postDelayed(() -> dialogCheckout.handle3ds(data), 400);
-    }
-
-    private void checkTokenGenerated(String token, String cvv, boolean isSave, String orderIds) {
-        JsonObject body = new JsonObject();
-        body.addProperty("order", orderIds);
-        body.addProperty("token", token);
-        body.addProperty("save-card", isSave);
-        if (cvv != null && !cvv.isEmpty()) {
-            body.addProperty("cvv", cvv);
-        }
-        OrdersApiCall.getInstance().checkoutAuthorize(body, new ApiRequestListener() {
-            @Override
-            public void onSuccess(Object object) {
-                dismissDialogs();
-                if (object instanceof JSONObject) {
-                    try {
-                        JSONObject data = (JSONObject) object;
-                        boolean isApproved = data.getBoolean("is-approved");
-                        if (isApproved) {
-                            if (dialogCheckout != null) {
-                                dialogCheckout.handle3ds(data);
-                            } else {
-                                checkoutForce(data);
-                            }
-
-                        } else {
-                            this.onError(CacheUtil.getInstance().getTranslations(Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH));
-                        }
-                    } catch (JSONException ex) {
-                        ex.printStackTrace();
-                        this.onError(ex);
-                    }
-                } else {
-                    dismissDialogs();
-                    this.onError(CacheUtil.getInstance().getTranslations(Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH));
-                }
-            }
-
-            @Override
-            public void onError(Object o) {
-                AppLogger.printRetrofitError(o);
-                if (o instanceof JSONObject) {
-                    JSONObject object = (JSONObject) o;
-                    ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: " + object + ")");
-                }
-                dismissDialogs();
-                showCardFailed();
-            }
-        });
-    }
-
     @Override
-    public void showCheckoutPaymentForm(String orderId) {
-
-        /*Intent intent = new Intent(PaymentActivity.this, CustomCheckoutActivity.class);
-        intent.putExtra(CustomCheckoutActivity.EXTRA_ORDER_ID , orderId);
-        intent.putExtra(CustomCheckoutActivity.EXTRA_PAYMENT_PROVIDER, paymentPresenter.getPaymentProvider());
-        checkoutActivityLauncher.launch(intent);
-        isFromCheckout = true;*/
-        if (isCanProceedFragmentTransaction(getSupportFragmentManager())) {
-
-            dialogCheckout = new CustomCheckoutDialog(this);
-            dialogCheckout.setOnActionSelectedListener(new CustomCheckoutDialog.OnActionSelectedListener() {
-                @Override
-                public void onFormSubmit() {
-                    showLoadingDialog();
-                }
-
-                @Override
-                public void onTokenGenerated(@Nullable TokenDetails response) {
-                    //dialogCheckout.clear();
-                    showLoadingDialog();
-                    saveDialogAlert = SaveDialogAlert.newInstance(new SaveDialogAlert.OnSavedAction() {
-                        @Override
-                        public void onClose() {
-                            saveDialogAlert.dismissAllowingStateLoss();
-                            checkTokenGenerated(response.getToken(), null, false, orderId);
-                        }
-
-                        @Override
-                        public void onProceed() {
-                            saveDialogAlert.dismissAllowingStateLoss();
-                            checkTokenGenerated(response.getToken(), null, true, orderId);
-                        }
-                    });
-                    saveDialogAlert.setCancelable(false);
-                    saveDialogAlert.show(getSupportFragmentManager(), SaveDialogAlert.class.toString());
-                }
-
-                @Override
-                public void onError(@Nullable String error) {
-                    String reason = "CardTokenisationFail";
-                    if (error != null) {
-                        reason = error;
-                    }
-                    ShipBookLogger.logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Failed (Reason: " + reason + ")");
-                    ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: " + reason + ")");
-                    dismissDialogs();
-                }
-
-                @Override
-                public void on3DSSuccess() {
-                    ShipBookLogger.logInfo(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Success");
-                    paymentPresenter.sendUpsells();
-                    dialogCheckout.dismissAllowingStateLoss();
-                }
-
-                @Override
-                public void on3DSFailure() {
-                    ShipBookLogger.logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter.getPaymentProvider() + " Card Payment Failed (Reason: on3DSFailure)");
-                    ApiLogUtil.sendOrderLog(ApiLogLevel.ERROR, orderId, paymentPresenter.getPaymentProvider(), "Card Payment Failed (Reason: on3DSFailure");
-                    showCardFailed();
-                }
-
-                @Override
-                public void on3DSError(@Nullable String error) {
-
-                }
-
-                @Override
-                public void onBackPressed() {
-                    ApiLogUtil.sendOrderLog(ApiLogLevel.INFO, orderId, paymentPresenter.getPaymentProvider(), "Card Payment onBackPressed");
-                    ApiLogUtil.sendOrderLog(ApiLogLevel.WARNING, orderId, paymentPresenter.getPaymentProvider(), "Card Payment onBackPressed");
-                    dialogCheckout.dismissAllowingStateLoss();
-                }
-            });
-        }
-
-      /*  if (dialogCheckout.getDialog().getWindow() != null) {
-            dialogCheckout.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }*/
-
-        dismissDialogs();
-        dialogCheckout.show(getSupportFragmentManager(), CustomCheckoutDialog.class.getSimpleName());
+    public void showCheckoutPaymentForm(String orderId, String id, String token, String secret) {
 
     }
 
@@ -1507,25 +1364,16 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
             showAlertDialog("", CacheUtil.getInstance().getTranslations(Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH, "Card payment failed. Do you want to Pay with Cash instead?"), CacheUtil.getInstance().getTranslations(Text.YES_CAPS), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if (dialogCheckout != null) {
-                        dialogCheckout.dismissAllowingStateLoss();
-                    }
                     dialog.dismiss();
                     selectPaymentTypeCash();
                 }
             }, CacheUtil.getInstance().getTranslations(Text.NO_CAPS), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if (dialogCheckout != null) {
-                        dialogCheckout.dismissAllowingStateLoss();
-                    }
                     dialog.dismiss();
                 }
             });
         } else {
-            if (dialogCheckout != null) {
-                dialogCheckout.dismissAllowingStateLoss();
-            }
             showError(CacheUtil.getInstance().getTranslations(Text.CARD_FAILED));
         }
     }
@@ -1795,40 +1643,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
 
     @Override
     public void showCardDialogList(String orderId) {
-        if (isCanProceedFragmentTransaction(getSupportFragmentManager())) {
-            savedCardsDialog = SavedCardsDialog.newInstance(CacheUtil.getInstance().getCustomerCards(), new SavedCardsDialog.OnSavedAction() {
-                @Override
-                public void onClose() {
-                    dismissDialogs();
-                    savedCardsDialog.dismissAllowingStateLoss();
-                }
-
-                @Override
-                public void onEditCards() {
-                    if (savedCardsDialog != null) {
-                        savedCardsDialog.switchToEditMode();
-                    }
-                }
-
-                @Override
-                public void onUseNewCard() {
-                    savedCardsDialog.dismissAllowingStateLoss();
-                    showCheckoutPaymentForm(orderId);
-                }
-
-                @Override
-                public void onAvail(CustomerCard card) {
-                    if (card != null) {
-                        inputCvvDialog(orderId, card);
-                    }
-                }
-            });
-            savedCardsDialog.setCancelable(false);
-            // Check if the fragment is still added to the activity
-            if (!savedCardsDialog.isAdded()) {
-                savedCardsDialog.show(getSupportFragmentManager(), SavedCardsDialog.class.toString());
-            }
-        }
 
     }
 
@@ -1891,25 +1705,6 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
     @Override
     public void insufficientLoyaltyPoints() {
 
-    }
-
-    private void inputCvvDialog(String orderId, CustomerCard card) {
-        cvvDialogAlert = CVVDialogAlert.newInstance(new CVVDialogAlert.OnCVVAction() {
-            @Override
-            public void onClose() {
-                cvvDialogAlert.dismiss();
-            }
-
-            @Override
-            public void onProceed(String cvv) {
-                savedCardsDialog.dismiss();
-                cvvDialogAlert.dismiss();
-                showLoadingDialog();
-                checkTokenGenerated(card.attributes.getToken(), cvv, false, orderId);
-            }
-        }, card);
-        cvvDialogAlert.setCancelable(false);
-        cvvDialogAlert.show(getSupportFragmentManager(), CVVDialogAlert.class.toString());
     }
 
     @Override

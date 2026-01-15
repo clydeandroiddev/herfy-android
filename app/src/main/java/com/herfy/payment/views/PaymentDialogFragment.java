@@ -293,7 +293,7 @@ public class PaymentDialogFragment extends BaseDialogFragment implements Payment
     }
 */
     @Override
-    public void showCheckoutPaymentForm(String orderId) {
+    public void showCheckoutPaymentForm(String orderId, String id, String token, String secret) {
 
     }
 

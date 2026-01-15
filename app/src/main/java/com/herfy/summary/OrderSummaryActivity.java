@@ -438,7 +438,7 @@ public class OrderSummaryActivity extends BaseActivity implements PaymentContrac
 
 
     @Override
-    public void showCheckoutPaymentForm(String orderId) {
+    public void showCheckoutPaymentForm(String orderId, String id, String token, String secret) {
 
     }
 

@@ -1,8 +1,5 @@
 package com.herfy.util.checkout
 
-import com.checkout.frames.model.CornerRadius
-import com.checkout.frames.model.Shape
-
 object PaymentFormConstants {
     const val backgroundColor: Long = 0XFFFFCDC2
     const val inputFieldColor: Long = 0XFFFFFFFF
@@ -20,6 +17,4 @@ object PaymentFormConstants {
     const val margin: Int = 10
 
     const val cornerRadius = 12
-    val inputFieldBorderShape = Shape.RoundCorner
-    val inputFieldCornerRadius = CornerRadius(cornerRadius)
 }
