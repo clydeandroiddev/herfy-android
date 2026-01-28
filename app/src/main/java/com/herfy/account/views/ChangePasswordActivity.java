@@ -258,9 +258,4 @@ public class ChangePasswordActivity extends BaseActivity implements AccountContr
     public void showCard(boolean isDefault) {
     }
 
-    @Override
-    public void onLoggedOut() {
-
-    }
-
 }

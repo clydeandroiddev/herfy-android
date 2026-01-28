@@ -25,6 +25,7 @@ import com.herfy.util.AppLogger
 import com.herfy.utils.constants.Text
 import com.herfy.utils.extensions.navigateUp
 import com.herfy.utils.helper.AuthUtil
+import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.DialogUtils.showAlertDialog
 import com.skylinedynamics.solosdk.api.SoloAuth
@@ -301,13 +302,15 @@ class ProfileFragment : BaseFragment(), AccountContract.View, DeleteAccountDialo
     }
 
     override fun onLogout() {
-        showLoadingDialog()
-        accountPresenter?.logout();
-    }
-
-    override fun onLoggedOut() {
+        LoginManager.getInstance().logOut()
         handleGoogleLogout()
-        dismissDialogs()
+        accountPresenter!!.removeMukafaaRedemption()
+        CacheUtil.getInstance().clearOrder()
+        SoloAuth.getInstance().logout()
+        CacheUtil.getInstance().setCurrentOrderId(null)
+        AuthUtil.getInstance().customerLoyalty = null
+        AuthUtil.getInstance().customerLoyaltyTier = null
+        AuthUtil.getInstance().customer = null
         navigateUp()
     }
 

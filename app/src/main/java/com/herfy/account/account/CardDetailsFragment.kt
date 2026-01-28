@@ -260,8 +260,4 @@ class CardDetailsFragment : BaseFragment(), AccountContract.View {
         dismissDialogs()
         binding.toggleDefault.isOpened = isDefault
     }
-
-    override fun onLoggedOut() {
-
-    }
 }

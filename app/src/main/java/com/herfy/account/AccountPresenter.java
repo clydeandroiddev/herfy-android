@@ -1,17 +1,12 @@
 package com.herfy.account;
 
-import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.herfy.util.AppLogger;
-import com.herfy.util.StringUtil;
 import com.herfy.utils.constants.Text;
 import com.herfy.utils.constants.Values;
-import com.herfy.utils.handler.ErrorHandler;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.ApiRequestListener;
-import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.Customer;
@@ -22,6 +17,9 @@ import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdateCustomerPasswordBody;
 import com.skylinedynamics.solosdk.api.models.requestbodies.UpdatePasswordCustomerBody;
 import com.skylinedynamics.solosdk.util.GsonHelper;
+import com.herfy.util.AppLogger;
+import com.herfy.utils.handler.ErrorHandler;
+import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -502,30 +500,6 @@ public class AccountPresenter implements AccountContract.Presenter {
             @Override
             public void onSuccess(Object o) {
                 accountView.accountDeleted();
-            }
-
-            @Override
-            public void onError(Object o) {
-                AppLogger.printRetrofitError(o.toString());
-                accountView.showError(ErrorHandler.getErrorMessage(o, CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED), null));
-            }
-        });
-    }
-
-    @Override
-    public void logout() {
-        CustomersApiCall.getInstance().logout(new ApiRequestListener() {
-            @Override
-            public void onSuccess(Object obj) {
-                LoginManager.getInstance().logOut();
-                removeMukafaaRedemption();
-                CacheUtil.getInstance().clearOrder();
-                SoloAuth.getInstance().logout();
-                CacheUtil.getInstance().setCurrentOrderId(null);
-                AuthUtil.getInstance().setCustomerLoyalty(null);
-                AuthUtil.getInstance().setCustomerLoyaltyTier(null);
-                AuthUtil.getInstance().setCustomer(null);
-                accountView.onLoggedOut();
             }
 
             @Override

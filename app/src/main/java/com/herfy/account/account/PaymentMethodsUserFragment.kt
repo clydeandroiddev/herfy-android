@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.account.account.adapter.PaymentMethodsAdapter
@@ -186,10 +187,6 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View,
     }
 
     override fun showCard(isDefault: Boolean) {
-    }
-
-    override fun onLoggedOut() {
-
     }
 
     override fun onSelectCard(card: CustomerCard, position: Int) {

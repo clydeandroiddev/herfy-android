@@ -214,9 +214,4 @@ public class LocationViewHolder extends RecyclerView.ViewHolder implements Accou
     public void showCard(boolean isDefault) {
     }
 
-    @Override
-    public void onLoggedOut() {
-
-    }
-
 }

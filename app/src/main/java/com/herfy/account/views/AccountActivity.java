@@ -21,20 +21,20 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.herfy.R;
 import com.herfy.account.AccountContract;
 import com.herfy.account.AccountPresenter;
-import com.herfy.account.adapters.AccountSavedCardsAdapter;
 import com.herfy.account.adapters.LocationsRecyclerViewAdapter;
+import com.herfy.account.adapters.AccountSavedCardsAdapter;
 import com.herfy.base.BaseActivity;
+import com.herfy.utils.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.AddressActivity;
-import com.herfy.util.StringUtil;
-import com.herfy.utils.constants.Text;
-import com.herfy.utils.helper.AnimUtil;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
 import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
+import com.herfy.utils.helper.AnimUtil;
+import com.herfy.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -380,11 +380,6 @@ public class AccountActivity extends BaseActivity implements AccountContract.Vie
 
     @Override
     public void showCard(boolean isDefault) {
-    }
-
-    @Override
-    public void onLoggedOut() {
-
     }
 
 }
