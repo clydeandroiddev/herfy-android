@@ -56,6 +56,8 @@ public interface AccountContract {
 
         void showCard(boolean isDefault);
 
+        void onLoggedOut();
+
     }
 
     interface Presenter extends BasePresenter {
@@ -97,6 +99,8 @@ public interface AccountContract {
         void getLocationsFromExtra(String locations);
 
         void deleteAccount();
+
+        void logout();
 
         void removeMukafaaRedemption();
 
