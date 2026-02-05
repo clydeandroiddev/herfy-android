@@ -416,11 +416,12 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
                                         var comboIndex = 0
                                         for (menuItem: MenuItem in menuItems) {
                                             if (menuItem.attributes.isCombo) {
-                                                val price = if(comboPricesList.isNotEmpty() && comboIndex < comboPricesList.size) {
-                                                    comboPricesList[comboIndex]
-                                                } else {
-                                                    0.0
-                                                }
+                                                val price =
+                                                    if (comboPricesList.isNotEmpty() && comboIndex < comboPricesList.size) {
+                                                        comboPricesList[comboIndex]
+                                                    } else {
+                                                        0.0
+                                                    }
                                                 if (price != 0.0) {
                                                     menuItem.price = price
                                                     menuItem.attributes.price = price
@@ -586,27 +587,31 @@ class OrdersPresenter(private val ordersView: OrdersContract.View) : OrdersContr
             try {
                 val attributes = data.optJSONObject("attributes")
                 if (attributes != null) {
-                    val lyveDriverObject = attributes.getJSONObject("lyve-driver")
-                    val lyveDriver =
-                        Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
-                    if (lyveDriver != null) {
-                        driver = lyveDriver
-                        ordersView.showWhatsApp(driver?.mobile ?: "")
-                        val bearing = lyveDriver.bearing
-                        if (bearing != null) {
-                            val lat = bearing.lat
-                            val lng = bearing.lng
-                            if (!lat.isNullOrEmpty() && !lng.isNullOrEmpty()) {
-                                val customerLatLng = LatLng(
-                                    order.customerLat, order.customerLng
-                                )
-                                val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
-                                ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
+                    val lyveDriverObject = attributes.optJSONObject("lyve-driver")
+                    if (lyveDriverObject != null) {
+                        val lyveDriver =
+                            Gson().fromJson(lyveDriverObject.toString(), LyveDriver::class.java)
+                        if (lyveDriver != null) {
+                            driver = lyveDriver
+                            ordersView.showWhatsApp(driver?.mobile ?: "")
+                            val bearing = lyveDriver.bearing
+                            if (bearing != null) {
+                                val lat = bearing.lat
+                                val lng = bearing.lng
+                                if (!lat.isNullOrEmpty() && !lng.isNullOrEmpty()) {
+                                    val customerLatLng = LatLng(
+                                        order.customerLat, order.customerLng
+                                    )
+                                    val driverLatLng = LatLng(lat.toDouble(), lng.toDouble())
+                                    ordersView.showDriver(customerLatLng, driverLatLng, bearing.eta)
+                                }
                             }
-                        }
-                        if (!isLocationUpdateSubscribed) {
-                            subscribeToOrderDriverLocationUpdate(order.id)
-                            setLogisticsPolling(order.id, order.orderStatus.sequence)
+                            if (!isLocationUpdateSubscribed) {
+                                subscribeToOrderDriverLocationUpdate(order.id)
+                                setLogisticsPolling(order.id, order.orderStatus.sequence)
+                            }
+                        } else {
+                            getDriver()
                         }
                     } else {
                         getDriver()
