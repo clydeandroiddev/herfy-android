@@ -443,4 +443,8 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
 
     override fun showCard(isDefault: Boolean) {
     }
+
+    override fun onLoggedOut() {
+
+    }
 }

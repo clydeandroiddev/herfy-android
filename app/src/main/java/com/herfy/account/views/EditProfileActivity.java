@@ -33,13 +33,15 @@ import com.google.gson.Gson;
 import com.herfy.R;
 import com.herfy.account.AccountContract;
 import com.herfy.account.AccountPresenter;
+import com.herfy.account.adapters.AccountDeleteSavedCardsAdapter;
 import com.herfy.account.adapters.HintAdapter;
 import com.herfy.account.adapters.LocationsRecyclerViewAdapter;
-import com.herfy.account.adapters.AccountDeleteSavedCardsAdapter;
 import com.herfy.auth.views.AuthActivity;
 import com.herfy.base.BaseActivity;
-import com.herfy.utils.constants.Text;
 import com.herfy.payment.savedcards.DeleteCardDialog;
+import com.herfy.util.AppLogger;
+import com.herfy.util.StringUtil;
+import com.herfy.utils.constants.Text;
 import com.herfy.utils.helper.AuthUtil;
 import com.herfy.utils.helper.BuildUtil;
 import com.herfy.utils.helper.CacheUtil;
@@ -48,8 +50,6 @@ import com.skylinedynamics.solosdk.api.SoloAuth;
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.Address;
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard;
-import com.herfy.util.AppLogger;
-import com.herfy.util.StringUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -600,6 +600,11 @@ public class EditProfileActivity extends BaseActivity implements AccountContract
 
     @Override
     public void showCard(boolean isDefault) {
+    }
+
+    @Override
+    public void onLoggedOut() {
+
     }
 
 }
