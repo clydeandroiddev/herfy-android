@@ -102,7 +102,7 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                 }
 
                 is LoginOTPPageViewState.SuccessUpdate -> {
-                    HydraAPI.getDefaultInstance(requireActivity())!!.pushUserUpdate(
+                    HydraAPI.getDefaultInstance(requireActivity())?.pushUserUpdate(
                         AuthUtil.getInstance().customer.attributes.mobile,
                         AuthUtil.getInstance().customer.attributes.firstName,
                         AuthUtil.getInstance().customer.attributes.lastName,
@@ -110,7 +110,7 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                         AuthUtil.getInstance().customer.attributes.mobile,
                     )
 
-                    HydraAPI.getDefaultInstance(requireActivity())!!.pushUserSignin(
+                    HydraAPI.getDefaultInstance(requireActivity())?.pushUserSignin(
                         AuthUtil.getInstance().customer.attributes.mobile,
                         AuthUtil.getInstance().customer.attributes.firstName,
                         AuthUtil.getInstance().customer.attributes.lastName,

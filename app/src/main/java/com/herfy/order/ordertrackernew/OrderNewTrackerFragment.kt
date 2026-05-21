@@ -379,7 +379,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private fun setupMiddleSlider() {
         activity?.let { act ->
             binding.apply {
-                val isOrderDetailsIframeEnabled = CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_ORDER_DETAILS)
+                val isOrderDetailsIframeEnabled = CacheUtil.getInstance()
+                    .isCapillaryIframeEnabled(Values.IFRAME_NAME_ORDER_DETAILS)
                 val capillaryPopup = CacheUtil.getInstance().capillaryPopup
 
                 if (isOrderDetailsIframeEnabled && capillaryPopup != null && !capillaryPopup.imageUri.isNullOrEmpty()) {
@@ -418,6 +419,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 intent.putExtra("url", url)
             }
             startActivity(intent)
+        } ?: run {
+            AppLogger.error("Context is null")
         }
     }
 
@@ -425,27 +428,28 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
         if (AuthUtil.getInstance().isSignedIn) {
             val customer = AuthUtil.getInstance().customer
             (activity as? BaseActivity)?.showLoadingDialog()
-            RewardApiCall.getInstance().getLoyaltyIframeToken(customer.id, object : ApiRequestListener {
-                override fun onSuccess(obj: Any?) {
-                    (activity as? BaseActivity)?.dismissDialogs()
-                    try {
-                        val jsonObject = JSONObject(obj.toString())
-                        val data = jsonObject.optJSONObject("data")
-                        if (data != null) {
-                            val token = data.getString("token")
-                            CacheUtil.getInstance().loyaltyIframeToken = token
-                            goToLoyaltyPage(actionValue)
+            RewardApiCall.getInstance()
+                .getLoyaltyIframeToken(customer.id, object : ApiRequestListener {
+                    override fun onSuccess(obj: Any?) {
+                        (activity as? BaseActivity)?.dismissDialogs()
+                        try {
+                            val jsonObject = JSONObject(obj.toString())
+                            val data = jsonObject.optJSONObject("data")
+                            if (data != null) {
+                                val token = data.getString("token")
+                                CacheUtil.getInstance().loyaltyIframeToken = token
+                                goToLoyaltyPage(actionValue)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
-                }
 
-                override fun onError(error: Any?) {
-                    AppLogger.printRetrofitError(error)
-                    (activity as? BaseActivity)?.dismissDialogs()
-                }
-            })
+                    override fun onError(error: Any?) {
+                        AppLogger.printRetrofitError(error)
+                        (activity as? BaseActivity)?.dismissDialogs()
+                    }
+                })
         }
     }
 
@@ -576,7 +580,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
     override fun showError(error: String?) {
         dismissDialogs()
-        DialogUtils.showAlertDialog(context = requireContext(),
+        DialogUtils.showAlertDialog(
+            context = requireContext(),
             title = "",
             body = error.orEmpty(),
             dialogInterface = { dialog, which ->
@@ -594,7 +599,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 store?.let {
                     val inflater =
                         act.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    val view = inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
+                    val view =
+                        inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
                     val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                     textView.isInvisible = true
                     addStoreMarker(store, view)
@@ -612,7 +618,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     store?.let {
                         val inflater =
                             act.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                        val view = inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
+                        val view = inflater.inflate(
+                            com.herfy.ordertracker.R.layout.order_store_marker,
+                            null
+                        )
                         val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                         textView.isInvisible = true
 
@@ -683,7 +692,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     val activity: Activity? = activity
                     val inflater =
                         activity?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                    val view = inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
+                    val view =
+                        inflater.inflate(com.herfy.ordertracker.R.layout.order_store_marker, null)
                     val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
                     val distanceValue: String
                     try {
@@ -701,14 +711,16 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     }
 
                                 var currentMarkerIcon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                                    binding.mapFrame.context, com.herfy.common.R.drawable.ic_address_user_home
+                                    binding.mapFrame.context,
+                                    com.herfy.common.R.drawable.ic_address_user_home
                                 )
                                 if (orderAddress!!.attributes.label.equals(
                                         "work", ignoreCase = true
                                     )
                                 ) {
                                     currentMarkerIcon = ViewUtil.vectorDrawableToBitmapDescriptor(
-                                        binding.mapFrame.context, com.herfy.common.R.drawable.ic_address_user_work
+                                        binding.mapFrame.context,
+                                        com.herfy.common.R.drawable.ic_address_user_work
                                     )
                                 }
 
@@ -1241,12 +1253,26 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     }
 
                     activity?.let {
-                        val statusDoneColor = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.status_done)
-                        val statusNotColor = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.status_not)
-                        val textStatusColorCurrent = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.text_status_color_current)
-                        val timeStatusColorCurrent = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.time_status_color_current)
-                        val textStatusColorPast = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.text_status_color_past)
-                        val timeStatusColorPast = ContextCompat.getColor(it, com.herfy.ordertracker.R.color.time_status_color_past)
+                        val statusDoneColor =
+                            ContextCompat.getColor(it, com.herfy.ordertracker.R.color.status_done)
+                        val statusNotColor =
+                            ContextCompat.getColor(it, com.herfy.ordertracker.R.color.status_not)
+                        val textStatusColorCurrent = ContextCompat.getColor(
+                            it,
+                            com.herfy.ordertracker.R.color.text_status_color_current
+                        )
+                        val timeStatusColorCurrent = ContextCompat.getColor(
+                            it,
+                            com.herfy.ordertracker.R.color.time_status_color_current
+                        )
+                        val textStatusColorPast = ContextCompat.getColor(
+                            it,
+                            com.herfy.ordertracker.R.color.text_status_color_past
+                        )
+                        val timeStatusColorPast = ContextCompat.getColor(
+                            it,
+                            com.herfy.ordertracker.R.color.time_status_color_past
+                        )
 
                         statusViewSecond.setBackgroundColor(statusDoneColor)
                         statusViewThird.setBackgroundColor(statusDoneColor)
@@ -1589,7 +1615,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 orderPaymentDetails.apply {
                     if (item.loyaltyActualPointsRedeemed > 0) {
                         orderPresenter?.let {
-                            val loyaltyTransaction = it.capillaryTransaction //it.soloLoyaltyTransaction
+                            val loyaltyTransaction =
+                                it.capillaryTransaction //it.soloLoyaltyTransaction
                             if (loyaltyTransaction != null || item.loyaltyPointsRedeemed > 0) {
                                 loyaltyContainer.visible()
                                 if (loyaltyTransaction != null) {
@@ -1598,7 +1625,10 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                                     )
                                     tvRedeemPointsLabel.text = CacheUtil.getInstance()
                                         .getTranslations(Text.LOYALTY_POINTS, "Loyalty points (x)")
-                                        .replace("x", loyaltyTransaction.attributes.points.toString())
+                                        .replace(
+                                            "x",
+                                            loyaltyTransaction.attributes.points.toString()
+                                        )
                                 } else {
                                     tvRedeemPointsEquiv.text = CurrencyUtils.updateCurrency(
                                         item.loyaltyPointsRedeemed, true, false, true
@@ -2060,7 +2090,8 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             orderDetails?.let { order ->
                 val orderId = CacheUtil.getInstance().currentOrderID
                 CacheUtil.getInstance().setCurrentOrderId(null)
-                ratingBarDialog = RatingBarDialog.newInstance(order.createdAt,
+                ratingBarDialog = RatingBarDialog.newInstance(
+                    order.createdAt,
                     OrderType.convertOrderTypeToString(OrderType.fromString(order.orderType))
                         .orderTypeString(),
                     order.locationName,

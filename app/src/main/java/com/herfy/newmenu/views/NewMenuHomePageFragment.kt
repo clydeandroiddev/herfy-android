@@ -64,6 +64,7 @@ import com.herfy.newmenu.adapter.SearchMenuRecyclerViewAdapter
 import com.herfy.newmenu.adapter.SliderFragmentStateAdapter
 import com.herfy.newmenu.viewholder.NewMenuViewHolder
 import com.herfy.popup.PopupFragment
+import com.herfy.util.AppLogger
 import com.herfy.utils.helper.CacheHelper
 import com.herfy.util.StringUtil
 import com.herfy.utils.constants.Text
@@ -213,29 +214,31 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             CacheUtil.getInstance().preselectedBranch = false
         }
 
-        if (BuildConfig.FEATURE_PHASE >= 1.3f) {
-            CacheUtil.getInstance().popup?.let { popup ->
-                val label = popup.label ?: ""
-                val isCapillaryPopup = label.equals("Capillary", ignoreCase = true) || label.lowercase(Locale.getDefault()).contains("capillary")
-                if (!isCapillaryPopup) {
-                    setFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
-                        clearFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT)
-                        when (bundle.getString(PopupFragment.ARGS_KEY_ACTION_TYPE)) {
-                            "url" -> showLink(Uri.parse(bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE)))
-                            "category" -> showMenuCategory(
-                                bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
-                            )
+        CacheUtil.getInstance().popup?.let { popup ->
+            val label = popup.label ?: ""
+            val isCapillaryPopup =
+                label.equals("Capillary", ignoreCase = true) || label.lowercase(Locale.getDefault())
+                    .contains("capillary")
+            if (!isCapillaryPopup) {
+                setFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
+                    clearFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT)
+                    when (bundle.getString(PopupFragment.ARGS_KEY_ACTION_TYPE)) {
+                        "url" -> showLink(Uri.parse(bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE)))
+                        "category" -> showMenuCategory(
+                            bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
+                        )
 
-                            "item", "product" -> showMenuItem(
-                                bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
-                            )
-                        }
+                        "item", "product" -> showMenuItem(
+                            bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
+                        )
                     }
-                    NavigationUtils.navigateSafe(
-                        findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDialogPopup()
-                    )
                 }
+                NavigationUtils.navigateSafe(
+                    findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDialogPopup()
+                )
             }
+        } ?: run {
+            AppLogger.error("No Popup no need to show")
         }
     }
 
@@ -276,6 +279,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun isFavorite(isFavorite: Boolean) {
 
     }
+
     override fun onResume() {
         super.onResume()
         checkDiffMenu()
@@ -510,9 +514,11 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             binding.totalContainer.visibility = View.VISIBLE
         }
         binding.totalPrice.text = if (CacheUtil.getInstance().cart.size > 0) {
-            StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice).toString() + " " +  CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+            StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice)
+                .toString() + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
         } else {
-            StringUtil.getFormattedPrice(0.0).toString()  + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+            StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()
+                .getTranslations(Text.TOTAL, "TOTAL")
         }
         if (menuFavoritesRecyclerViewAdapter != null) {
             binding.favoritesItemList.recycledViewPool.clear()
@@ -1043,7 +1049,7 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         view: ImageView,
         isShouldBackPressed: Boolean
     ) {
-        addCartItem(menuItem, isShouldBackPressed,0)
+        addCartItem(menuItem, isShouldBackPressed, 0)
         listener?.animateViewToCart(view, menuItem.attributes.image, 0)
     }
 
@@ -1069,9 +1075,11 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             }
         }
         binding.totalPrice.text = if (CacheUtil.getInstance().cart.size > 0) {
-            StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice).toString() + " " +  CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+            StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice)
+                .toString() + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
         } else {
-            StringUtil.getFormattedPrice(0.0).toString()  + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+            StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()
+                .getTranslations(Text.TOTAL, "TOTAL")
         }
     }
 
@@ -1100,10 +1108,13 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
             e.printStackTrace()
         }
     }
+
     override fun updateFavoriteByPosition(
         position: Int,
         menuItem: MenuItem?
-    ) {}
+    ) {
+    }
+
     override fun showHideModifierItemPrice(show: Boolean, modifierGroupPosition: Int) {}
     override fun showModifierSelectionIndicator(
         hasAtleastOneSelectedItem: Boolean,
@@ -1566,9 +1577,11 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
     override fun updateFloatingTotalPrice() {
         activity?.runOnUiThread {
             binding.totalPrice.text = if (CacheUtil.getInstance().cart.size > 0) {
-                StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice).toString() + " " +  CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+                StringUtil.getFormattedPrice(menuPresenter.menuItemsTotalPrice)
+                    .toString() + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
             } else {
-                StringUtil.getFormattedPrice(0.0).toString()  + " " + CacheUtil.getInstance().getTranslations(Text.TOTAL, "TOTAL")
+                StringUtil.getFormattedPrice(0.0).toString() + " " + CacheUtil.getInstance()
+                    .getTranslations(Text.TOTAL, "TOTAL")
             }
         }
     }

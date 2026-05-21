@@ -700,10 +700,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.paymentSummaryContainer.apply {
             btnPaste.setOnClickListener {
                 val couponVal = checkAndroidClipboard()
-                if (!couponVal.isEmpty()) {
-                    tieCoupon.setText(couponVal)
-                    btnApply.performClick()
+                if (couponVal.isEmpty()) {
+                    return@setOnClickListener
                 }
+                tieCoupon.setText(couponVal)
+                btnApply.performClick()
             }
         }
 
@@ -2426,31 +2427,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         context?.let {
             if (message.isNotEmpty()) {
                 showAlertDialog("", message)
-                /*val commonCustomDialog = CommonCustomDialog(
-                    it,
-                    title = CacheUtil.getInstance()
-                        .getTranslations(Text.INVALID_FOR_THIS_ORDER, "Invalid for this Order"),
-                    message = message,
-                    icon = com.herfy.common.R.drawable.ic_dialog_error,
-                    buttonALabel = CacheUtil.getInstance()
-                        .getTranslations(Text.GOT_IT, "Got it"),
-                    buttonBLabel = CacheUtil.getInstance()
-                        .getTranslations(Text.ADD_MORE_ITEMS, "Add more items"),
-                )
-                commonCustomDialog.show()
-                commonCustomDialog.setCancelable(false)
-                commonCustomDialog.setButtonAListener {
-                    commonCustomDialog.dismiss()
-                }
-                commonCustomDialog.setButtonBListener {
-                    commonCustomDialog.dismiss()
-                    Handler(Looper.getMainLooper()).post {
-                        findNavController().navigateToDeepLink("nav_menu")
-                    }
-                }*/
             }
         }
-
     }
-
 }

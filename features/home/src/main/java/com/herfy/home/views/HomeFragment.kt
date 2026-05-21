@@ -143,7 +143,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 if (actionValue.isNotEmpty()) {
                     when (bundle.getString(Values.ARGS_KEY_ACTION_TYPE)) {
                         "url" -> {
-                            if (popup.label.equals(Values.LABEL_CAPILLARY, ignoreCase = true) && CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)) {
+                            if (popup.label.equals(
+                                    Values.LABEL_CAPILLARY,
+                                    ignoreCase = true
+                                ) && CacheUtil.getInstance()
+                                    .isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+                            ) {
                                 if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
                                     pendingLoyaltyUrl = actionValue
                                     viewModel.getLoyaltyIframe(true)
@@ -426,6 +431,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             it.getContentIfNotHandled()?.let {
                 goToLoyaltyPage(pendingLoyaltyUrl)
                 pendingLoyaltyUrl = null
+            } ?: run {
+                AppLogger.error("Content not handled")
             }
         }
 
@@ -1153,7 +1160,8 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun setupMiddleSlider() {
         activity?.let { act ->
             binding.apply {
-                val isHomeIframeEnabled = CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+                val isHomeIframeEnabled =
+                    CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
                 val capillaryPopup = CacheUtil.getInstance().capillaryPopup
 
                 if (isHomeIframeEnabled && capillaryPopup != null && !capillaryPopup.imageUri.isNullOrEmpty()) {
