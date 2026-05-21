@@ -45,6 +45,7 @@ import com.herfy.history.adapters.OrderServiceChargeRecyclerViewAdapter
 import com.herfy.history.adapters.TimeLineAdapter
 import com.herfy.history.views.CancelOrderDialog.Companion.newInstance
 import com.herfy.loyalty.LoyaltyActivity
+import com.herfy.loyalty.LoyaltyIFrameActivity
 import com.herfy.main.MainActivity
 import com.herfy.util.*
 import com.herfy.util.extensions.dialPhoneNumber
@@ -171,7 +172,8 @@ class OrderFragment : BaseFragment(), OrdersContract.View, CancelOrderDialog.OnA
         binding.menuItemsRecyclerView.adapter = menuItemsRecyclerViewAdapter
         binding.btnOpenLoyalty.setOnClickListener { v: View? ->
             activity?.let {
-                val intent = Intent(it, LoyaltyActivity::class.java)
+                val intent = Intent(it, LoyaltyIFrameActivity::class.java)
+                intent.putExtra("iframe_name", Values.IFRAME_NAME_ORDER_DETAILS)
                 startActivity(intent)
             }
         }

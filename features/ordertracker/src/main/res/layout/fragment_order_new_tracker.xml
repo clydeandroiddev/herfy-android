@@ -242,6 +242,10 @@
                                 android:id="@+id/status_tracker_layout"
                                 layout="@layout/include_status_tracker_layout" />
 
+                            <include
+                                android:id="@+id/layout_middle_banner"
+                                layout="@layout/banner_middle" />
+
                             <FrameLayout
                                 android:id="@+id/orderCurbsideDetailsFrame"
                                 android:layout_width="match_parent"
@@ -368,8 +372,8 @@
                                     android:includeFontPadding="false"
                                     android:maxLines="1"
                                     android:textColor="#0C0C0C"
-                                    android:textSize="12sp"
                                     android:textDirection="ltr"
+                                    android:textSize="12sp"
                                     app:layout_constraintBottom_toBottomOf="@id/totalLabel"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@id/totalLabel"

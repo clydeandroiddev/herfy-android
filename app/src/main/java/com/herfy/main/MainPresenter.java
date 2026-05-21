@@ -33,6 +33,7 @@ import com.skylinedynamics.solosdk.api.calls.CustomersApiCall;
 import com.skylinedynamics.solosdk.api.calls.IntegrationsApiCall;
 import com.skylinedynamics.solosdk.api.calls.NotificationApiCall;
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall;
+import com.skylinedynamics.solosdk.api.calls.RewardApiCall;
 import com.skylinedynamics.solosdk.api.calls.UtilitiesApiCall;
 import com.skylinedynamics.solosdk.api.models.objects.AllergenCdn;
 import com.skylinedynamics.solosdk.api.models.objects.Application;
@@ -136,6 +137,38 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
+    public void getLoyaltyIFrame() {
+        if (AuthUtil.getInstance().isSignedIn()) {
+            Customer customer = AuthUtil.getInstance().getCustomer();
+            RewardApiCall.getInstance().getLoyaltyIframeToken(customer.getId(), new ApiRequestListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    try {
+                        JSONObject object = new JSONObject(o.toString());
+                        JSONObject data = object.optJSONObject("data");
+                        if (data != null) {
+                            String token = data.getString("token");
+                            CacheUtil.getInstance().setLoyaltyIframeToken(token);
+                            mainView.showLoyalty(true);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        this.onError(e.getMessage());
+                        mainView.showLoyalty(false);
+                    }
+                }
+
+                @Override
+                public void onError(Object o) {
+                    AppLogger.printRetrofitError(o);
+                    mainView.showLoyalty(false);
+                }
+            });
+
+        }
+    }
+
+    @Override
     public void getOrders() {
         if (AuthUtil.getInstance().isSignedIn()) {
             Customer customer = AuthUtil.getInstance().getCustomer();
@@ -160,8 +193,8 @@ public class MainPresenter implements MainContract.Presenter {
                                 } else if (order.getSequence() < OrderStatusType.FINISHED.getValue()) {
                                     AblyUtil ablyUtil = AblyUtil.Companion.getInstance();
                                     ablyUtil.subscribeToOrderStatusUpdate(
-                                        order.getId(),
-                                        MainPresenter.this::onOrderStatusUpdate
+                                            order.getId(),
+                                            MainPresenter.this::onOrderStatusUpdate
                                     );
                                 }
                             }
@@ -292,7 +325,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void geUnreadNotification() {
-        if(AuthUtil.getInstance().isSignedIn()) {
+        if (AuthUtil.getInstance().isSignedIn()) {
             NotificationApiCall.getInstance().getUnreadNotifications(new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object o) {
@@ -314,7 +347,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     public void getIntegrations() {
-        if(AuthUtil.getInstance().isSignedIn()) {
+        if (AuthUtil.getInstance().isSignedIn()) {
             String paymentGateway = CacheUtil.getInstance().getApplication().getAttributes().getPaymentGateway();
             if (paymentGateway.equalsIgnoreCase("checkout") || paymentGateway.equalsIgnoreCase("foodics-online")) {
                 IntegrationsApiCall.getInstance().getKeys(paymentGateway, new ApiRequestListener() {
@@ -473,14 +506,14 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void multibrandValidation(boolean proceed) {
-        if(AuthUtil.getInstance().isSignedIn()) {
+        if (AuthUtil.getInstance().isSignedIn()) {
             JsonObject orderBody = new JsonObject();
             Customer customer = AuthUtil.getInstance().getCustomer();
             orderBody.addProperty("customer", customer.getId());
             CouponsApiCall.getInstance().validatePromotion(orderBody, new ApiRequestListener() {
                 @Override
                 public void onSuccess(Object obj) {
-                    if(proceed) {
+                    if (proceed) {
                         mainView.dismissDialogs();
                         mainView.gateWay();
                     }
@@ -489,7 +522,7 @@ public class MainPresenter implements MainContract.Presenter {
                 @Override
                 public void onError(Object error) {
                     AppLogger.printRetrofitError(error);
-                    if(proceed) {
+                    if (proceed) {
 
                     }
                 }
@@ -843,7 +876,7 @@ public class MainPresenter implements MainContract.Presenter {
                                     menuItem.customFieldObjectMap.disablePosAndroid = inner[1];
                                 } else if (inner[0].equalsIgnoreCase("kiosk_address_id")) {
                                     menuItem.customFieldObjectMap.kioskAddressId = inner[1];
-                                }else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
+                                } else if (inner[0].equalsIgnoreCase("nutritional-info-image")) {
                                     menuItem.customFieldObjectMap.nutritionInfoImageUrl = inner[1];
                                 }
                             }
@@ -919,7 +952,7 @@ public class MainPresenter implements MainContract.Presenter {
 
                 public void onSuccess(Headers headers, Object o) {
                     try {
-                        if(headers.names().contains("last-modified")) {
+                        if (headers.names().contains("last-modified")) {
                             CacheUtil.getInstance().setMenuCdnLastModified(headers.get("last-modified"));
                         }
                         JSONObject object = new JSONObject(o.toString());

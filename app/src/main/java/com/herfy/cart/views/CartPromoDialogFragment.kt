@@ -213,9 +213,9 @@ class CartPromoDialogFragment : DialogFragment(), CartPromoListener {
                     message = message,
                     icon = com.herfy.common.R.drawable.ic_dialog_error,
                     buttonALabel = CacheUtil.getInstance()
-                        .getTranslations(Text.GOT_IT_LABEL, "Got it"),
+                        .getTranslations(Text.GOT_IT, "Got it"),
                     buttonBLabel = CacheUtil.getInstance()
-                        .getTranslations(Text.ADD_MORE_ITEMS_LABEL, "Add more items"),
+                        .getTranslations(Text.ADD_MORE_ITEMS, "Add more items"),
                 )
                 commonCustomDialog.show()
                 commonCustomDialog.setCancelable(false)

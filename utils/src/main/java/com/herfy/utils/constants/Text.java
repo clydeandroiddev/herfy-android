@@ -949,6 +949,7 @@ public class Text {
     public static final String INVALID_FOR_THIS_ORDER = "invalid_for_this_order";
     public static final String GOT_IT_LABEL = "got_it_label";
     public static final String ADD_MORE_ITEMS_LABEL = "add_more_items_label";
+    public static final String GOT_IT = "got_it";
     public static final String COUPON_DISCOUNT_LABEL = "coupon_discount_label";
     public static final String CHECKOUT_LABEL = "checkout_label";
 
@@ -1250,5 +1251,7 @@ public class Text {
     public static final String LOYALTY_DISABLED = "loyalty_disabled";
     public static final String CHOOSE_LABEL = "choose_label";
     public static final String MINIMUM_REDEMPTION_ERROR = "minimum_redemption_points";
+
+    public static final String PASTE_LABEL = "paste";
 
 }

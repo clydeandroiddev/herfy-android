@@ -93,7 +93,12 @@ public class CountriesPresenter implements CountriesContract.Presenter {
                             concept = concept.parse(included.getJSONObject(i));
                             CacheUtil.getInstance().setConcept(concept);
                         } else if (included.getJSONObject(i).optString("type").equalsIgnoreCase("popup")) {
-                            CacheUtil.getInstance().setPopup(included.getJSONObject(i));
+                            JSONObject popupObj = included.getJSONObject(i);
+                            String label = popupObj.optJSONObject("attributes") != null ? popupObj.getJSONObject("attributes").optString("label") : "";
+                            if (label.equalsIgnoreCase("Capillary") || label.toLowerCase().contains("capillary")) {
+                                CacheUtil.getInstance().setCapillaryPopup(popupObj);
+                            }
+                            CacheUtil.getInstance().setPopup(popupObj);
                         }
                     }
                 } else {

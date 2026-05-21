@@ -5,6 +5,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.capillary.hydra.android.sdk.HydraAPI
 import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
@@ -14,6 +15,7 @@ import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.viewmodel.LoginOTPViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,6 +102,21 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                 }
 
                 is LoginOTPPageViewState.SuccessUpdate -> {
+                    HydraAPI.getDefaultInstance(requireActivity())!!.pushUserUpdate(
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        AuthUtil.getInstance().customer.attributes.firstName,
+                        AuthUtil.getInstance().customer.attributes.lastName,
+                        AuthUtil.getInstance().customer.attributes.email,
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                    )
+
+                    HydraAPI.getDefaultInstance(requireActivity())!!.pushUserSignin(
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                        AuthUtil.getInstance().customer.attributes.firstName,
+                        AuthUtil.getInstance().customer.attributes.lastName,
+                        AuthUtil.getInstance().customer.attributes.email,
+                        AuthUtil.getInstance().customer.attributes.mobile,
+                    )
                     binding.skipButton.performClick()
                 }
 

@@ -71,6 +71,7 @@ import com.herfy.feedback.FeedbackActivity
 import com.herfy.home.views.HomeFragment
 import com.herfy.home.views.HomeFragmentDirections
 import com.herfy.loyalty.LoyaltyActivity
+import com.herfy.loyalty.LoyaltyIFrameActivity
 import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
 import com.herfy.menu.view.MenuFragment
@@ -172,6 +173,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     var currentDestination = -1
     private var languageAdapter: LanguageAdapter? = null
     var isDrawerOpen = false
+
     @Volatile
     private var shouldCheckAlarmPermission = false
 
@@ -194,7 +196,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
 
-
     override fun onRestart() {
         super.onRestart()
         val locale = LocaleUtil.getLocale()
@@ -202,9 +203,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             mCurrentLocale = locale
             val i = Intent(this@MainActivity, MainActivity::class.java)
             startActivity(i)
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
-            }else {
+            } else {
                 overridePendingTransition(0, 0)
             }
         }
@@ -218,7 +219,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
             firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
         }
-
 
 
         val bundle = intent.extras
@@ -253,7 +253,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     HydraPushApi.getInstance().requestPushPermission(this)
-                }else{
+                } else {
                     shouldCheckAlarmPermission = true
                     passUserPreferenceUpdate(true)
                 }
@@ -267,7 +267,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                     AuthUtil.getInstance().customer.attributes.lastName,
                     AuthUtil.getInstance().customer.attributes.email,
                     AuthUtil.getInstance().customer.attributes.mobile,
-                    emptyMap<String, Any>())
+                    emptyMap<String, Any>()
+                )
 
                 HydraFirebaseAPI.getInstance()
                     .passPushToken(this, AuthUtil.getInstance().firebase)
@@ -302,7 +303,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             currentDestination = destination.id
             binding.toolbarMain.apply {
                 if (currentDestination == R.id.nav_herfy_home || currentDestination == R.id.nav_dialog_popup) {
-                    setStatusBarColor(ContextCompat.getColor(this@MainActivity, com.herfy.commonstyles.R.color.toolbar_color))
+                    setStatusBarColor(
+                        ContextCompat.getColor(
+                            this@MainActivity,
+                            com.herfy.commonstyles.R.color.toolbar_color
+                        )
+                    )
                     hide(false)
                     setCartQuantity()
                     setupSideBar()
@@ -637,7 +643,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         signUpHydra()
 
 
-
     }
 
     private fun setupSideBar() {
@@ -672,9 +677,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             ) ||
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                         .contains(PaymentType.LOYALTY)
-        if(containsLoyalty && isSignedIn){
+        if (containsLoyalty && isSignedIn) {
             binding.sidebar.fmLoyalty.visible()
-        }else {
+        } else {
             binding.sidebar.fmLoyalty.gone()
         }
         binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
@@ -772,10 +777,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         binding.sidebar.fmHistory.setOnClickListener { showHistory() }
         binding.sidebar.fmLoyalty.setOnClickListener {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            val intent = Intent(this@MainActivity, LoyaltyActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                showLoadingDialog()
+                mainPresenter.getLoyaltyIFrame()
+            } else {
+                showLoyaltyPage()
+            }
         }
         binding.sidebar.fmFeedback.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -891,6 +898,14 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             intent.removeExtra("autoLogin")
             binding.sidebar.signin.performClick()
         }
+    }
+
+    private fun showLoyaltyPage() {
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        val intent = Intent(this@MainActivity, LoyaltyIFrameActivity::class.java)
+        intent.putExtra("iframe_name", Values.IFRAME_NAME_HOME)
+        startActivity(intent)
+        overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
     }
 
     private fun showNotifications() {
@@ -1084,6 +1099,13 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
+    override fun showLoyalty(proceedToLoyalty: Boolean) {
+        dismissDialogs()
+        if (proceedToLoyalty) {
+            showLoyaltyPage()
+        }
+    }
+
     fun triggerMainRebirth() {
         val multiCountry =
             BuildConfig.APPLICATION_ID.contains("com.labeeb") || BuildConfig.MULTI_COUNTRY_ENABLED
@@ -1144,7 +1166,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     @OptIn(DelicateCoroutinesApi::class)
     fun setCartQuantity() {
-        GlobalScope.launch(context = CoroutineContextProvider().Main){
+        GlobalScope.launch(context = CoroutineContextProvider().Main) {
             cacheUtilHelper.getCartItems {
                 cacheUtilHelper.setCartQuantity(it)
                 binding.toolbarMain.setCart(cacheUtilHelper.getCartQuantity())
@@ -1573,20 +1595,22 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         if (BuildConfig.VERSION_NAME != "3.1.2") return
 
         val customer = auth.customer ?: return
-        val phone =customer.attributes?.mobile ?: ""
+        val phone = customer.attributes?.mobile ?: ""
         if (phone.isBlank()) return
 
         if (!auth.isHydraSignedUp(phone)) {
             HydraAPI.getDefaultInstance(this@MainActivity)?.pushUserSignup(
                 cuid = phone ?: "",
                 firstName = customer.attributes?.firstName,
-                lastName  = customer.attributes?.lastName,
-                email     = customer.attributes?.email,
-                phone     = phone,
+                lastName = customer.attributes?.lastName,
+                email = customer.attributes?.email,
+                phone = phone,
                 customData = emptyMap()
             )
             auth.saveHydraSignUp(phone)
         }
+
+
     }
 
     private fun checkAlarmPermission() {

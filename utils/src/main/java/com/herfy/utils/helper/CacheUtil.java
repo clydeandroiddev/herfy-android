@@ -45,6 +45,7 @@ import com.skylinedynamics.solosdk.api.models.objects.curbside.CarMaker;
 import com.skylinedynamics.solosdk.api.models.objects.curbside.CustomerCar;
 import com.skylinedynamics.solosdk.util.GsonHelper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -172,6 +173,8 @@ public class CacheUtil {
     private static final String DEVICE_USED_PROMOTIONS = "device_used_promotions";
     private static final String SHARED_STRING_CONFIG = "SharedStringConfig";
     private static final String CAPILLARY_URL_SSL = "capillary_url_ssl";
+    private static final String LOYALTY_IFRAME_TOKEN = "loyalty_iframe_token";
+    private static final String CAPILLARY_IFRAMES = "capillary_iframes";
 
     private CacheUtil(Context context) {
 
@@ -646,6 +649,28 @@ public class CacheUtil {
         return null;
     }
 
+    public void setCapillaryPopup(JSONObject popup) throws JSONException {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+
+        if (popup == null) {
+            editor.remove("CAPILLARY_POPUP");
+            editor.apply();
+            return;
+        }
+
+        editor.putString("CAPILLARY_POPUP", popup.getJSONObject("attributes").toString());
+        editor.apply();
+    }
+
+    public Popup getCapillaryPopup() {
+        String value = cacheSharedPreferences.getString("CAPILLARY_POPUP", null);
+        if (value != null) {
+            return GsonHelper.gsonFinal().fromJson(value, Popup.class);
+        }
+        return null;
+    }
+
+
     public void setMenuCached(long menuCached) {
         SharedPreferences.Editor editor = cacheSharedPreferences.edit();
         editor.putLong(MENU_CACHED, menuCached);
@@ -735,6 +760,7 @@ public class CacheUtil {
         setOrderDeliveryTelephone(null);
         setOrderDeliveryLabel(null);
         setOrderDeliveryInstructions(null);
+        setLoyaltyIframeToken(null);
     }
 
     public void clearOrder() {
@@ -770,6 +796,7 @@ public class CacheUtil {
         setCustomCard(null);
         setConsumerData(null);
         setLastOrderId(null);
+        setLoyaltyIframeToken(null);
     }
 
     public void setCart(ArrayList<MenuItem> menuItems) {
@@ -2188,7 +2215,7 @@ public class CacheUtil {
 
     public String getSharedStringConfig(String defaultValue) {
         String sharedStringConfig = cacheSharedPreferences.getString(SHARED_STRING_CONFIG, defaultValue);
-        if(sharedStringConfig == null || sharedStringConfig.isEmpty()) {
+        if (sharedStringConfig == null || sharedStringConfig.isEmpty()) {
             sharedStringConfig = defaultValue;
         } else {
             return new String(Base64.decode(sharedStringConfig, Base64.DEFAULT));
@@ -2212,6 +2239,16 @@ public class CacheUtil {
         editor.apply();
     }
 
+    public String getLoyaltyIframeToken() {
+        return cacheSharedPreferences.getString(LOYALTY_IFRAME_TOKEN, "");
+    }
+
+    public void setLoyaltyIframeToken(String loyaltyIframeToken) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(LOYALTY_IFRAME_TOKEN, loyaltyIframeToken);
+        editor.apply();
+    }
+
     // Get hydra_base_url from JSON
     public String getCapillaryBaseUrl() {
         try {
@@ -2222,6 +2259,28 @@ public class CacheUtil {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public boolean isCapillaryIframeEnabled(String name) {
+        try {
+            String jsonStr = getCapillaryConfig();
+            if (jsonStr == null || jsonStr.isEmpty()) {
+                return false;
+            }
+            JSONObject json = new JSONObject(jsonStr);
+            JSONArray iframes = json.optJSONArray("capillary_iframes");
+            if (iframes != null) {
+                for (int i = 0; i < iframes.length(); i++) {
+                    JSONObject iframe = iframes.getJSONObject(i);
+                    if (name.equalsIgnoreCase(iframe.optString("name"))) {
+                        return iframe.optBoolean("enabled", false);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // Get hydra_ssl_public_key from JSON (decoded from Base64)
@@ -2261,6 +2320,33 @@ public class CacheUtil {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public void setCapillaryIframes(String capillaryIframes) {
+        SharedPreferences.Editor editor = cacheSharedPreferences.edit();
+        editor.putString(CAPILLARY_IFRAMES, capillaryIframes);
+        editor.apply();
+    }
+
+    public String getCapillaryIframes() {
+        return cacheSharedPreferences.getString(CAPILLARY_IFRAMES, "[]");
+    }
+
+    // Optional helper to get url for a specific iframe by name
+    public String getCapillaryIframeUrl(String name) {
+        try {
+            String iframesStr = getCapillaryIframes();
+            JSONArray jsonArray = new JSONArray(iframesStr);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject iframeObj = jsonArray.getJSONObject(i);
+                if (iframeObj.optString("name", "").equalsIgnoreCase(name)) {
+                    return iframeObj.optString("url", "");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }

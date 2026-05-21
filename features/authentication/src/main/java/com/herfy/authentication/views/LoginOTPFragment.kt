@@ -209,6 +209,16 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             requireActivity().setResult(Activity.RESULT_OK)
             requireActivity().finish()
         } else {
+            HydraAPI.getDefaultInstance(requireActivity())?.pushUserSignup(
+                cuid = args.phoneNumber ?: "",
+                firstName = args.givenName,
+                lastName = args.givenName,
+                email = args.phoneNumber,
+                phone = args.givenName,
+                customData = emptyMap()
+            )
+
+
             findNavController().navigate(
                 LoginOTPFragmentDirections.actionOtpToInputUser(
                     phoneNumber = args.phoneNumber,

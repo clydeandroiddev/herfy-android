@@ -39,6 +39,9 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+
 interface AuthRepository {
 
     suspend fun login(phoneNumber: String, result: (LoginResponse) -> Unit)
@@ -60,8 +63,7 @@ interface AuthRepository {
     )
 
     suspend fun updateName(
-        customerId: String, name: String, lastName: String, result: (CustomerResponse) -> Unit
-    )
+        customerId: String, name: String, lastName: String): CustomerResponse
 
     suspend fun updateMobile(
         customerId: String, mobile: String, result: (CustomerResponse) -> Unit
@@ -587,6 +589,61 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateName(
+        customerId: String, name: String, lastName: String
+    ): CustomerResponse = suspendCancellableCoroutine { continuation ->
+
+        val updateCustomerBody = UpdateCustomerNameBody(name, lastName)
+
+        CustomersApiCall.getInstance().updateCustomerName(updateCustomerBody, customerId, object : ApiRequestListener {
+
+            override fun onSuccess(o: Any) {
+                if (o is JSONObject) {
+                    try {
+
+                        val dataObj = o.getJSONObject("data")
+                        val cust = Gson().fromJson(dataObj.toString(), Customer::class.java)
+                        AuthUtil.getInstance().customer = cust
+                        continuation.resume(CustomerResponse(true, cust, ""))
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        continuation.resume(
+                            CustomerResponse(false, null, CacheUtil.getInstance().getTranslations(Text.SAVING_PROFILE_ERROR))
+                        )
+                    }
+                } else {
+                    continuation.resume(
+                        CustomerResponse(
+                            false,
+                            null,
+                            CacheUtil.getInstance().getTranslations(Text.SAVING_PROFILE_ERROR)
+                        )
+                    )
+                }
+            }
+
+            override fun onError(o: Any) {
+                AppLogger.printRetrofitError(o)
+                var detail = CacheUtil.getInstance().getTranslations(Text.AN_ERROR_OCCURRED)
+                if (o is JSONObject) {
+                    try {
+                        val error = o["error"]
+                        if (error is JSONObject) {
+                            detail = error.getString("detail")
+                        } else if (error is JSONArray) {
+                            val errorObject = error.getJSONObject(0)
+                            detail = errorObject.getString("detail")
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        detail = CacheUtil.getInstance().getTranslations(Text.SAVING_PROFILE_ERROR)
+                    }
+                }
+                continuation.resume(CustomerResponse(false, null, detail))
+            }
+        })
+    }
+
+   /* override suspend fun updateName(
         customerId: String, name: String, lastName: String, result: (CustomerResponse) -> Unit
     ) {
         val updateCustomerBody = UpdateCustomerNameBody(name, lastName)
@@ -721,7 +778,7 @@ class AuthRepositoryImpl @Inject constructor(
                     }
                 }
             })
-    }
+    }*/
 
     override suspend fun updateMobile(
         customerId: String, mobile: String, result: (CustomerResponse) -> Unit

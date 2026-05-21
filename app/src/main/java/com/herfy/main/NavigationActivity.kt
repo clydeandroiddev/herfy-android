@@ -188,6 +188,10 @@ class NavigationActivity : BaseActivity(), MainContract.View {
 
     }
 
+    override fun showLoyalty(proceedToLoyalty: Boolean) {
+
+    }
+
     fun showScheduleBubble() {
         /*  if (CacheUtil.getInstance().concept.allowAdvanceOrder && currentDestination == R.id.nav_cart) {
               try {

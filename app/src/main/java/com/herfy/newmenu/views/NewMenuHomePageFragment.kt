@@ -214,23 +214,27 @@ class NewMenuHomePageFragment : BaseFragment(), MenuContract.View, SliderContrac
         }
 
         if (BuildConfig.FEATURE_PHASE >= 1.3f) {
-            CacheUtil.getInstance().popup?.let {
-                setFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
-                    clearFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT)
-                    when (bundle.getString(PopupFragment.ARGS_KEY_ACTION_TYPE)) {
-                        "url" -> showLink(Uri.parse(bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE)))
-                        "category" -> showMenuCategory(
-                            bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
-                        )
+            CacheUtil.getInstance().popup?.let { popup ->
+                val label = popup.label ?: ""
+                val isCapillaryPopup = label.equals("Capillary", ignoreCase = true) || label.lowercase(Locale.getDefault()).contains("capillary")
+                if (!isCapillaryPopup) {
+                    setFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
+                        clearFragmentResultListener(PopupFragment.ARGS_KEY_FRAGMENT_RESULT)
+                        when (bundle.getString(PopupFragment.ARGS_KEY_ACTION_TYPE)) {
+                            "url" -> showLink(Uri.parse(bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE)))
+                            "category" -> showMenuCategory(
+                                bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
+                            )
 
-                        "item", "product" -> showMenuItem(
-                            bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
-                        )
+                            "item", "product" -> showMenuItem(
+                                bundle.getString(PopupFragment.ARGS_KEY_ACTION_VALUE) ?: ""
+                            )
+                        }
                     }
+                    NavigationUtils.navigateSafe(
+                        findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDialogPopup()
+                    )
                 }
-                NavigationUtils.navigateSafe(
-                    findNavController(), NewMenuHomePageFragmentDirections.actionHomeToDialogPopup()
-                )
             }
         }
     }

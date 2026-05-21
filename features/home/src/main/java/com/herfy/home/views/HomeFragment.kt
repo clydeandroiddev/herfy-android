@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.core.view.isVisible
@@ -37,6 +38,7 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.extensions.gone
 import com.herfy.utils.extensions.loadSliderImage
 import com.herfy.utils.extensions.navigateToDeepLink
+import com.herfy.utils.extensions.ninjaTap
 import com.herfy.utils.extensions.observeNonNull
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.setInteractionDisabled
@@ -49,11 +51,13 @@ import com.herfy.utils.helper.LocaleUtil
 import com.herfy.utils.helper.StringUtil
 import com.herfy.utils.helper.TimeUtil
 import com.herfy.utils.helper.ViewUtil
+import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
 import com.skylinedynamics.solosdk.util.AppLogger
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import java.util.regex.Pattern
 
 
@@ -71,6 +75,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private var bottomSliderhandler: Handler? = null
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private var countDownTimer: CountDownTimer? = null
+    private var pendingLoyaltyUrl: String? = null
     private val cacheUtilHelper by lazy {
         context?.let {
             CacheUtilHelper(it)
@@ -91,6 +96,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             setupPromoCategory()
             setupPromotions()
             setupCaterWithHerfy()
+            setupMiddleSlider()
             setupBottomSlider()
             layoutLoyalty.apply {
                 //progress.isEnabled = false
@@ -104,37 +110,57 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         intent.putExtra("checkout", false)
                         startActivity(intent)
                     }
-
                 }
-                clSeeRewards.setOnClickListener {
-                    context?.let {
-                        val intent = Intent()
-                        intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
-                        startActivity(intent)
+                cvLoyaltyDetails.ninjaTap(viewLifecycleScope) {
+                    if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                        viewModel.getLoyaltyIframe(true)
+                    } else {
+                        goToLoyaltyPage()
                     }
                 }
             }
         }
     }
 
+    private fun goToLoyaltyPage(url: String? = null) {
+        context?.let {
+            val intent = Intent()
+            intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
+            intent.putExtra("iframe_name", Values.IFRAME_NAME_HOME)
+            if (!url.isNullOrEmpty()) {
+                intent.putExtra("url", url)
+            }
+            startActivity(intent)
+        }
+    }
+
     private fun showPopup() {
-        CacheUtil.getInstance().popup?.let {
-            Glide.with(requireContext()).load(CacheUtil.getInstance().popup.imageUri).preload()
+        CacheUtil.getInstance().popup?.let { popup ->
+            Glide.with(requireContext()).load(popup.imageUri).preload()
             setFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT)
                 val actionValue = bundle.getString(Values.ARGS_KEY_ACTION_VALUE) ?: ""
                 if (actionValue.isNotEmpty()) {
                     when (bundle.getString(Values.ARGS_KEY_ACTION_TYPE)) {
                         "url" -> {
-                            try {
-                                val activity = activity
-                                if (activity != null) {
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    intent.data = Uri.parse(actionValue)
-                                    activity.startActivity(intent)
+                            if (popup.label.equals(Values.LABEL_CAPILLARY, ignoreCase = true) && CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)) {
+                                if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                                    pendingLoyaltyUrl = actionValue
+                                    viewModel.getLoyaltyIframe(true)
+                                } else {
+                                    goToLoyaltyPage(actionValue)
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                            } else {
+                                try {
+                                    val activity = activity
+                                    if (activity != null) {
+                                        val intent = Intent(Intent.ACTION_VIEW)
+                                        intent.data = Uri.parse(actionValue)
+                                        activity.startActivity(intent)
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
                         }
 
@@ -176,6 +202,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     cvEmptyState.gone()
                 }
                 viewModel.getLoyalty()
+                viewModel.getLoyaltyIframe()
             } else {
                 binding.layoutLoyalty.apply {
                     clCustomerLoyalty.visible()
@@ -395,6 +422,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
+        viewModel.showLoyaltyPage.observeNonNull(this) {
+            it.getContentIfNotHandled()?.let {
+                goToLoyaltyPage(pendingLoyaltyUrl)
+                pendingLoyaltyUrl = null
+            }
+        }
+
         viewModel.showPromo.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { promo ->
                 promotionDetailBottomSheet = PromotionDetailBottomSheet.newInstance(
@@ -456,7 +490,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 } else {
                     binding.layoutLoyalty.apply {
                         clCustomerLoyalty.visible()
-                        cvShimmerLoyalty.visible()
+                        cvShimmerLoyalty.gone()
                         cvLoyaltyDetails.gone()
                         cvEmptyState.gone()
                     }
@@ -474,8 +508,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             loyalty.let { loyalty ->
                 binding.layoutLoyalty.apply {
                     loyalty.let {
-                        tvTotalPoints.text = StringUtil.localize(loyalty.attributes.currentBalance.toString())
-                        val currentBalanceValue = String.format("%.2f", loyalty.attributes.currentBalanceAmount)
+                        tvTotalPoints.text =
+                            StringUtil.localize(loyalty.attributes.currentBalance.toString())
+                        val currentBalanceValue =
+                            String.format("%.2f", loyalty.attributes.currentBalanceAmount)
                         tvSarValue.text = StringUtil.localize(currentBalanceValue)
                         var loyaltyTier = loyalty.attributes.loyaltyTier?.label?.english ?: ""
                         val tierImageUrl = loyalty.attributes.loyaltyTier?.imageUrl ?: ""
@@ -483,22 +519,26 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             loyaltyTier = loyaltyTier.lowercase().replaceFirstChar(Char::titlecase)
                         }
                         if (loyaltyTier.isNotEmpty()) {
-                            var tierBackground = com.herfy.commonstyles.R.drawable.background_bronze_tier
+                            var tierBackground =
+                                com.herfy.commonstyles.R.drawable.background_bronze_tier
                             if (loyaltyTier.equals(
                                     "Silver", ignoreCase = true
                                 ) || loyaltyTier == "فضي"
                             ) {
-                                tierBackground = com.herfy.commonstyles.R.drawable.background_silver_tier
+                                tierBackground =
+                                    com.herfy.commonstyles.R.drawable.background_silver_tier
                             } else if (loyaltyTier.equals(
                                     "Gold", ignoreCase = true
                                 ) || loyaltyTier == "ذهبي"
                             ) {
-                                tierBackground = com.herfy.commonstyles.R.drawable.background_gold_tier
+                                tierBackground =
+                                    com.herfy.commonstyles.R.drawable.background_gold_tier
                             } else if (loyaltyTier.equals(
                                     "Diamond", true
                                 ) || loyaltyTier == "البلاتين"
                             ) {
-                                tierBackground = com.herfy.commonstyles.R.drawable.background_diamond_tier
+                                tierBackground =
+                                    com.herfy.commonstyles.R.drawable.background_diamond_tier
                             }
                             tvTier.setBackgroundResource(tierBackground)
                             tvTier.text = loyaltyTier
@@ -547,12 +587,14 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         viewModel.tierProgress.observeNonNull(this) {
             it.getContentIfNotHandled()?.let { tierProgress ->
                 AuthUtil.getInstance().setCustomerLoyaltyTier(tierProgress.nextTier)
-                CacheUtil.getInstance().setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
+                CacheUtil.getInstance()
+                    .setTotalAccumulatedPoints(tierProgress.totalPointsAccumulated)
                 CacheUtil.getInstance().setPointsUntilNextTier(tierProgress.pointsToNextTier)
                 CacheUtil.getInstance().setStartingPointsOfNextTier(tierProgress.startPoints)
                 binding.layoutLoyalty.apply {
                     if (tierProgress.pointsToNextTier <= 0) {
-                        val tierName = tierProgress.loyalty?.attributes?.loyaltyTier?.label?.english ?: ""
+                        val tierName =
+                            tierProgress.loyalty?.attributes?.loyaltyTier?.label?.english ?: ""
                         if (tierProgress.isMaxTier) {
                             progress.max = 100
                             progress.progress = 100
@@ -1104,6 +1146,39 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 //                    }
                 }
 
+            }
+        }
+    }
+
+    private fun setupMiddleSlider() {
+        activity?.let { act ->
+            binding.apply {
+                val isHomeIframeEnabled = CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+                val capillaryPopup = CacheUtil.getInstance().capillaryPopup
+
+                if (isHomeIframeEnabled && capillaryPopup != null && !capillaryPopup.imageUri.isNullOrEmpty()) {
+                    layoutMiddleBanner.apply {
+                        clMiddleBanner.visibility = View.VISIBLE
+                        cvBannerMiddle.visibility = View.VISIBLE
+                        shimmerBannerMiddle.visibility = View.GONE
+
+                        Glide.with(act)
+                            .load(capillaryPopup.imageUri)
+                            .into(ivBannerMiddle)
+
+                        ivBannerMiddle.setOnClickListener {
+                            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                                viewModel.getLoyaltyIframe(true)
+                            } else {
+                                goToLoyaltyPage(null)
+                            }
+                        }
+                    }
+                } else {
+                    layoutMiddleBanner.apply {
+                        clMiddleBanner.visibility = View.GONE
+                    }
+                }
             }
         }
     }

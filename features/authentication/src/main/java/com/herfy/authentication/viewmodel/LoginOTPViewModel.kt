@@ -107,18 +107,19 @@ class LoginOTPViewModel @Inject constructor(
                         firstName = fullname[0]
                     }
                     _state.emit(LoginOTPPageViewState.ShowLoading(true))
-                    authRepository.updateName(customerId, firstName, lastName) {
-                        viewModelScope.launchWithTimber(dispatchers.io) {
-                            _state.emit(LoginOTPPageViewState.ShowLoading(false))
-                            if (it.success) {
-                                _state.emit(LoginOTPPageViewState.SuccessUpdate)
-                            } else {
-                                _state.emit(
-                                    LoginOTPPageViewState.ShowError(
-                                        it.message
-                                    )
+                    viewModelScope.launchWithTimber(dispatchers.io) {
+
+                        val response = authRepository.updateName(customerId, firstName, lastName)
+                        _state.emit(LoginOTPPageViewState.ShowLoading(false))
+
+                        if (response.success) {
+                            _state.emit(LoginOTPPageViewState.SuccessUpdate)
+                        } else {
+                            _state.emit(
+                                LoginOTPPageViewState.ShowError(
+                                    response.message
                                 )
-                            }
+                            )
                         }
                     }
                 }

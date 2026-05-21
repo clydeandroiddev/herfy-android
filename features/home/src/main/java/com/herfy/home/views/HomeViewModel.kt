@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.herfy.analytics.kochava.KochavaEventType
@@ -35,10 +34,7 @@ import com.skylinedynamics.solosdk.api.ApiRequestListener
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
 import com.skylinedynamics.solosdk.api.calls.MenuApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty
-import com.skylinedynamics.solosdk.api.models.objects.LoyaltyAttributes
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyProfile
-import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTier
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
@@ -49,7 +45,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderDetails
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Slide
-import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.api.models.objects.TranslatedV2
 import com.skylinedynamics.solosdk.util.GsonHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -157,6 +152,9 @@ class HomeViewModel @Inject constructor(
     private val _showOrderTypeFromCampaign = MutableLiveData<Event<Boolean>>()
     val showOrderTypeFromCampaign: LiveData<Event<Boolean>> = _showOrderTypeFromCampaign
 
+    private val _showLoyaltyPage = MutableLiveData<Event<Boolean>>()
+    val showLoyaltyPage: LiveData<Event<Boolean>> = _showLoyaltyPage
+
     private val _showPromotionsError = MutableLiveData<Event<ErrorMsgItem>>()
     val showPromotionsError: LiveData<Event<ErrorMsgItem>> = _showPromotionsError
 
@@ -202,6 +200,24 @@ class HomeViewModel @Inject constructor(
                 }
             } else {
                 _caterList.value = arrayListOf()
+            }
+        }
+    }
+
+    fun getLoyaltyIframe() {
+        getLoyaltyIframe(false)
+    }
+
+    fun getLoyaltyIframe(proceedToLoyalty: Boolean) {
+        if (AuthUtil.getInstance().isSignedIn) {
+            invoke {
+                homeRepository.getLoyaltyIframeToken(AuthUtil.getInstance().customer.id) { response ->
+                    if (response.success) {
+                        if (proceedToLoyalty) {
+                            _showLoyaltyPage.value = Event(true)
+                        }
+                    }
+                }
             }
         }
     }
@@ -447,7 +463,8 @@ class HomeViewModel @Inject constructor(
                 val loyalty = pair.first
                 val totalPointsAccumulated = loyalty.attributes.currentBalance
                 var eligibleTiers = Observable.fromIterable(tiers)
-                    .filter { tier: LoyaltyTierV2 -> totalPointsAccumulated <= tier.endingPoints }.toList()
+                    .filter { tier: LoyaltyTierV2 -> totalPointsAccumulated <= tier.endingPoints }
+                    .toList()
                     .blockingGet()
                 var pointsToNextTier = 0
                 if (loyalty.attributes.loyaltyTier == null) {
@@ -484,7 +501,8 @@ class HomeViewModel @Inject constructor(
                 if (nextTier != null) {
                     startPoints = nextTier.startingPoints
                     if (loyalty.attributes.loyaltyTier != null) {
-                        isMaxTier = nextTier.label.english == loyalty.attributes.loyaltyTier.label.english
+                        isMaxTier =
+                            nextTier.label.english == loyalty.attributes.loyaltyTier.label.english
                     }
                     if (isMaxTier) {
                         pointsToNextTier = 0
