@@ -469,7 +469,7 @@ dependencies {
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
 
     //Checkout Sdk
-    implementation "com.checkout:checkout-android-components:1.3.0"
+    implementation "com.checkout:checkout-android-components:1.12.0"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.31.5-beta"
 
     //Moyasar SDK
