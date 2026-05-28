@@ -71,6 +71,7 @@ import com.herfy.history.OrdersPresenter
 import com.herfy.history.historynew.RatingBarDialog
 import com.herfy.history.historynew.adapter.OrderMenuItemsAdapter
 import com.herfy.main.MainActivity
+import com.herfy.home.adapter.SliderImageAdapter
 import com.herfy.ordertracker.databinding.FragmentOrderNewTrackerBinding
 import com.herfy.util.AppLogger
 import com.herfy.util.StringUtil
@@ -155,6 +156,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     private var driverLastLastEta: Int? = null
 
     private var countDownTimer: CountDownTimer? = null
+    private lateinit var middleSliderImageAdapter: SliderImageAdapter
 
     private var countDownTime: Long = 60000
 
@@ -388,17 +390,31 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             return
         }
 
+        if (!::middleSliderImageAdapter.isInitialized) {
+            middleSliderImageAdapter = SliderImageAdapter(
+                sliderListener = object : SliderImageAdapter.SliderListener {
+                    override fun onSelectedImage(slide: Slide) {
+                        if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                            getLoyaltyIframe(null, true)
+                        } else {
+                            goToLoyaltyPage(null, true)
+                        }
+                    }
+                }
+            )
+            binding.layoutMiddleBanner.vpBannerMiddle.adapter = middleSliderImageAdapter
+        }
+
         CmsApiCall.getInstance().getSlider(sliderId, object : ApiRequestListener {
             override fun onSuccess(obj: Any?) {
-                var bannerImageUri = ""
+                val bannerSlides = arrayListOf<Slide>()
                 try {
                     val dataArray = JSONObject(obj.toString()).optJSONArray("data")
                     if (dataArray != null && dataArray.length() > 0) {
                         for (i in 0 until dataArray.length()) {
                             val slide = Slide.parse(dataArray.getJSONObject(i))
                             if (slide.imageUri.isNotEmpty()) {
-                                bannerImageUri = slide.imageUri
-                                break
+                                bannerSlides.add(slide)
                             }
                         }
                     }
@@ -406,16 +422,21 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                     e.printStackTrace()
                 }
 
-                activity?.let { act ->
-                    binding.layoutMiddleBanner.apply {
-                        if (bannerImageUri.isNotEmpty()) {
-                            clMiddleBanner.visibility = View.VISIBLE
-                            cvBannerMiddle.visibility = View.VISIBLE
-                            shimmerBannerMiddle.visibility = View.GONE
-                            Glide.with(act).load(bannerImageUri).into(ivBannerMiddle)
+                binding.layoutMiddleBanner.apply {
+                    if (bannerSlides.isNotEmpty()) {
+                        clMiddleBanner.visibility = View.VISIBLE
+                        cvBannerMiddle.visibility = View.VISIBLE
+                        shimmerBannerMiddle.visibility = View.GONE
+                        middleSliderImageAdapter.updateImageList(bannerSlides)
+                        if (bannerSlides.size > 1) {
+                            sdiBannerMiddle.visibility = View.VISIBLE
+                            sdiBannerMiddle.setViewPager2(vpBannerMiddle)
                         } else {
-                            clMiddleBanner.visibility = View.GONE
+                            sdiBannerMiddle.visibility = View.GONE
                         }
+                    } else {
+                        clMiddleBanner.visibility = View.GONE
+                        sdiBannerMiddle.visibility = View.GONE
                     }
                 }
             }
@@ -425,14 +446,6 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                 binding.layoutMiddleBanner.clMiddleBanner.visibility = View.GONE
             }
         })
-
-        binding.layoutMiddleBanner.ivBannerMiddle.setOnClickListener {
-            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
-                getLoyaltyIframe(null, true)
-            } else {
-                goToLoyaltyPage(null, true)
-            }
-        }
     }
 
     private fun goToLoyaltyPage(url: String? = null, forceRemoteConfigUrl: Boolean = false) {

@@ -23,14 +23,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:visibility="visible">
 
-        <ImageView
-            android:id="@+id/iv_banner_middle"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_banner_middle"
             android:layout_width="match_parent"
             android:layout_height="110dp"
-            android:scaleType="centerCrop"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            android:layoutDirection="locale"
+            android:visibility="visible" />
 
     </com.google.android.material.card.MaterialCardView>
+
+    <com.tbuonomo.viewpagerdotsindicator.StrokeDotsIndicator
+        android:id="@+id/sdi_banner_middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        app:dotsColor="@color/input_border_color"
+        app:dotsSize="10dp"
+        app:dotsSpacing="4dp"
+        app:dotsStrokeColor="@color/white"
+        app:dotsStrokeWidth="1dp"
+        app:dotsWidthFactor="3.5"
+        app:layout_constraintBottom_toBottomOf="@id/cv_banner_middle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:progressMode="false"
+        app:selectedDotColor="@color/white" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_banner_middle"

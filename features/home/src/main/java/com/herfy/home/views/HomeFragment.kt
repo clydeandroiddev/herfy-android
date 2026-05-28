@@ -55,6 +55,7 @@ import com.herfy.utils.helper.viewLifecycleScope
 import com.skylinedynamics.solosdk.api.models.objects.OrderStatusType
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.PaymentType
+import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.util.AppLogger
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
@@ -73,6 +74,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private var sliderHandler: Handler? = null
     private lateinit var bottomSliderImageAdapter: SliderImageAdapter
     private var bottomSliderhandler: Handler? = null
+    private lateinit var middleSliderImageAdapter: SliderImageAdapter
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private var countDownTimer: CountDownTimer? = null
     private var pendingLoyaltyUrl: String? = null
@@ -200,6 +202,10 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         setupMiddleSlider()
         setupPromotions()
         setupOrdertracker()
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     private fun updateCustomerLoyalty() {
@@ -734,21 +740,27 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.middleSlideList.observeNonNull(this) { slides ->
-            activity?.let { act ->
-                val isSignedIn = AuthUtil.getInstance().isSignedIn
-                val isHomeIframeEnabled =
-                    CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
-                val middleSlide = slides.firstOrNull()
+            ensureMiddleSliderAdapter()
+            val isSignedIn = AuthUtil.getInstance().isSignedIn
+            val isHomeIframeEnabled =
+                CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+            val middleSlides = ArrayList(slides.filter { !it.imageUri.isNullOrEmpty() })
 
-                binding.layoutMiddleBanner.apply {
-                    if (isSignedIn && isHomeIframeEnabled && middleSlide != null && middleSlide.imageUri.isNotEmpty()) {
-                        clMiddleBanner.visibility = View.VISIBLE
-                        cvBannerMiddle.visibility = View.VISIBLE
-                        shimmerBannerMiddle.visibility = View.GONE
-                        Glide.with(act).load(middleSlide.imageUri).into(ivBannerMiddle)
+            binding.layoutMiddleBanner.apply {
+                if (isSignedIn && isHomeIframeEnabled && middleSlides.isNotEmpty()) {
+                    clMiddleBanner.visibility = View.VISIBLE
+                    cvBannerMiddle.visibility = View.VISIBLE
+                    shimmerBannerMiddle.visibility = View.GONE
+                    middleSliderImageAdapter.updateImageList(middleSlides)
+                    if (middleSlides.size > 1) {
+                        sdiBannerMiddle.visibility = View.VISIBLE
+                        sdiBannerMiddle.setViewPager2(vpBannerMiddle)
                     } else {
-                        clMiddleBanner.visibility = View.GONE
+                        sdiBannerMiddle.visibility = View.GONE
                     }
+                } else {
+                    clMiddleBanner.visibility = View.GONE
+                    sdiBannerMiddle.visibility = View.GONE
                 }
             }
         }
@@ -1194,6 +1206,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
 
     private fun setupMiddleSlider() {
+        ensureMiddleSliderAdapter()
         val isHomeIframeEnabled =
             CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
         if (!isHomeIframeEnabled) {
@@ -1202,13 +1215,26 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
         viewModel.getMiddleSliders()
-        binding.layoutMiddleBanner.ivBannerMiddle.setOnClickListener {
-            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
-                pendingForceRemoteConfigUrl = true
-                viewModel.getLoyaltyIframe(true)
-            } else {
-                goToLoyaltyPage(null, forceRemoteConfigUrl = true)
-            }
+    }
+
+    private fun ensureMiddleSliderAdapter() {
+        if (!::middleSliderImageAdapter.isInitialized) {
+            middleSliderImageAdapter = SliderImageAdapter(
+                sliderListener = object : SliderImageAdapter.SliderListener {
+                    override fun onSelectedImage(slide: Slide) {
+                        if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                            pendingForceRemoteConfigUrl = true
+                            viewModel.getLoyaltyIframe(true)
+                        } else {
+                            goToLoyaltyPage(null, forceRemoteConfigUrl = true)
+                        }
+                    }
+                }
+            )
+        }
+
+        if (binding.layoutMiddleBanner.vpBannerMiddle.adapter == null) {
+            binding.layoutMiddleBanner.vpBannerMiddle.adapter = middleSliderImageAdapter
         }
     }
 
