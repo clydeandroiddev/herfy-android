@@ -76,6 +76,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private var promotionDetailBottomSheet: PromotionDetailBottomSheet? = null
     private var countDownTimer: CountDownTimer? = null
     private var pendingLoyaltyUrl: String? = null
+    private var pendingForceRemoteConfigUrl: Boolean = false
     private val cacheUtilHelper by lazy {
         context?.let {
             CacheUtilHelper(it)
@@ -115,27 +116,37 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
                         viewModel.getLoyaltyIframe(true)
                     } else {
-                        goToLoyaltyPage()
+                        goToLoyaltyPage(iframeName = Values.IFRAME_NAME_HOME_REWARDS)
                     }
                 }
             }
         }
     }
 
-    private fun goToLoyaltyPage(url: String? = null) {
+    private fun goToLoyaltyPage(
+        url: String? = null,
+        iframeName: String = Values.IFRAME_NAME_HOME,
+        forceRemoteConfigUrl: Boolean = false
+    ) {
         context?.let {
             val intent = Intent()
             intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
-            intent.putExtra("iframe_name", Values.IFRAME_NAME_HOME)
+            intent.putExtra("iframe_name", iframeName)
             if (!url.isNullOrEmpty()) {
                 intent.putExtra("url", url)
             }
+            intent.putExtra("force_remote_config_url", forceRemoteConfigUrl)
             startActivity(intent)
         }
     }
 
     private fun showPopup() {
         CacheUtil.getInstance().popup?.let { popup ->
+            val isCapillaryPopup = popup.label.equals(Values.LABEL_CAPILLARY, ignoreCase = true)
+            if (isCapillaryPopup && !AuthUtil.getInstance().isSignedIn) {
+                return
+            }
+
             Glide.with(requireContext()).load(popup.imageUri).preload()
             setFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT) { key, bundle ->
                 clearFragmentResultListener(Values.ARGS_KEY_FRAGMENT_RESULT)
@@ -186,6 +197,7 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         super.onResume()
         updateGreetings()
         updateCustomerLoyalty()
+        setupMiddleSlider()
         setupPromotions()
         setupOrdertracker()
     }
@@ -429,8 +441,12 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
         viewModel.showLoyaltyPage.observeNonNull(this) {
             it.getContentIfNotHandled()?.let {
-                goToLoyaltyPage(pendingLoyaltyUrl)
+                goToLoyaltyPage(
+                    pendingLoyaltyUrl,
+                    forceRemoteConfigUrl = pendingForceRemoteConfigUrl
+                )
                 pendingLoyaltyUrl = null
+                pendingForceRemoteConfigUrl = false
             } ?: run {
                 AppLogger.error("Content not handled")
             }
@@ -712,6 +728,26 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         }
                     } else {
                         clBottomBanner.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        viewModel.middleSlideList.observeNonNull(this) { slides ->
+            activity?.let { act ->
+                val isSignedIn = AuthUtil.getInstance().isSignedIn
+                val isHomeIframeEnabled =
+                    CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+                val middleSlide = slides.firstOrNull()
+
+                binding.layoutMiddleBanner.apply {
+                    if (isSignedIn && isHomeIframeEnabled && middleSlide != null && middleSlide.imageUri.isNotEmpty()) {
+                        clMiddleBanner.visibility = View.VISIBLE
+                        cvBannerMiddle.visibility = View.VISIBLE
+                        shimmerBannerMiddle.visibility = View.GONE
+                        Glide.with(act).load(middleSlide.imageUri).into(ivBannerMiddle)
+                    } else {
+                        clMiddleBanner.visibility = View.GONE
                     }
                 }
             }
@@ -1158,35 +1194,20 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     }
 
     private fun setupMiddleSlider() {
-        activity?.let { act ->
-            binding.apply {
-                val isHomeIframeEnabled =
-                    CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
-                val capillaryPopup = CacheUtil.getInstance().capillaryPopup
+        val isHomeIframeEnabled =
+            CacheUtil.getInstance().isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+        if (!isHomeIframeEnabled) {
+            binding.layoutMiddleBanner.clMiddleBanner.visibility = View.GONE
+            return
+        }
 
-                if (isHomeIframeEnabled && capillaryPopup != null && !capillaryPopup.imageUri.isNullOrEmpty()) {
-                    layoutMiddleBanner.apply {
-                        clMiddleBanner.visibility = View.VISIBLE
-                        cvBannerMiddle.visibility = View.VISIBLE
-                        shimmerBannerMiddle.visibility = View.GONE
-
-                        Glide.with(act)
-                            .load(capillaryPopup.imageUri)
-                            .into(ivBannerMiddle)
-
-                        ivBannerMiddle.setOnClickListener {
-                            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
-                                viewModel.getLoyaltyIframe(true)
-                            } else {
-                                goToLoyaltyPage(null)
-                            }
-                        }
-                    }
-                } else {
-                    layoutMiddleBanner.apply {
-                        clMiddleBanner.visibility = View.GONE
-                    }
-                }
+        viewModel.getMiddleSliders()
+        binding.layoutMiddleBanner.ivBannerMiddle.setOnClickListener {
+            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                pendingForceRemoteConfigUrl = true
+                viewModel.getLoyaltyIframe(true)
+            } else {
+                goToLoyaltyPage(null, forceRemoteConfigUrl = true)
             }
         }
     }

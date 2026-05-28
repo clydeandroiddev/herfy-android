@@ -903,7 +903,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private fun showLoyaltyPage() {
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         val intent = Intent(this@MainActivity, LoyaltyIFrameActivity::class.java)
-        intent.putExtra("iframe_name", Values.IFRAME_NAME_HOME)
+        intent.putExtra("iframe_name", Values.IFRAME_NAME_SIDEBAR_REWARDS)
         startActivity(intent)
         overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
     }

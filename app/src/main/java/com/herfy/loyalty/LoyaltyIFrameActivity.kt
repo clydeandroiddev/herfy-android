@@ -1,9 +1,7 @@
 package com.herfy.loyalty
 
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebSettings
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.enableEdgeToEdge
 import androidx.core.content.ContextCompat
@@ -52,8 +50,7 @@ class LoyaltyIFrameActivity : BaseActivity() {
         binding.webView.settings.javaScriptEnabled = true
         binding.webView.settings.domStorageEnabled = true
 
-        val token = CacheUtil.getInstance().loyaltyIframeToken
-        if (token.isNullOrEmpty() && AuthUtil.getInstance().isSignedIn) {
+        if (AuthUtil.getInstance().isSignedIn) {
             showLoadingDialog()
             val customer = AuthUtil.getInstance().customer
             RewardApiCall.getInstance().getLoyaltyIframeToken(customer.id, object : ApiRequestListener {
@@ -85,25 +82,76 @@ class LoyaltyIFrameActivity : BaseActivity() {
 
     private fun loadWebViewUrl() {
         val iframeName = intent.getStringExtra("iframe_name") ?: Values.IFRAME_NAME_HOME
-        val remoteConfigUrl = CacheUtil.getInstance().getCapillaryIframeUrl(iframeName)
         val intentUrl = intent.getStringExtra("url")
+        val forceRemoteConfigUrl = intent.getBooleanExtra("force_remote_config_url", false)
+        val remoteConfigUrl = getIframeUrlFromRemoteConfig(iframeName)
+            .ifEmpty { CacheUtil.getInstance().getCapillaryIframeUrl(iframeName) }
+        val shouldUsePopupActionUrl = !forceRemoteConfigUrl &&
+            (iframeName == Values.IFRAME_NAME_HOME || iframeName == Values.IFRAME_NAME_ORDER_DETAILS)
+        val capillaryPopupUrl = if (shouldUsePopupActionUrl) {
+            CacheUtil.getInstance().capillaryPopup?.actionValue
+        } else {
+            null
+        }
         val token = CacheUtil.getInstance().loyaltyIframeToken
         val mobile = AuthUtil.getInstance().customer?.attributes?.mobile ?: ""
 
         val baseUrl = if (!intentUrl.isNullOrEmpty()) {
             intentUrl
+        } else if (!capillaryPopupUrl.isNullOrEmpty()) {
+            capillaryPopupUrl
         } else if (!remoteConfigUrl.isNullOrEmpty()) {
             remoteConfigUrl
         } else {
-            "https://demoapps.capillarytech.com/herfy-app/"
+            "https://demoapps.capillarytech.com/herfy-app"
         }
 
-        val url = if (!baseUrl.contains("token=")) {
-            val separator = if (baseUrl.contains("?")) "&" else "?"
-            "${baseUrl}${separator}token=${token}&mobile=${mobile}&lang=${LocaleUtil.getInstance().languageSymbol}"
+        val normalizedBaseUrl = ensureTrailingSlash(ensureHttpsUrl(baseUrl.trim()))
+
+        val url = if (!normalizedBaseUrl.contains("token=")) {
+            val separator = if (normalizedBaseUrl.contains("?")) "&" else "?"
+            "${normalizedBaseUrl}${separator}token=${token}&mobile=${mobile}&lang=${LocaleUtil.getInstance().languageSymbol}"
         } else {
-            baseUrl
+            normalizedBaseUrl
         }
         binding.webView.loadUrl(url)
     }
+
+    private fun getIframeUrlFromRemoteConfig(iframeName: String): String {
+        return try {
+            val configJson = CacheUtil.getInstance().getCapillaryConfig()
+            if (configJson.isEmpty()) {
+                return ""
+            }
+
+            val iframes = JSONObject(configJson).optJSONArray("capillary_iframes") ?: return ""
+            for (i in 0 until iframes.length()) {
+                val iframe = iframes.optJSONObject(i) ?: continue
+                if (iframeName.equals(iframe.optString("name"), ignoreCase = true)) {
+                    return iframe.optString("url", "")
+                }
+            }
+            ""
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
+
+    private fun ensureHttpsUrl(url: String): String {
+        val value = url.trim()
+        return value.replaceFirst(Regex("(?i)^http://"), "https://")
+    }
+
+    private fun ensureTrailingSlash(url: String): String {
+        val parts = url.split("?", limit = 2)
+        val base = parts[0].trimEnd('/') + "/"
+        return if (parts.size > 1) {
+            "$base?${parts[1]}"
+        } else {
+            base
+        }
+    }
+
 }

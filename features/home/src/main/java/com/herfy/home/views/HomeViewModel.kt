@@ -131,6 +131,9 @@ class HomeViewModel @Inject constructor(
     private val _bottomSlideList = MutableLiveData<ArrayList<Slide>>()
     val bottomSlideList: LiveData<ArrayList<Slide>> = _bottomSlideList
 
+    private val _middleSlideList = MutableLiveData<ArrayList<Slide>>()
+    val middleSlideList: LiveData<ArrayList<Slide>> = _middleSlideList
+
     private val _showCart = MutableLiveData<Event<Boolean>>()
     val showCart: LiveData<Event<Boolean>> = _showCart
 
@@ -296,6 +299,27 @@ class HomeViewModel @Inject constructor(
                 }
             } else {
                 _bottomSlideList.value = arrayListOf()
+            }
+        }
+    }
+
+    fun getMiddleSliders() {
+        invoke {
+            val sliderId = CacheUtil.getInstance().getSliderId(Values.CAPILLARY_BANNER_LABEL)
+            if (!sliderId.isNullOrEmpty()) {
+                homeRepository.getSliders(sliderId) { homeResponse ->
+                    if (homeResponse.success) {
+                        homeResponse.data?.cast<ArrayList<Slide>> {
+                            _middleSlideList.value = it
+                        } ?: run {
+                            _middleSlideList.value = arrayListOf()
+                        }
+                    } else {
+                        _middleSlideList.value = arrayListOf()
+                    }
+                }
+            } else {
+                _middleSlideList.value = arrayListOf()
             }
         }
     }

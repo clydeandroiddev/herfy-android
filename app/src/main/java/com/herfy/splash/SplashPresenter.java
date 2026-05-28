@@ -627,6 +627,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                                     key = Values.HOME_PAGE_BOTTOM_BANNER_LABEL;
                                 } else if (label.equalsIgnoreCase(Values.CATEGORY_PAGE_TOP_BANNER_LABEL)) {
                                     key = Values.CATEGORY_PAGE_TOP_BANNER_LABEL;
+                                    } else if (label.equalsIgnoreCase(Values.CAPILLARY_BANNER_LABEL)) {
+                                        key = Values.CAPILLARY_BANNER_LABEL;
                                 }
                                 if (label.equalsIgnoreCase(Values.CATER_HERFY_BANNER)) {
                                     CacheUtil.getInstance().setSliderId(Values.CATER_HERFY_BANNER, slider.getId());
@@ -646,6 +648,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL, "");
                     CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_BOTTOM_BANNER_LABEL, "");
                     CacheUtil.getInstance().setSliderId(Values.CATEGORY_PAGE_TOP_BANNER_LABEL, "");
+                    CacheUtil.getInstance().setSliderId(Values.CAPILLARY_BANNER_LABEL, "");
                 }
 
                 //getSlider(false);
@@ -656,6 +659,7 @@ public class SplashPresenter implements SplashContract.Presenter {
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o.toString());
                 CacheUtil.getInstance().setMidSliderId("");
+                CacheUtil.getInstance().setSliderId(Values.CAPILLARY_BANNER_LABEL, "");
                 //getSlider(false);
                 proceed();
             }

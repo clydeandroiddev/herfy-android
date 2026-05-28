@@ -105,7 +105,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.herfy.utils.constants.Navigation
 import com.herfy.utils.helper.AuthUtil
 import com.skylinedynamics.solosdk.api.ApiRequestListener
+import com.skylinedynamics.solosdk.api.calls.CmsApiCall
 import com.skylinedynamics.solosdk.api.calls.RewardApiCall
+import com.skylinedynamics.solosdk.api.models.objects.Slide
 import org.json.JSONObject
 import java.util.Calendar
 import java.util.Locale
@@ -377,40 +379,63 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     }
 
     private fun setupMiddleSlider() {
-        activity?.let { act ->
-            binding.apply {
-                val isOrderDetailsIframeEnabled = CacheUtil.getInstance()
-                    .isCapillaryIframeEnabled(Values.IFRAME_NAME_ORDER_DETAILS)
-                val capillaryPopup = CacheUtil.getInstance().capillaryPopup
+        val isOrderDetailsIframeEnabled = CacheUtil.getInstance()
+            .isCapillaryIframeEnabled(Values.IFRAME_NAME_ORDER_DETAILS)
+        val sliderId = CacheUtil.getInstance().getSliderId(Values.CAPILLARY_BANNER_LABEL)
 
-                if (isOrderDetailsIframeEnabled && capillaryPopup != null && !capillaryPopup.imageUri.isNullOrEmpty()) {
-                    layoutMiddleBanner.apply {
-                        clMiddleBanner.visibility = View.VISIBLE
-                        cvBannerMiddle.visibility = View.VISIBLE
-                        shimmerBannerMiddle.visibility = View.GONE
+        if (!isOrderDetailsIframeEnabled || sliderId.isNullOrEmpty()) {
+            binding.layoutMiddleBanner.clMiddleBanner.visibility = View.GONE
+            return
+        }
 
-                        Glide.with(act)
-                            .load(capillaryPopup.imageUri)
-                            .into(ivBannerMiddle)
-
-                        ivBannerMiddle.setOnClickListener {
-                            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
-                                getLoyaltyIframe(null)
-                            } else {
-                                goToLoyaltyPage(null)
+        CmsApiCall.getInstance().getSlider(sliderId, object : ApiRequestListener {
+            override fun onSuccess(obj: Any?) {
+                var bannerImageUri = ""
+                try {
+                    val dataArray = JSONObject(obj.toString()).optJSONArray("data")
+                    if (dataArray != null && dataArray.length() > 0) {
+                        for (i in 0 until dataArray.length()) {
+                            val slide = Slide.parse(dataArray.getJSONObject(i))
+                            if (slide.imageUri.isNotEmpty()) {
+                                bannerImageUri = slide.imageUri
+                                break
                             }
                         }
                     }
-                } else {
-                    layoutMiddleBanner.apply {
-                        clMiddleBanner.visibility = View.GONE
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+                activity?.let { act ->
+                    binding.layoutMiddleBanner.apply {
+                        if (bannerImageUri.isNotEmpty()) {
+                            clMiddleBanner.visibility = View.VISIBLE
+                            cvBannerMiddle.visibility = View.VISIBLE
+                            shimmerBannerMiddle.visibility = View.GONE
+                            Glide.with(act).load(bannerImageUri).into(ivBannerMiddle)
+                        } else {
+                            clMiddleBanner.visibility = View.GONE
+                        }
                     }
                 }
+            }
+
+            override fun onError(error: Any?) {
+                AppLogger.printRetrofitError(error)
+                binding.layoutMiddleBanner.clMiddleBanner.visibility = View.GONE
+            }
+        })
+
+        binding.layoutMiddleBanner.ivBannerMiddle.setOnClickListener {
+            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                getLoyaltyIframe(null, true)
+            } else {
+                goToLoyaltyPage(null, true)
             }
         }
     }
 
-    private fun goToLoyaltyPage(url: String? = null) {
+    private fun goToLoyaltyPage(url: String? = null, forceRemoteConfigUrl: Boolean = false) {
         context?.let {
             val intent = Intent()
             intent.setClassName(it, Navigation.LOYALTY_ACTIVITY)
@@ -418,13 +443,14 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
             if (!url.isNullOrEmpty()) {
                 intent.putExtra("url", url)
             }
+            intent.putExtra("force_remote_config_url", forceRemoteConfigUrl)
             startActivity(intent)
         } ?: run {
             AppLogger.error("Context is null")
         }
     }
 
-    private fun getLoyaltyIframe(actionValue: String?) {
+    private fun getLoyaltyIframe(actionValue: String?, forceRemoteConfigUrl: Boolean = false) {
         if (AuthUtil.getInstance().isSignedIn) {
             val customer = AuthUtil.getInstance().customer
             (activity as? BaseActivity)?.showLoadingDialog()
@@ -438,7 +464,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
                             if (data != null) {
                                 val token = data.getString("token")
                                 CacheUtil.getInstance().loyaltyIframeToken = token
-                                goToLoyaltyPage(actionValue)
+                                goToLoyaltyPage(actionValue, forceRemoteConfigUrl)
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
