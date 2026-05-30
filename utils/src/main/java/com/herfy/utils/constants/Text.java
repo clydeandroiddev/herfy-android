@@ -393,6 +393,7 @@ public class Text {
     public static final String LOYALTY_TIER_MEMBER_LABEL = "tier_member_label";
     public static final String LOYALTY_MOBILE_NUMBER_LABEL = "mobile_number_caps";
     public static final String ORDER_SESSION_EXPIRED = "order_session_expired";
+    public static final String LOGIN_SESSION_EXPIRED = "login_session_expired";
     public static final String CONTINUE_TITLE = "continue_title";
 
     public static final String CONTINUE_LABEL = "continue_label";

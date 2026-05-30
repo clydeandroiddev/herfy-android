@@ -159,14 +159,13 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                             if (popup.label.equals(
                                     Values.LABEL_CAPILLARY,
                                     ignoreCase = true
-                                ) && CacheUtil.getInstance()
-                                    .isCapillaryIframeEnabled(Values.IFRAME_NAME_HOME)
+                                )
                             ) {
                                 if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
                                     pendingLoyaltyUrl = actionValue
                                     viewModel.getLoyaltyIframe(true)
                                 } else {
-                                    goToLoyaltyPage(actionValue)
+                                    goToLoyaltyPage(actionValue, Values.IFRAME_NAME_HOME_POPUP)
                                 }
                             } else {
                                 try {

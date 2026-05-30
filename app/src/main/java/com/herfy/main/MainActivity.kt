@@ -31,6 +31,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -74,6 +75,7 @@ import com.herfy.loyalty.LoyaltyActivity
 import com.herfy.loyalty.LoyaltyIFrameActivity
 import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
+import com.herfy.main.session.SessionExpiryManager
 import com.herfy.menu.view.MenuFragment
 import com.herfy.menuitem.view.MenuItemDetailFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
@@ -170,6 +172,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var isFromLogOut = false
     private var isFromFavorites = false
     private var fromChangeLanguage = false
+    private var isSessionExpiredDialogVisible = false
     var currentDestination = -1
     private var languageAdapter: LanguageAdapter? = null
     var isDrawerOpen = false
@@ -534,6 +537,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     override fun onResume() {
         super.onResume()
+        SessionExpiryManager.setListener {
+            handleGlobalSessionExpired()
+        }
 
         if (shouldCheckAlarmPermission) {
 
@@ -706,6 +712,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun onPause() {
+        SessionExpiryManager.setListener(null)
         super.onPause()
         mainPresenter.detachAbly()
     }
@@ -1052,7 +1059,56 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         googleSignInClient.signOut()
         SoloAuth.getInstance().logout()
         AuthUtil.getInstance().customer = null
+        AuthUtil.getInstance().setCustomerLoyalty(null)
+        AuthUtil.getInstance().setCustomerLoyaltyTier(null)
         CacheUtil.getInstance().setConsumerData(null)
+        CacheUtil.getInstance().setLoyaltyIframeToken(null)
+        CacheUtil.getInstance().setCurrentOrderId(null)
+    }
+
+    private fun handleGlobalSessionExpired() {
+        if (isFinishing || isDestroyed) {
+            SessionExpiryManager.releaseForRetry()
+            return
+        }
+
+        if (isSessionExpiredDialogVisible) {
+            return
+        }
+
+        isSessionExpiredDialogVisible = true
+        logoutUser()
+        CacheUtil.getInstance().clearOrder()
+
+        val title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR")
+        val message = CacheUtil.getInstance().getTranslations(
+            Text.LOGIN_SESSION_EXPIRED,
+            "Your session has expired. Please login again."
+        )
+        val loginLabel = CacheUtil.getInstance().getTranslations(Text.LOGIN_REGISTER_LABEL, "Login")
+
+        AlertDialog.Builder(this)
+            .setCancelable(false)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(loginLabel) { dialog, _ ->
+                dialog.dismiss()
+                isSessionExpiredDialogVisible = false
+                SessionExpiryManager.consume()
+                navigateToLoginAfterSessionExpiry()
+            }
+            .show()
+    }
+
+    private fun navigateToLoginAfterSessionExpiry() {
+        val intent = Intent(this, AuthActivity::class.java)
+        intent.putExtra("sign_in", true)
+        intent.putExtra("guest", false)
+        intent.putExtra("curbside", false)
+        intent.putExtra("checkout", false)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 
     override fun gateWay() {

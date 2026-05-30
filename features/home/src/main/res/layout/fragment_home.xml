@@ -81,7 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    app:constraint_referenced_ids="layout_loyalty,layout_middle_banner,layout_promotions,layout_catering, layout_bottom_banner"
+                    app:constraint_referenced_ids="layout_middle_banner,layout_loyalty,layout_promotions,layout_catering, layout_bottom_banner"
                     app:flow_horizontalBias="0"
                     app:flow_maxElementsWrap="1"
                     app:flow_verticalBias="0"
@@ -90,13 +90,13 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_order_type" />
 
                 <include
+                    android:id="@+id/layout_middle_banner"
+                    layout="@layout/banner_middle" />
+
+                <include
                     android:id="@+id/layout_loyalty"
                     layout="@layout/customer_loyalty"
                     android:visibility="visible" />
-
-                <include
-                    android:id="@+id/layout_middle_banner"
-                    layout="@layout/banner_middle" />
 
                 <include
                     android:id="@+id/layout_promotions"

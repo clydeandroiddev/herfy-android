@@ -87,6 +87,7 @@ object Values {
     const val CAPILLARY_PROVIDER = "capillary"
     const val LABEL_CAPILLARY = "Capillary"
     const val IFRAME_NAME_HOME = "home"
+    const val IFRAME_NAME_HOME_POPUP = "home_popup"
     const val IFRAME_NAME_ORDER_DETAILS = "order_details"
     const val IFRAME_NAME_HOME_REWARDS = "home_rewards"
     const val IFRAME_NAME_SIDEBAR_REWARDS = "sidebar_rewards"

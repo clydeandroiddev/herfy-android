@@ -25,6 +25,7 @@ import com.herfy.R
 import com.herfy.analytics.kochava.KochavaTrackerUtil
 import com.herfy.database.AppDatabase
 import com.herfy.font.FontHandler
+import com.herfy.main.session.GlobalUnauthorizedInterceptor
 import com.herfy.util.AppLogger
 import com.herfy.util.AppPushMessageListener
 import com.herfy.util.glide.UnsafeOkHttpClient
@@ -91,6 +92,10 @@ class BaseApplication : Application(), ImageLoaderFactory {
             .addInterceptor(chuckerInterceptor)
 
         SoloApi.getInstance().addInterceptor(HmacHeaderInterceptor())
+
+        if (GlobalUnauthorizedInterceptor.markRegisteredIfNeeded()) {
+            SoloApi.getInstance().addInterceptor(GlobalUnauthorizedInterceptor)
+        }
 
         ShipBook.start(this, reveal(Keychain.SHIP_BOOK_APP_ID), reveal(Keychain.SHIP_BOOK_APP_KEY))
         ShipBook.enableInnerLog(BuildConfig.DEBUG)

@@ -24,6 +24,11 @@ class LoyaltyIFrameActivity : BaseActivity() {
 
     private lateinit var binding: ActivityLoyaltyIframeBinding
 
+    private data class IframeRemoteConfig(
+        val url: String,
+        val additionalParams: List<String> = emptyList()
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -80,11 +85,29 @@ class LoyaltyIFrameActivity : BaseActivity() {
         }
     }
 
+    override fun onPause() {
+        binding.webView.onPause()
+        binding.webView.pauseTimers()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.webView.onResume()
+        binding.webView.resumeTimers()
+    }
+
+    override fun onDestroy() {
+        cleanupWebView()
+        super.onDestroy()
+    }
+
     private fun loadWebViewUrl() {
         val iframeName = intent.getStringExtra("iframe_name") ?: Values.IFRAME_NAME_HOME
         val intentUrl = intent.getStringExtra("url")
         val forceRemoteConfigUrl = intent.getBooleanExtra("force_remote_config_url", false)
-        val remoteConfigUrl = getIframeUrlFromRemoteConfig(iframeName)
+        val iframeConfig = getIframeConfigFromRemoteConfig(iframeName)
+        val remoteConfigUrl = iframeConfig.url
             .ifEmpty { CacheUtil.getInstance().getCapillaryIframeUrl(iframeName) }
         val shouldUsePopupActionUrl = !forceRemoteConfigUrl &&
             (iframeName == Values.IFRAME_NAME_HOME || iframeName == Values.IFRAME_NAME_ORDER_DETAILS)
@@ -108,36 +131,79 @@ class LoyaltyIFrameActivity : BaseActivity() {
 
         val normalizedBaseUrl = ensureTrailingSlash(ensureHttpsUrl(baseUrl.trim()))
 
-        val url = if (!normalizedBaseUrl.contains("token=")) {
+        val urlWithDefaults = if (!normalizedBaseUrl.contains("token=")) {
             val separator = if (normalizedBaseUrl.contains("?")) "&" else "?"
             "${normalizedBaseUrl}${separator}token=${token}&mobile=${mobile}&lang=${LocaleUtil.getInstance().languageSymbol}"
         } else {
             normalizedBaseUrl
         }
-        binding.webView.loadUrl(url)
+
+        val finalUrl = appendAdditionalParams(urlWithDefaults, iframeConfig.additionalParams)
+        AppLogger.info("LoyaltyIFrameActivity", "finalUrl=$finalUrl")
+        binding.webView.loadUrl(finalUrl)
     }
 
-    private fun getIframeUrlFromRemoteConfig(iframeName: String): String {
+    private fun getIframeConfigFromRemoteConfig(iframeName: String): IframeRemoteConfig {
         return try {
             val configJson = CacheUtil.getInstance().getCapillaryConfig()
             if (configJson.isEmpty()) {
-                return ""
+                return IframeRemoteConfig("")
             }
 
-            val iframes = JSONObject(configJson).optJSONArray("capillary_iframes") ?: return ""
+            val iframes = JSONObject(configJson).optJSONArray("capillary_iframes") ?: return IframeRemoteConfig("")
             for (i in 0 until iframes.length()) {
                 val iframe = iframes.optJSONObject(i) ?: continue
                 if (iframeName.equals(iframe.optString("name"), ignoreCase = true)) {
-                    return iframe.optString("url", "")
+                    val additionalParams = mutableListOf<String>()
+                    val additionalParamsArray = iframe.optJSONArray("additional_params")
+                    if (additionalParamsArray != null) {
+                        for (index in 0 until additionalParamsArray.length()) {
+                            val param = additionalParamsArray.optString(index, "").trim()
+                            if (param.isNotEmpty()) {
+                                additionalParams.add(param)
+                            }
+                        }
+                    }
+
+                    return IframeRemoteConfig(
+                        url = iframe.optString("url", ""),
+                        additionalParams = additionalParams
+                    )
                 }
             }
-            ""
+            IframeRemoteConfig("")
         } catch (e: Exception) {
             e.printStackTrace()
-            ""
+            IframeRemoteConfig("")
         }
     }
 
+    private fun appendAdditionalParams(url: String, additionalParams: List<String>): String {
+        if (additionalParams.isEmpty()) return url
+
+        var updatedUrl = url
+        for (param in additionalParams) {
+            val normalizedParam = param.trim().trimStart('&', '?')
+            if (normalizedParam.isEmpty()) continue
+
+            val key = normalizedParam.substringBefore("=").trim()
+            if (key.isNotEmpty() && hasQueryKey(updatedUrl, key)) continue
+
+            val separator = if (updatedUrl.contains("?")) "&" else "?"
+            updatedUrl += "$separator$normalizedParam"
+        }
+        return updatedUrl
+    }
+
+    private fun hasQueryKey(url: String, key: String): Boolean {
+        val query = url.substringAfter("?", "")
+        if (query.isEmpty()) return false
+
+        return query
+            .split("&")
+            .map { it.substringBefore("=") }
+            .any { it.equals(key, ignoreCase = true) }
+    }
 
     private fun ensureHttpsUrl(url: String): String {
         val value = url.trim()
@@ -151,6 +217,21 @@ class LoyaltyIFrameActivity : BaseActivity() {
             "$base?${parts[1]}"
         } else {
             base
+        }
+    }
+
+    private fun cleanupWebView() {
+        if (!::binding.isInitialized) return
+
+        // Ensure any active media stops immediately when leaving the screen.
+        with(binding.webView) {
+            stopLoading()
+            loadUrl("about:blank")
+            onPause()
+            pauseTimers()
+            clearHistory()
+            removeAllViews()
+            destroy()
         }
     }
 
