@@ -266,6 +266,19 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.herfy.payment.views.CheckoutFlowActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <data android:scheme="@string/checkout_ui_callback_scheme" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".checkout.ChoosePaymentActivity"
             android:exported="true"
             android:screenOrientation="portrait">

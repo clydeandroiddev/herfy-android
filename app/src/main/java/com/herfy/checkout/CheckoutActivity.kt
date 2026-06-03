@@ -24,10 +24,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.checkout.tokenization.model.TokenDetails
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -44,7 +42,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.model.mutation.Overlay
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.herfy.BuildConfig
 import com.herfy.R
 import com.herfy.analytics.facebook.FacebookAppEventUtil
@@ -64,11 +61,9 @@ import com.herfy.order.views.OrderTypeActivity
 import com.herfy.payment.PaymentContract
 import com.herfy.payment.PaymentPresenter
 import com.herfy.payment.savedcards.CVVDialogAlert
-import com.herfy.payment.savedcards.CVVDialogAlert.OnCVVAction
 import com.herfy.payment.savedcards.SaveDialogAlert
 import com.herfy.payment.savedcards.SavedCardsDialog
-import com.herfy.payment.views.CustomCheckoutDialog
-import com.herfy.payment.views.CustomCheckoutDialog.OnActionSelectedListener
+import com.herfy.payment.views.CheckoutFlowActivity
 import com.herfy.payment.views.MoyasarActivity
 import com.herfy.util.AppLogger
 import com.herfy.util.ShipBookLogger.logError
@@ -98,8 +93,6 @@ import com.herfy.utils.permission.permissionProvider
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import com.skylinedynamics.solosdk.api.ApiRequestListener
-import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
 import com.skylinedynamics.solosdk.api.models.objects.CustomerCard
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
@@ -116,8 +109,6 @@ import company.tap.gosellapi.open.models.CardsList
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import org.json.JSONException
-import org.json.JSONObject
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -138,7 +129,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var mMap: GoogleMap? = null
     var isBranchImageAvailable = false
     var mukafaaSelected = false
-    var dialogCheckout: CustomCheckoutDialog? = null
     private var paymentPresenter: PaymentContract.Presenter? = null
     private val oneDayDecorator: OneDayDecorator? = null
     private val beforeDateDecorator: BeforeDateDecorator? = null
@@ -171,7 +161,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     private var myPolyline: Polyline? = null
 
-    var isFromCheckout = false
     private var moyasarActivityResultLauncher: ActivityResultLauncher<Intent>? = null
     private var isShowCardFailed = false
 
@@ -187,6 +176,9 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     private var finalDiscount = 0.0
     private var loyaltySarAmount = 0.0
     private var validateLoyalty = false
+
+    private var checkoutActivityResultLauncher: ActivityResultLauncher<Intent>? = null
+
 
     var alrahjiCheckChangeListener = OnCheckedChangeListener { p0, p1 ->
         if (!p1) {
@@ -288,6 +280,23 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         }
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
+        checkoutActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+            { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val intent: Intent? = result.data
+                    if (intent != null) {
+                        if (intent.getBooleanExtra(CheckoutFlowActivity.STATUS_SUCCESS, false)) {
+                            paymentPresenter!!.sendUpsells()
+                        } else {
+                            isShowCardFailed = true
+                        }
+                    }
+                } else {
+                    isShowCardFailed = true
+                }
+            })
+
     }
 
     override fun onStart() {
@@ -316,11 +325,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
 
     private fun requestPermissionLocation() {
-        permissionManager.requestPermissions(permissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
-        ), showRationale = { rationaleCallback ->
-            rationaleCallback.showRationale()
-        }) { result ->
+        permissionManager.requestPermissions(
+            permissions = arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+            ), showRationale = { rationaleCallback ->
+                rationaleCallback.showRationale()
+            }) { result ->
             when (result) {
                 is PermissionResult.Denied -> {
                     showToast(result.deniedPermissions.joinToString(", "))
@@ -339,10 +349,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     override fun onResume() {
         super.onResume()
-        if (isFromCheckout) {
-            isFromCheckout = false
-            return
-        }
         paymentPresenter!!.validateOrder(
             false, CacheUtil.getInstance().orderStore, null, loyaltypointsInput, isShowCardFailed
         )
@@ -399,93 +405,103 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 mMap?.uiSettings?.isZoomControlsEnabled = false
                 mMap?.uiSettings?.isMapToolbarEnabled = false
 
+                val orderAddress = CacheUtil.getInstance().orderAddress
                 if (orderType == OrderType.DELIVERY) {
-                    currentMarkerIcon =
-                        com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                            this, com.herfy.common.R.drawable.ic_address_user_home
-                        )
-                    if (CacheUtil.getInstance().orderAddress.attributes.label.equals(
-                            "work",
-                            ignoreCase = true
-                        )
-                    ) {
+                    if (orderAddress != null) {
                         currentMarkerIcon =
                             com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
-                                this, com.herfy.common.R.drawable.ic_address_user_work
+                                this, com.herfy.common.R.drawable.ic_address_user_home
                             )
-                    }
-                    val lat = CacheUtil.getInstance().orderAddress.attributes.lat.toDouble()
-                    val lon = CacheUtil.getInstance().orderAddress.attributes.longt.toDouble()
-                    val addressLocation = LatLng(lat, lon)
-                    val view = inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null)
-                    val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
-                    val image = view.findViewById<ImageView>(R.id.icon)
-                    image.setImageResource(com.herfy.checkout.R.drawable.delivery_marker_selected)
-                    val currentLocation =
-                        LatLng(addressLocation.latitude, addressLocation.longitude)
-                    val currentDistance = DistanceCalculator.calculateDistance(
-                        currentLocation.latitude,
-                        currentLocation.longitude,
-                        storeLocation.latitude,
-                        storeLocation.longitude
-                    )
-                    val distanceValue = StringUtil.getDistance(currentDistance)
-                    textView.text =
-                        CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                           .replace("(x)", distanceValue)
-                           .lowercase(getDefault())
-                    val icon = BitmapDescriptorFactory.fromBitmap(
-                        ViewUtil.createDrawableFromView(
-                            this@CheckoutActivity, view
-                        )
-                    )
-                    val currentLocationMarker = MarkerOptions()
-                    currentLocationMarker.icon(currentMarkerIcon)
-                    currentLocationMarker.position(addressLocation)
-                    currentLocationMarker.anchor(0.5f, 1f)
-                    markerOptionsList.add(currentLocationMarker)
-                    mMap?.addMarker(currentLocationMarker)
-                    val storeLocationMarker = MarkerOptions()
-                    storeLocationMarker.icon(icon)
-                    storeLocationMarker.position(storeLocation)
-                    storeLocationMarker.anchor(0.5f, 1f)
-                    markerOptionsList.add(storeLocationMarker)
-                    val markerStore = mMap?.addMarker(storeLocationMarker)
-                    markerStore?.tag = "storeMarker"
-                    mMap?.setOnMarkerClickListener { marker ->
-                        if (marker.tag == "storeMarker") {
-                            goToStoreInMap(storeLocation)
-                            true // Consume the click event
-                        } else {
-                            false // Default behavior (showing the InfoWindow)
+
+                        try {
+                            if (orderAddress.attributes.label.equals(
+                                    "work",
+                                    ignoreCase = true
+                                )
+                            ) {
+                                currentMarkerIcon =
+                                    com.herfy.utils.helper.ViewUtil.vectorDrawableToBitmapDescriptor(
+                                        this, com.herfy.common.R.drawable.ic_address_user_work
+                                    )
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                    }
-                    val builder = LatLngBounds.Builder()
-                    builder.include(addressLocation)
-                    builder.include(storeLocation)
-                    val bounds = builder.build()
-                    val width = Resources.getSystem().displayMetrics.widthPixels
-                    val padding = (width * 0.21).toInt()
-                    val cu = CameraUpdateFactory.newLatLngBounds(
-                        bounds, padding
-                    )
-                    mMap?.animateCamera(cu, object : CancelableCallback {
-                        override fun onCancel() {}
-                        override fun onFinish() {
-                            val zout = CameraUpdateFactory.zoomBy(-1.0f)
-                            mMap?.animateCamera(zout)
+
+                        val lat = orderAddress.attributes.lat.toDouble()
+                        val lon = orderAddress.attributes.longt.toDouble()
+                        val addressLocation = LatLng(lat, lon)
+                        val view =
+                            inflater.inflate(com.herfy.ordertype.R.layout.marker_store_new, null)
+                        val textView = view.findViewById<TextView>(com.herfy.ordertype.R.id.kmAway)
+                        val image = view.findViewById<ImageView>(R.id.icon)
+                        image.setImageResource(com.herfy.checkout.R.drawable.delivery_marker_selected)
+                        val currentLocation =
+                            LatLng(addressLocation.latitude, addressLocation.longitude)
+                        val currentDistance = DistanceCalculator.calculateDistance(
+                            currentLocation.latitude,
+                            currentLocation.longitude,
+                            storeLocation.latitude,
+                            storeLocation.longitude
+                        )
+                        val distanceValue = StringUtil.getDistance(currentDistance)
+                        textView.text =
+                            CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
+                                .replace("(x)", distanceValue)
+                                .lowercase(getDefault())
+                        val icon = BitmapDescriptorFactory.fromBitmap(
+                            ViewUtil.createDrawableFromView(
+                                this@CheckoutActivity, view
+                            )
+                        )
+                        val currentLocationMarker = MarkerOptions()
+                        currentLocationMarker.icon(currentMarkerIcon)
+                        currentLocationMarker.position(addressLocation)
+                        currentLocationMarker.anchor(0.5f, 1f)
+                        markerOptionsList.add(currentLocationMarker)
+                        mMap?.addMarker(currentLocationMarker)
+                        val storeLocationMarker = MarkerOptions()
+                        storeLocationMarker.icon(icon)
+                        storeLocationMarker.position(storeLocation)
+                        storeLocationMarker.anchor(0.5f, 1f)
+                        markerOptionsList.add(storeLocationMarker)
+                        val markerStore = mMap?.addMarker(storeLocationMarker)
+                        markerStore?.tag = "storeMarker"
+                        mMap?.setOnMarkerClickListener { marker ->
+                            if (marker.tag == "storeMarker") {
+                                goToStoreInMap(storeLocation)
+                                true // Consume the click event
+                            } else {
+                                false // Default behavior (showing the InfoWindow)
+                            }
                         }
-                    })
-                    try {
-                        deletePolyline()
-                        val storeLoc = LatLng(
-                            storeLocation.latitude, storeLocation.longitude
+                        val builder = LatLngBounds.Builder()
+                        builder.include(addressLocation)
+                        builder.include(storeLocation)
+                        val bounds = builder.build()
+                        val width = Resources.getSystem().displayMetrics.widthPixels
+                        val padding = (width * 0.21).toInt()
+                        val cu = CameraUpdateFactory.newLatLngBounds(
+                            bounds, padding
                         )
-                        myPolyline = drawArcPolyline(
-                            mMap, currentLocation, storeLoc, view.context
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                        mMap?.animateCamera(cu, object : CancelableCallback {
+                            override fun onCancel() {}
+                            override fun onFinish() {
+                                val zout = CameraUpdateFactory.zoomBy(-1.0f)
+                                mMap?.animateCamera(zout)
+                            }
+                        })
+                        try {
+                            deletePolyline()
+                            val storeLoc = LatLng(
+                                storeLocation.latitude, storeLocation.longitude
+                            )
+                            myPolyline = drawArcPolyline(
+                                mMap, currentLocation, storeLoc, view.context
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 } else {
                     markerOptions.position(storeLocation)
@@ -508,9 +524,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                                 val distanceValue = StringUtil.getDistance(currentDistance)
 
                                 textView.text =
-                                    CacheUtil.getInstance().getTranslations(Text.KM_AWAY, "(x) away")
-                                       .replace("(x)", distanceValue)
-                                       .lowercase(getDefault())
+                                    CacheUtil.getInstance()
+                                        .getTranslations(Text.KM_AWAY, "(x) away")
+                                        .replace("(x)", distanceValue)
+                                        .lowercase(getDefault())
                                 val icon = BitmapDescriptorFactory.fromBitmap(
                                     ViewUtil.createDrawableFromView(
                                         this@CheckoutActivity, view
@@ -649,12 +666,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         if (orderType === OrderType.DELIVERY) {
             binding!!.groupDeliveryInstruction.visible()
-            if (CacheUtil.getInstance().orderAddress != null) {
-                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
+            val orderAddress = CacheUtil.getInstance().orderAddress
+            if (orderAddress != null) {
+                binding!!.tvBranchName.text = orderAddress.attributes.line1
+                val instruction = orderAddress.attributes.instructions
+                binding!!.tvDeliveryInstruction.text = instruction
+                binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
             }
-            val instruction = CacheUtil.getInstance().orderAddress.attributes.instructions
-            binding!!.tvDeliveryInstruction.text = instruction
-            binding!!.tvDeliveryInstruction.setVisible(instruction.isNotEmpty())
         } else {
             binding!!.groupDeliveryInstruction.gone()
             if (CacheUtil.getInstance().orderStore != null) {
@@ -762,7 +780,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             ).map { it.toString() }.collectLatest { pointsText ->
 
                 if (pointsText.isNotEmpty()) {
-                    var userSetPoints = StringUtil.toEnglish(pointsText).toDoubleOrNull() ?: 0.0 // Safer parsing
+                    var userSetPoints =
+                        StringUtil.toEnglish(pointsText).toDoubleOrNull() ?: 0.0 // Safer parsing
                     val currentPoints = loyalty.attributes.currentBalance.toDouble()
                     val pointConversion = loyalty.attributes.loyaltyTier.redemptionRatio
                     val roundedTotal = floor((finalTotal - finalDiscount))
@@ -784,10 +803,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                             binding!!.layoutLoyalty.etPoints.error = null
 
                         } else {
-                            binding!!.layoutLoyalty.etPoints.error = CacheUtil.getInstance().getTranslations(
-                                Text.MINIMUM_REDEMPTION_ERROR,
-                                "Minimum points to redeem is $minimumRedemptionPoints"
-                            ).replace("(x)", minimumRedemptionPoints.toString())
+                            binding!!.layoutLoyalty.etPoints.error =
+                                CacheUtil.getInstance().getTranslations(
+                                    Text.MINIMUM_REDEMPTION_ERROR,
+                                    "Minimum points to redeem is $minimumRedemptionPoints"
+                                ).replace("(x)", minimumRedemptionPoints.toString())
 
                             binding!!.layoutLoyalty.etSarAmount.setText("")
                             paymentPresenter!!.setLoyaltyPointsUsed(0)
@@ -808,10 +828,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                         binding!!.layoutLoyalty.etPoints.error = null
 
                     } else {
-                        binding!!.layoutLoyalty.etPoints.error = CacheUtil.getInstance().getTranslations(
-                            Text.MINIMUM_REDEMPTION_ERROR,
-                            "Minimum points to redeem is $minimumRedemptionPoints"
-                        ).replace("(x)", minimumRedemptionPoints.toString())
+                        binding!!.layoutLoyalty.etPoints.error =
+                            CacheUtil.getInstance().getTranslations(
+                                Text.MINIMUM_REDEMPTION_ERROR,
+                                "Minimum points to redeem is $minimumRedemptionPoints"
+                            ).replace("(x)", minimumRedemptionPoints.toString())
 
                         binding!!.layoutLoyalty.etSarAmount.setText("")
                         paymentPresenter!!.setLoyaltyPointsUsed(0)
@@ -822,7 +843,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     loyaltySarAmount = Math.min(
                         userSetPoints * pointConversion, paymentPresenter!!.menuItemsTotalPrice
                     )
-
 
 
                     val formattedSarAmount = String.format("%.2f", loyaltySarAmount)
@@ -848,7 +868,13 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     binding!!.layoutLoyalty.etPoints.setSelection(0)
                     paymentPresenter!!.setLoyaltyPointsUsed(0)
                     loyaltypointsInput = 0
-                    paymentPresenter!!.validateOrder(false, CacheUtil.getInstance().orderStore, null, 0, false)
+                    paymentPresenter!!.validateOrder(
+                        false,
+                        CacheUtil.getInstance().orderStore,
+                        null,
+                        0,
+                        false
+                    )
 
                 }
 
@@ -883,11 +909,12 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
             val loyaltyBalanceLabelText = CacheUtil.getInstance().getTranslations(
                 Text.LOYALTY_POINTS_PAYMENT_LABEL, "(x) Points ((y))"
-            ).replace("(x)", if (currentBalanceAmount.toInt().toDouble() == currentBalanceAmount) {
-                AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toString()
-            } else {
-                formattedLoyaltyPoints.takeIf { it.isNotEmpty() } ?: "0"
-            }).replace(
+            ).replace(
+                "(x)", if (currentBalanceAmount.toInt().toDouble() == currentBalanceAmount) {
+                    AuthUtil.getInstance().customerLoyalty.attributes.currentBalance.toString()
+                } else {
+                    formattedLoyaltyPoints.takeIf { it.isNotEmpty() } ?: "0"
+                }).replace(
                 "(y)", updateCurrency(currentBalanceAmount, true).toString()
             )
             binding!!.layoutLoyalty.tvLoyaltyPoints.text = loyaltyBalanceLabelText
@@ -908,8 +935,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                 binding!!.tvBranchName.text = CacheUtil.getInstance().orderStore.attributes.name;
             } else {
-                binding!!.tvBranchName.text = CacheUtil.getInstance().orderAddress.attributes.line1
-//                tvBranchAddress.setText(CacheUtil.getInstance().getOrderAddress().getAttributes().getLine1());
+                val orderAddress = CacheUtil.getInstance().orderAddress
+                if (orderAddress != null) {
+                    binding!!.tvBranchName.text =
+                        CacheUtil.getInstance().orderAddress.attributes.line1
+                }
             }
             val isEligibleForLoyaltyDiscount =
                 isFullSignedIn && paymentTypes.contains(PaymentType.LOYALTY) && passedTotalFromCart > 0
@@ -1066,114 +1096,42 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showValidateOrderError(errors: List<String>) {}
     override fun sendOrder() {}
     override fun initializeTap(orderId: String, total: Double) {}
-    override fun showCheckoutPaymentForm(orderId: String?) {
-        if (isCanProceedFragmentTransaction(supportFragmentManager)) {
-            dialogCheckout = CustomCheckoutDialog(this)
-            dialogCheckout!!.setOnActionSelectedListener(object : OnActionSelectedListener {
-                override fun onFormSubmit() {
-                    showLoadingDialog()
-                }
 
-                override fun onTokenGenerated(response: TokenDetails?) {
-                    //dialogCheckout.clear();
-                    showLoadingDialog()
-                    saveDialogAlert =
-                        SaveDialogAlert.newInstance(object : SaveDialogAlert.OnSavedAction {
-                            override fun onClose() {
-                                saveDialogAlert!!.dismissAllowingStateLoss()
-                                checkTokenGenerated(
-                                    response!!.token, null, false, orderId.orEmpty()
-                                )
-                            }
-
-                            override fun onProceed() {
-                                saveDialogAlert!!.dismissAllowingStateLoss()
-                                checkTokenGenerated(response!!.token, null, true, orderId.orEmpty())
-                            }
-                        })
-                    saveDialogAlert?.setCancelable(false)
-                    saveDialogAlert?.show(
-                        supportFragmentManager, SaveDialogAlert::class.java.toString()
-                    )
-                }
-
-                override fun onError(error: String?) {
-                    var reason = "CardTokenisationFail"
-                    if (error != null) {
-                        reason = error
-                    }
-                    logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: " + reason + ")")
-                    sendOrderLog(
-                        ApiLogLevel.ERROR,
-                        orderId,
-                        paymentPresenter!!.paymentProvider,
-                        "Card Payment Failed (Reason: $reason)"
-                    )
-                    dismissDialogs()
-                }
-
-                override fun on3DSSuccess() {
-                    logInfo(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Success")
-                    paymentPresenter!!.sendUpsells()
-                    dialogCheckout!!.dismissAllowingStateLoss()
-                }
-
-                override fun on3DSError(error: String?) {
-
-                }
-
-                override fun on3DSFailure() {
-                    logError(BuildConfig.TAG + " - Order ID: " + orderId + " -> " + paymentPresenter!!.paymentProvider + " Card Payment Failed (Reason: on3DSFailure)")
-                    sendOrderLog(
-                        ApiLogLevel.ERROR,
-                        orderId,
-                        paymentPresenter!!.paymentProvider,
-                        "Card Payment Failed (Reason: on3DSFailure)"
-                    )
-                    showCardFailed()
-                }
-
-                override fun onBackPressed() {
-                    sendOrderLog(
-                        ApiLogLevel.INFO,
-                        orderId,
-                        paymentPresenter!!.paymentProvider,
-                        "Card Payment onBackPressed"
-                    )
-                    sendOrderLog(
-                        ApiLogLevel.WARNING,
-                        orderId,
-                        paymentPresenter!!.paymentProvider,
-                        "Card Payment onBackPressed"
-                    )
-                    dialogCheckout!!.dismissAllowingStateLoss()
-                }
-            })
-            dismissDialogs()
-            dialogCheckout!!.show(
-                supportFragmentManager, CustomCheckoutDialog::class.java.simpleName
+    override fun showCheckoutPaymentForm(
+        orderId: String,
+        id: String,
+        token: String,
+        secret: String
+    ) {
+        try {
+            Handler().post(Runnable {
+                val intent = Intent(this@CheckoutActivity, CheckoutFlowActivity::class.java)
+                intent.putExtra(CheckoutFlowActivity.EXTRA_PAYMENT_SESSION_ID, id)
+                intent.putExtra(CheckoutFlowActivity.EXTRA_PAYMENT_SESSION_TOKEN, token)
+                intent.putExtra(CheckoutFlowActivity.EXTRA_PAYMENT_SESSION_SECRET, secret)
+                checkoutActivityResultLauncher?.launch(intent)
+            }
             )
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
         }
     }
 
     override fun showInputCvvDialog(orderId: String) {
         dismissDialogs()
-        inputCvvDialog(orderId, CacheUtil.getInstance().customCard)
     }
 
     override fun showCardFailed() {
-        if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
+        if (CacheUtil.getInstance().orderPayment == PaymentType.CARD) {
             showAlertDialog(
                 "", CacheUtil.getInstance().getTranslations(
                     Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH,
                     "Card payment failed. Do you want to Pay with Cash instead?"
                 ), CacheUtil.getInstance().getTranslations(Text.YES_CAPS), { dialog, which ->
-                    dialogCheckout?.dismissAllowingStateLoss()
                     dialog.dismiss()
                     selectPaymentTypeCash()
                 }, CacheUtil.getInstance().getTranslations(Text.NO_CAPS)
             ) { dialog, which ->
-                dialogCheckout?.dismissAllowingStateLoss()
                 dialog.dismiss()
             }
         } else {
@@ -1182,7 +1140,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
                 CacheUtil.getInstance().getTranslations(Text.CARD_FAILED),
                 CacheUtil.getInstance().getTranslations(Text.OK)
             ) { dialog, _ ->
-                dialogCheckout?.dismissAllowingStateLoss()
                 dialog.dismiss()
             }
         }
@@ -1376,46 +1333,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun showErrorPrayerTime() {}
 
     override fun setOrderId(orderId: String) {}
-    override fun showCardDialogList(orderId: String) {
-        if (isCanProceedFragmentTransaction(supportFragmentManager)) {
-            savedCardsDialog = SavedCardsDialog.newInstance(CacheUtil.getInstance().customerCards,
-                object : SavedCardsDialog.OnSavedAction {
-                    override fun onClose() {
-                        dismissDialogs()
-                        savedCardsDialog!!.dismissAllowingStateLoss()
-                    }
-
-                    override fun onEditCards() {
-                        if (savedCardsDialog != null) {
-                            savedCardsDialog!!.switchToEditMode()
-                        }
-                    }
-
-                    override fun onUseNewCard() {
-                        savedCardsDialog!!.dismissAllowingStateLoss()
-                        showCheckoutPaymentForm(orderId)
-                    }
-
-                    override fun onAvail(card: CustomerCard) {
-                        if (card != null) {
-                            inputCvvDialog(orderId, card)
-                        }
-                    }
-                })
-            savedCardsDialog?.setCancelable(false)
-            // Check if the fragment is still added to the activity
-            if (!savedCardsDialog?.isAdded()!!) {
-                savedCardsDialog?.show(
-                    supportFragmentManager, SavedCardsDialog::class.java.toString()
-                )
-            }
-        }
-    }
-
-    private fun isCanProceedFragmentTransaction(fragmentManager: FragmentManager): Boolean {
-        return !isFinishing && !fragmentManager.isStateSaved && !fragmentManager.isDestroyed
-    }
-
+    override fun showCardDialogList(orderId: String) {}
     override fun firebaseECommercePurchaseEvent(orderedItem: List<MenuItem>, total: Double) {
         FirebaseECommerceEventUtil.purchaseEvent(this, paymentPresenter!!.menuItemsList, total)
         FacebookAppEventUtil.purchaseEvent(this, paymentPresenter!!.menuItemsList, total)
@@ -1584,22 +1502,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         startActivity(intent)
     }
 
-    private fun inputCvvDialog(orderId: String, card: CustomerCard) {
-        cvvDialogAlert = CVVDialogAlert.newInstance(object : OnCVVAction {
-            override fun onClose() {
-                cvvDialogAlert!!.dismiss()
-            }
-
-            override fun onProceed(cvv: String) {
-                cvvDialogAlert!!.dismiss()
-                showLoadingDialog()
-                checkTokenGenerated(card.attributes.getToken(), cvv, false, orderId)
-            }
-        }, card)
-        cvvDialogAlert?.setCancelable(false)
-        cvvDialogAlert?.show(supportFragmentManager, CVVDialogAlert::class.java.toString())
-    }
-
     override fun onDateSelected(
         materialCalendarView: MaterialCalendarView, calendarDay: CalendarDay, b: Boolean
     ) {
@@ -1740,69 +1642,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     override fun paymentInitiated(charge: Charge?) {}
 
     override fun googlePayFailed(error: String?) {}
-
-    private fun checkTokenGenerated(
-        token: String, cvv: String?, isSave: Boolean, orderIds: String
-    ) {
-        val body = JsonObject()
-        body.addProperty("order", orderIds)
-        body.addProperty("token", token)
-        body.addProperty("save-card", isSave)
-        if (cvv != null && !cvv.isEmpty()) {
-            body.addProperty("cvv", cvv)
-        }
-        OrdersApiCall.getInstance().checkoutAuthorize(body, object : ApiRequestListener {
-            override fun onSuccess(`object`: Any) {
-                dismissDialogs()
-                if (`object` is JSONObject) {
-                    try {
-                        val data = `object`
-                        val isApproved = data.getBoolean("is-approved")
-                        if (isApproved) {
-                            if (dialogCheckout != null) {
-                                dialogCheckout!!.handle3ds(data)
-                            } else {
-                                checkoutForce(data)
-                            }
-                        } else {
-                            onError(
-                                CacheUtil.getInstance()
-                                    .getTranslations(Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH)
-                            )
-                        }
-                    } catch (ex: JSONException) {
-                        ex.printStackTrace()
-                        onError(ex)
-                    }
-                } else {
-                    dismissDialogs()
-                    onError(
-                        CacheUtil.getInstance()
-                            .getTranslations(Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH)
-                    )
-                }
-            }
-
-            override fun onError(o: Any) {
-                AppLogger.printRetrofitError(o)
-                if (o is JSONObject) {
-                    sendOrderLog(
-                        ApiLogLevel.ERROR,
-                        orderId,
-                        paymentPresenter!!.paymentProvider,
-                        "Card Payment Failed (Reason: $o)"
-                    )
-                }
-                dismissDialogs()
-                showCardFailed()
-            }
-        })
-    }
-
-    private fun checkoutForce(data: JSONObject) {
-        showCheckoutPaymentForm(orderId)
-        Handler().postDelayed({ dialogCheckout?.handle3ds(data) }, 400)
-    }
 
     private fun PermissionManager.RationaleCallback.showRationale() {
         DialogUtils.showConfirmDialog(

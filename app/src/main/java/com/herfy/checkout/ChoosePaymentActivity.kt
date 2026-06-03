@@ -134,7 +134,12 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
 
     }
 
-    override fun showCheckoutPaymentForm(orderId: String?) {
+    override fun showCheckoutPaymentForm(
+        orderId: String?,
+        id: String?,
+        token: String?,
+        secret: String?
+    ) {
 
     }
 
