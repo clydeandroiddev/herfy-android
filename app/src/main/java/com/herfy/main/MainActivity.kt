@@ -218,9 +218,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        if (AuthUtil.getInstance().isSignedIn) {
+        val auth = AuthUtil.getInstance()
+        val signedInCustomer = auth.customer
+        if (auth.isSignedIn && signedInCustomer != null) {
             val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-            firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
+            firebaseAnalytics.setUserId(signedInCustomer.id)
         }
 
 
@@ -262,23 +264,25 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 }
             }
 
-            if (AuthUtil.getInstance().firebase.isNotEmpty() && AuthUtil.getInstance().isSignedIn) {
-                //HYDRA SIGN IN EVENT
-                getDefaultInstance(applicationContext)!!.pushUserSignin(
-                    AuthUtil.getInstance().customer.attributes.mobile,
-                    AuthUtil.getInstance().customer.attributes.firstName,
-                    AuthUtil.getInstance().customer.attributes.lastName,
-                    AuthUtil.getInstance().customer.attributes.email,
-                    AuthUtil.getInstance().customer.attributes.mobile,
-                    emptyMap<String, Any>()
-                )
+            val authState = AuthUtil.getInstance()
+            val hydraCustomer = authState.customer
+            if (authState.firebase.isNotEmpty() && authState.isSignedIn && hydraCustomer != null) {
+                 //HYDRA SIGN IN EVENT
+                 getDefaultInstance(applicationContext)!!.pushUserSignin(
+                     hydraCustomer.attributes.mobile,
+                     hydraCustomer.attributes.firstName,
+                     hydraCustomer.attributes.lastName,
+                     hydraCustomer.attributes.email,
+                     hydraCustomer.attributes.mobile,
+                      emptyMap<String, Any>()
+                 )
 
-                HydraFirebaseAPI.getInstance()
-                    .passPushToken(this, AuthUtil.getInstance().firebase)
+                 HydraFirebaseAPI.getInstance()
+                     .passPushToken(this, authState.firebase)
 
-            }
+             }
 
-        }
+         }
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
@@ -661,50 +665,51 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         val customer = AuthUtil.getInstance().customer
         val isSubs = CacheUtil.getInstance().mode == 2
         val isSignedIn = AuthUtil.getInstance().isSignedIn
+        val hasCustomer = customer != null
         val isGuest =
-            (isSignedIn && !customer.attributes.accountType.equals("full", ignoreCase = true))
-        if (isSignedIn) {
-            val customerNameLabel =
-                CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x)!")
-            binding.sidebar.customerName.text = customerNameLabel.replace(
-                "(x)", if (isSignedIn) customer.attributes.firstName.trim() else ""
-            )
-            binding.sidebar.clNotification.visible()
-            binding.sidebar.fmLoyalty.visible()
-        } else {
-            binding.sidebar.customerName.text =
-                CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
-            binding.sidebar.clNotification.gone()
-            binding.sidebar.fmLoyalty.gone()
-        }
-        val containsLoyalty =
-            CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
-                PaymentType.LOYALTY
-            ) ||
-                    CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
-                        .contains(PaymentType.LOYALTY)
-        if (containsLoyalty && isSignedIn) {
-            binding.sidebar.fmLoyalty.visible()
-        } else {
-            binding.sidebar.fmLoyalty.gone()
-        }
-        binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
-        binding.sidebar.fmActiveSubscription.visibility =
-            if (isSubs && isSignedIn) View.VISIBLE else View.GONE
-        binding.sidebar.fmSignin.visibility =
-            if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
-        val loggedInRules = if (isSignedIn) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
-        binding.sidebar.fmHistory.visibility = loggedInRules
-        binding.sidebar.fmFavorites.visibility = loggedInRules
-        binding.sidebar.selectionLayout.visibility =
-            if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
-        binding.sidebar.fmSupport.setOnClickListener {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            val intent = Intent(this, FeedbackActivity::class.java)
-            startActivity(intent)
-        }
-        binding.sidebar.fmStoreLocator.isVisible = isSignedIn
-    }
+            (isSignedIn && hasCustomer && !customer!!.attributes.accountType.equals("full", ignoreCase = true))
+        if (isSignedIn && hasCustomer) {
+             val customerNameLabel =
+                 CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x)!")
+             binding.sidebar.customerName.text = customerNameLabel.replace(
+                 "(x)", if (isSignedIn) customer.attributes.firstName.trim() else ""
+             )
+             binding.sidebar.clNotification.visible()
+             binding.sidebar.fmLoyalty.visible()
+         } else {
+             binding.sidebar.customerName.text =
+                 CacheUtil.getInstance().getTranslations(Text.HI_LOGGED_OUT, "Hi!")
+             binding.sidebar.clNotification.gone()
+             binding.sidebar.fmLoyalty.gone()
+         }
+         val containsLoyalty =
+             CacheUtil.getInstance().application.attributes.getDeliverPaymentTypes().contains(
+                 PaymentType.LOYALTY
+             ) ||
+                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
+                         .contains(PaymentType.LOYALTY)
+         if (containsLoyalty && isSignedIn && hasCustomer) {
+             binding.sidebar.fmLoyalty.visible()
+         } else {
+             binding.sidebar.fmLoyalty.gone()
+         }
+         binding.sidebar.fmAccount.visibility = if (isSignedIn && hasCustomer) View.VISIBLE else View.GONE
+         binding.sidebar.fmActiveSubscription.visibility =
+             if (isSubs && isSignedIn && hasCustomer) View.VISIBLE else View.GONE
+         binding.sidebar.fmSignin.visibility =
+             if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
+         val loggedInRules = if (isSignedIn && hasCustomer) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
+         binding.sidebar.fmHistory.visibility = loggedInRules
+         binding.sidebar.fmFavorites.visibility = loggedInRules
+         binding.sidebar.selectionLayout.visibility =
+             if (BuildConfig.SUBSCRIPTION_ENABLED) View.VISIBLE else View.GONE
+         binding.sidebar.fmSupport.setOnClickListener {
+             binding.drawerLayout.closeDrawer(GravityCompat.START)
+             val intent = Intent(this, FeedbackActivity::class.java)
+             startActivity(intent)
+         }
+         binding.sidebar.fmStoreLocator.isVisible = isSignedIn && hasCustomer
+     }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
@@ -1709,14 +1714,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     private fun passUserPreferenceUpdate(hasPermission: Boolean) {
-        if (AuthUtil.getInstance().isSignedIn) {
-            val mobile = AuthUtil.getInstance().customer.attributes.mobile
+        val auth = AuthUtil.getInstance()
+        val customer = auth.customer
+        if (auth.isSignedIn && customer != null) {
+            val mobile = customer.attributes.mobile
+            if (mobile.isEmpty()) return
 
-            HydraAPI.Companion.getDefaultInstance(applicationContext)!!
-                .passUserPreferences(
-                    mobile,
-                    UserPreferences(hasPermission, hasPermission)
-                )
+             HydraAPI.Companion.getDefaultInstance(applicationContext)!!
+                 .passUserPreferences(
+                     mobile,
+                     UserPreferences(hasPermission, hasPermission)
+                 )
 
         }
     }

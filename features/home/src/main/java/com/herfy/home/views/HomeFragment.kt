@@ -93,7 +93,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             getOrderTypes()
         }
         binding.apply {
-            showPopup()
             setupSlider()
             setupCustomerLoyalty()
             setupPromoCategory()

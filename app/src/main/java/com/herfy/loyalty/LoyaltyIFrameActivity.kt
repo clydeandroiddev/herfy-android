@@ -126,10 +126,10 @@ class LoyaltyIFrameActivity : BaseActivity() {
         } else if (!remoteConfigUrl.isNullOrEmpty()) {
             remoteConfigUrl
         } else {
-            "https://demoapps.capillarytech.com/herfy-app"
+            "https://demoapps.capillarytech.com/herfy-app/"
         }
 
-        val normalizedBaseUrl = ensureTrailingSlash(ensureHttpsUrl(baseUrl.trim()))
+        val normalizedBaseUrl = ensureHttpsUrl(baseUrl.trim())
 
         val urlWithDefaults = if (!normalizedBaseUrl.contains("token=")) {
             val separator = if (normalizedBaseUrl.contains("?")) "&" else "?"
@@ -210,15 +210,6 @@ class LoyaltyIFrameActivity : BaseActivity() {
         return value.replaceFirst(Regex("(?i)^http://"), "https://")
     }
 
-    private fun ensureTrailingSlash(url: String): String {
-        val parts = url.split("?", limit = 2)
-        val base = parts[0].trimEnd('/') + "/"
-        return if (parts.size > 1) {
-            "$base?${parts[1]}"
-        } else {
-            base
-        }
-    }
 
     private fun cleanupWebView() {
         if (!::binding.isInitialized) return
