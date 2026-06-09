@@ -42,6 +42,7 @@ import com.capillary.hydra.android.sdk.UserPreferences;
 import com.herfy.R;
 import com.herfy.auth.views.AuthFragment;
 import com.herfy.base.BaseDialogFragment;
+import com.herfy.base.BaseApplication;
 import com.herfy.utils.constants.Text;
 import com.herfy.main.MainActivity;
 import com.herfy.order.views.OrderTypeActivity;
@@ -555,22 +556,42 @@ public class VerifyCodeDialogFragment extends BaseDialogFragment implements Veri
 
     @Override
     public void showVerified() {
+        if (!isHydraReady()) {
+            onDismiss(getDialog());
+            return;
+        }
 
-        //HYDRA SIGN IN EVENT
-        HydraAPI.Companion.getDefaultInstance(requireContext()).
-                pushUserSignin(
-                        AuthUtil.getInstance().getCustomer().getId(),
-                        AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
-                        AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
-                        AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
-                        AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                        Collections.emptyMap());
+        if (AuthUtil.getInstance().getCustomer() == null
+                || AuthUtil.getInstance().getCustomer().getAttributes() == null
+                || AuthUtil.getInstance().getCustomer().getAttributes().getMobile() == null
+                || AuthUtil.getInstance().getCustomer().getAttributes().getMobile().isEmpty()) {
+            onDismiss(getDialog());
+            return;
+        }
 
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            HydraAPI.Companion.getDefaultInstance(requireContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(false,false));
-        }else{
-            HydraAPI.Companion.getDefaultInstance(requireContext()).passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(true,true));
+        HydraAPI hydraAPI = HydraAPI.Companion.getDefaultInstance(requireContext());
+        if (hydraAPI == null) {
+            onDismiss(getDialog());
+            return;
+        }
 
+        try {
+            //HYDRA SIGN IN EVENT
+            hydraAPI.pushUserSignin(
+                    AuthUtil.getInstance().getCustomer().getId(),
+                    AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                    AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                    AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                    AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                    Collections.emptyMap());
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                hydraAPI.passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(false,false));
+            } else {
+                hydraAPI.passUserPreferences(AuthUtil.getInstance().getCustomer().getAttributes().getMobile(), new UserPreferences(true,true));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
@@ -631,6 +652,16 @@ public class VerifyCodeDialogFragment extends BaseDialogFragment implements Veri
         if (checkIfAllIsFilled()) {
             confirm.performClick();
         }
+    }
+
+    private boolean isHydraReady() {
+        if (getContext() == null) {
+            return false;
+        }
+        if (!(getContext().getApplicationContext() instanceof BaseApplication)) {
+            return false;
+        }
+        return ((BaseApplication) getContext().getApplicationContext()).ensureHydraInitializedFromCache();
     }
 
 }

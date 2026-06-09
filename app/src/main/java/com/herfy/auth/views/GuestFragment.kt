@@ -105,7 +105,7 @@ class GuestFragment : BaseFragment(), AuthContract.View {
     ) { result: ActivityResult? ->
         if (result != null && result.data != null) {
             try {
-                val message = result.data!!.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+                val message = result.data?.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
                 if (message != null) {
                     val otpLength = CacheUtil.getInstance().concept.otpLength.toString()
                     val p = Pattern.compile(String.format("\\b\\d{%s}\\b", otpLength))
@@ -114,9 +114,7 @@ class GuestFragment : BaseFragment(), AuthContract.View {
                     while (m.find()) {
                         codeValue = m.group(0)
                     }
-                    if (verifyCodeDialogFragment != null) {
-                        verifyCodeDialogFragment!!.setCode(codeValue)
-                    }
+                    verifyCodeDialogFragment?.setCode(codeValue)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -165,7 +163,7 @@ class GuestFragment : BaseFragment(), AuthContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        authPresenter!!.start()
+        authPresenter.start()
         activity?.let {
             val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(BuildUtil.googleInClient(it))
@@ -310,8 +308,8 @@ class GuestFragment : BaseFragment(), AuthContract.View {
                 val baseActivity = it as BaseActivity
                 baseActivity.showLoadingDialog()
             }
-            authPresenter!!.guest(
-                binding.firstName!!.text.toString().trim { it <= ' ' },
+            authPresenter.guest(
+                binding.firstName.text.toString().trim { it <= ' ' },
                 StringUtil.toEnglish(
                     selectedDialCode + binding.phoneNumber.text.toString()
                         .trim { it <= ' ' }),
@@ -320,13 +318,19 @@ class GuestFragment : BaseFragment(), AuthContract.View {
         }
 
         binding.google.setOnClickListener {
-            googleSignInClient!!.signOut()
+            val client = googleSignInClient
+            val launcher = googleLauncher
+            if (client == null || launcher == null) {
+                showMessage(CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR))
+                return@setOnClickListener
+            }
+            client.signOut()
             activity?.let {
                 val baseActivity = it as BaseActivity
                 baseActivity.showLoadingDialog()
             }
-            val signInIntent = googleSignInClient!!.signInIntent
-            googleLauncher!!.launch(signInIntent)
+            val signInIntent = client.signInIntent
+            launcher.launch(signInIntent)
         }
     }
 
@@ -413,12 +417,12 @@ class GuestFragment : BaseFragment(), AuthContract.View {
             it.dismiss()
         }
         codeBroadcastReceiver = CodeBroadcastReceiver()
-        codeBroadcastReceiver!!.setCodeBroadcastReceiverListener(object :
+        codeBroadcastReceiver?.setCodeBroadcastReceiverListener(object :
             CodeBroadcastReceiverListener {
             override fun onReceived(intent: Intent) {
                 if (intent != null) {
                     try {
-                        codeLauncher!!.launch(intent)
+                        codeLauncher?.launch(intent)
                     } catch (e: ActivityNotFoundException) {
                         e.printStackTrace()
                     }
@@ -467,16 +471,15 @@ class GuestFragment : BaseFragment(), AuthContract.View {
             val baseActivity = it as BaseActivity
             baseActivity.dismissDialogs()
         }
-        if (codeDialogFragment == null || codeDialogFragment!!.dialog == null || !codeDialogFragment!!.dialog!!
-                .isShowing
-        ) {
+        val showingDialog = codeDialogFragment?.dialog?.isShowing == true
+        if (!showingDialog) {
             codeBroadcastReceiver = CodeBroadcastReceiver()
-            codeBroadcastReceiver!!.setCodeBroadcastReceiverListener(object :
+            codeBroadcastReceiver?.setCodeBroadcastReceiverListener(object :
                 CodeBroadcastReceiverListener {
                 override fun onReceived(intent: Intent) {
                     if (intent != null) {
                         try {
-                            codeLauncher!!.launch(intent)
+                            codeLauncher?.launch(intent)
                         } catch (e: ActivityNotFoundException) {
                             e.printStackTrace()
                         }
@@ -495,7 +498,7 @@ class GuestFragment : BaseFragment(), AuthContract.View {
                 task.addOnFailureListener { e: Exception -> AppLogger.error(e.message) }
             }
         } else {
-            codeDialogFragment!!.dismiss()
+            codeDialogFragment?.dismiss()
         }
         val args = Bundle()
         args.putBoolean("guest", guest)
@@ -591,7 +594,7 @@ class GuestFragment : BaseFragment(), AuthContract.View {
     override fun changeLanguage(language: String) {}
     override fun logSigninEvent(customerId: String?) {}
     override fun logRegistrationEvent(registrationMethod: String?) {
-        FacebookAppEventUtil.completeRegistrationEvent(requireContext(), registrationMethod!!)
+        FacebookAppEventUtil.completeRegistrationEvent(requireContext(), registrationMethod.orEmpty())
     }
 
 }

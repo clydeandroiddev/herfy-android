@@ -102,21 +102,30 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                 }
 
                 is LoginOTPPageViewState.SuccessUpdate -> {
-                    HydraAPI.getDefaultInstance(requireActivity())?.pushUserUpdate(
-                        AuthUtil.getInstance().customer.attributes.mobile,
-                        AuthUtil.getInstance().customer.attributes.firstName,
-                        AuthUtil.getInstance().customer.attributes.lastName,
-                        AuthUtil.getInstance().customer.attributes.email,
-                        AuthUtil.getInstance().customer.attributes.mobile,
-                    )
+                    val hydraApi = HydraAPI.getDefaultInstance(requireActivity())
+                    val attributes = AuthUtil.getInstance().customer?.attributes
+                    val mobile = attributes?.mobile
+                    if (hydraApi != null && !mobile.isNullOrBlank()) {
+                        try {
+                            hydraApi.pushUserUpdate(
+                                mobile,
+                                attributes.firstName,
+                                attributes.lastName,
+                                attributes.email,
+                                mobile,
+                            )
 
-                    HydraAPI.getDefaultInstance(requireActivity())?.pushUserSignin(
-                        AuthUtil.getInstance().customer.attributes.mobile,
-                        AuthUtil.getInstance().customer.attributes.firstName,
-                        AuthUtil.getInstance().customer.attributes.lastName,
-                        AuthUtil.getInstance().customer.attributes.email,
-                        AuthUtil.getInstance().customer.attributes.mobile,
-                    )
+                            hydraApi.pushUserSignin(
+                                mobile,
+                                attributes.firstName,
+                                attributes.lastName,
+                                attributes.email,
+                                mobile,
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
                     binding.skipButton.performClick()
                 }
 

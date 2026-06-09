@@ -46,7 +46,6 @@ import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 import com.capillary.hydra.android.sdk.UserPreferences
 import com.capillary.hydra.firebase.HydraFirebaseAPI
-import com.capillary.hydra.pushbase.HydraPushApi
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -57,6 +56,7 @@ import com.herfy.R
 import com.herfy.animation.ActivitySwitcher
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
+import com.herfy.base.BaseApplication
 import com.herfy.browser.BrowserActivity
 import com.herfy.cart.views.CartFragment
 import com.herfy.cmspage.CmsPageActivity
@@ -189,6 +189,18 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             }
         }
 
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            try {
+                if (isGranted) {
+                    shouldCheckAlarmPermission = true
+                }
+                passUserPreferenceUpdate(isGranted)
+            } catch (e: Exception) {
+                AppLogger.error(e.message)
+            }
+        }
+
     private val cacheUtilHelper by lazy {
         CacheUtilHelper(this)
     }
@@ -219,8 +231,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val auth = AuthUtil.getInstance()
-        val signedInCustomer = auth.customer
-        if (auth.isSignedIn && signedInCustomer != null) {
+        val signedInCustomer = auth?.customer
+        if (auth?.isSignedIn == true && signedInCustomer != null) {
             val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
             firebaseAnalytics.setUserId(signedInCustomer.id)
         }
@@ -241,14 +253,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         //HYDRA LOGS
         runOnUiThread {
-
-            HydraPushApi.getInstance().addPermissionResponseListener { isGranted ->
-                if (isGranted) {
-                    shouldCheckAlarmPermission = true
-                    passUserPreferenceUpdate(true)
-                } else {
-                    passUserPreferenceUpdate(false)
-                }
+            if (!isHydraReady()) {
+                return@runOnUiThread
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
@@ -257,30 +263,34 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                         Manifest.permission.POST_NOTIFICATIONS
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    HydraPushApi.getInstance().requestPushPermission(this)
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
                     shouldCheckAlarmPermission = true
                     passUserPreferenceUpdate(true)
                 }
             }
 
-            val authState = AuthUtil.getInstance()
+            val authState = AuthUtil.getInstance() ?: return@runOnUiThread
             val hydraCustomer = authState.customer
-            if (authState.firebase.isNotEmpty() && authState.isSignedIn && hydraCustomer != null) {
-                 //HYDRA SIGN IN EVENT
-                 getDefaultInstance(applicationContext)!!.pushUserSignin(
-                     hydraCustomer.attributes.mobile,
-                     hydraCustomer.attributes.firstName,
-                     hydraCustomer.attributes.lastName,
-                     hydraCustomer.attributes.email,
-                     hydraCustomer.attributes.mobile,
-                      emptyMap<String, Any>()
-                 )
+            val attributes = hydraCustomer?.attributes
+            val firebaseToken = authState.firebase
+            if (!firebaseToken.isNullOrBlank() && authState.isSignedIn && hydraCustomer != null && attributes != null) {
+                try {
+                    //HYDRA SIGN IN EVENT
+                    getDefaultInstance(applicationContext)?.pushUserSignin(
+                        attributes.mobile.orEmpty(),
+                        attributes.firstName.orEmpty(),
+                        attributes.lastName.orEmpty(),
+                        attributes.email.orEmpty(),
+                        attributes.mobile.orEmpty(),
+                        emptyMap<String, Any>()
+                    )
 
-                 HydraFirebaseAPI.getInstance()
-                     .passPushToken(this, authState.firebase)
-
-             }
+                    HydraFirebaseAPI.getInstance()?.passPushToken(this, firebaseToken)
+                } catch (e: Exception) {
+                    AppLogger.error(e.message)
+                }
+            }
 
          }
 
@@ -1714,18 +1724,27 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     private fun passUserPreferenceUpdate(hasPermission: Boolean) {
-        val auth = AuthUtil.getInstance()
-        val customer = auth.customer
-        if (auth.isSignedIn && customer != null) {
-            val mobile = customer.attributes.mobile
-            if (mobile.isEmpty()) return
+        try {
+            if (!isHydraReady()) return
 
-             HydraAPI.Companion.getDefaultInstance(applicationContext)!!
-                 .passUserPreferences(
-                     mobile,
-                     UserPreferences(hasPermission, hasPermission)
-                 )
+            val auth = AuthUtil.getInstance() ?: return
+            if (!auth.isSignedIn) return
 
+            val customer = auth.customer ?: return
+            val mobile = customer.attributes?.mobile
+            if (mobile.isNullOrBlank()) return
+
+            HydraAPI.getDefaultInstance(applicationContext)?.passUserPreferences(
+                mobile,
+                UserPreferences(hasPermission, hasPermission)
+            )
+        } catch (e: Exception) {
+            AppLogger.error(e.message)
         }
+    }
+
+    private fun isHydraReady(): Boolean {
+        val app = applicationContext as? BaseApplication ?: return false
+        return app.ensureHydraInitializedFromCache()
     }
 }

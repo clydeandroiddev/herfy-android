@@ -48,6 +48,9 @@ import io.shipbook.shipbooksdk.ShipBook
 @HiltAndroidApp
 class BaseApplication : Application(), ImageLoaderFactory {
 
+    @Volatile
+    private var hydraInitialized = false
+
 
 
     override fun onCreate() {
@@ -65,6 +68,10 @@ class BaseApplication : Application(), ImageLoaderFactory {
         LocaleUtil.init(this)
         FontHandler.init(this)
         KochavaTrackerUtil.init(applicationContext, reveal(Keychain.KOCHAVA_GUID))
+
+        // Best-effort early Hydra init from cached remote-config values.
+        // Splash initialization still runs later and keeps behavior unchanged.
+        ensureHydraInitializedFromCache()
 
         //FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
         SoloApi.init(this, EnvUtil.getEnvironmentUrl(), BuildUtil.soloAppKey())
@@ -129,6 +136,8 @@ class BaseApplication : Application(), ImageLoaderFactory {
     }
 
     fun initializeHydraSdk(context: Context) {
+        if (hydraInitialized) return
+
         val notificationConfig = NotificationConfig(
             R.drawable.notification,
             R.color.colorPrimary,
@@ -156,8 +165,29 @@ class BaseApplication : Application(), ImageLoaderFactory {
 
         try {
             HydraAPI.instanceWithConfig(context, hydraConfig)
+            hydraInitialized = true
         } catch (e: HydraConfigurationException) {
             AppLogger.error("Hydra init failed $e")
+            hydraInitialized = false
         }
+    }
+
+    fun ensureHydraInitializedFromCache(): Boolean {
+        if (hydraInitialized) return true
+
+        val baseUrl = CacheUtil.getInstance().capillaryBaseUrl
+        val publicKey = CacheUtil.getInstance().capillarySslPublicKey
+        val accountId = if (BuildConfig.BUILD_TYPE.equals("release", ignoreCase = true)) {
+            CacheUtil.getInstance().capillaryAccountPlayStoreAppSigning
+        } else {
+            CacheUtil.getInstance().capillaryAccountId
+        }
+
+        if (baseUrl.isEmpty() || publicKey.isEmpty() || accountId.isEmpty()) {
+            return false
+        }
+
+        initializeHydraSdk(this)
+        return hydraInitialized
     }
 }

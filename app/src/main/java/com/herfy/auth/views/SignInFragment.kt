@@ -43,7 +43,7 @@ import java.util.Locale.getDefault
 class SignInFragment : BaseFragment(), AuthContract.View {
 
     private var _listener: Listener? = null
-    private val listener get() = _listener!!
+    private val listener: Listener? get() = _listener
 
     private var  _binding: FragmentSignInBinding? = null
     val binding: FragmentSignInBinding? get() =  _binding
@@ -73,7 +73,7 @@ class SignInFragment : BaseFragment(), AuthContract.View {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loginOption = CacheUtil.getInstance().concept.loginOption
-        authPresenter!!.start()
+        authPresenter?.start()
     }
 
     override fun onResume() {
@@ -92,31 +92,31 @@ class SignInFragment : BaseFragment(), AuthContract.View {
             }
 
 
-            with(listener) {
+            listener?.let { host ->
                 binding?.apply {
-                    animateSpringView(Techniques.SlideInUp, 300, usernameLabel, 8)
-                    if (loginOption != LoginOption.EMAIL) animateSpringView(
+                    host.animateSpringView(Techniques.SlideInUp, 300, usernameLabel, 8)
+                    if (loginOption != LoginOption.EMAIL) host.animateSpringView(
                         Techniques.SlideInUp,
                         350,
                         phoneNumberContainer,
                         8
                     )
-                    else animateSpringView(Techniques.SlideInUp, 350, usernameContainer, 8)
+                    else host.animateSpringView(Techniques.SlideInUp, 350, usernameContainer, 8)
 
-                    animateSpringView(Techniques.SlideInUp, 400, passwordLabel, 8)
-                    animateSpringView(Techniques.SlideInUp, 450, passwordContainer, 8)
-                    animateSpringView(Techniques.SlideInUp, 500, signIn, 8)
-                    animateSpringView(Techniques.SlideInUp, 550, forgotPassword, 8)
-                    animateSpringView(Techniques.SlideInUp, 800, language.languageContainer, 8)
+                    host.animateSpringView(Techniques.SlideInUp, 400, passwordLabel, 8)
+                    host.animateSpringView(Techniques.SlideInUp, 450, passwordContainer, 8)
+                    host.animateSpringView(Techniques.SlideInUp, 500, signIn, 8)
+                    host.animateSpringView(Techniques.SlideInUp, 550, forgotPassword, 8)
+                    host.animateSpringView(Techniques.SlideInUp, 800, language.languageContainer, 8)
 
                     val socialLoginOption = CacheUtil.getInstance().concept.socialLoginOption
                     if (socialLoginOption.isNotEmpty() && socialLoginOption != "apple") {
-                        animateSpringView(Techniques.SlideInUp, 600, or, 8)
+                        host.animateSpringView(Techniques.SlideInUp, 600, or, 8)
                         if (socialLoginOption.contains("solo-guest")) {
-                            animateSpringView(Techniques.SlideInUp, 650, guest, 8)
+                            host.animateSpringView(Techniques.SlideInUp, 650, guest, 8)
                         } else guest.visibility = View.GONE
                         if (socialLoginOption.contains("google")) {
-                            animateSpringView(Techniques.SlideInUp, 700, google, 8)
+                            host.animateSpringView(Techniques.SlideInUp, 700, google, 8)
                         } else binding?.google?.visibility = View.GONE
                     } else {
                         binding?.apply {
@@ -151,7 +151,7 @@ class SignInFragment : BaseFragment(), AuthContract.View {
         eventMetricName: String?,
         eventMetricValue: Double
     ) {
-        listener.logEventAttributesMetric(eventName, eventAttributes, eventMetricName, eventMetricValue)
+        listener?.logEventAttributesMetric(eventName, eventAttributes, eventMetricName, eventMetricValue)
     }
 
     override fun setCartExpiry() {}
@@ -309,7 +309,7 @@ class SignInFragment : BaseFragment(), AuthContract.View {
 
             binding?.signIn?.setOnClickListener {
                 if (loginOption == LoginOption.MOBILE_NUMBER) {
-                    listener.signIn(
+                    listener?.signIn(
                         StringUtil.toEnglish(
                             StringUtil.localize(
                                 if (selectedDialCode.contains(
@@ -320,7 +320,7 @@ class SignInFragment : BaseFragment(), AuthContract.View {
                         ), password.text.toString().trim { it <= ' ' }, mobileFormatIndex
                     )
                 } else {
-                    listener.signIn(
+                    listener?.signIn(
                         username.text.toString().trim { it <= ' ' },
                         password.text.toString().trim { it <= ' ' },
                         -1
@@ -337,10 +337,10 @@ class SignInFragment : BaseFragment(), AuthContract.View {
             }
             guest.setOnClickListener {
                 firstAnimate = true
-                listener.showGuest()
+                listener?.showGuest()
             }
 //        binding.social.facebook.setOnClickListener { listener.signInFacebook() }
-            google.setOnClickListener { listener.signInGoogle() }
+            google.setOnClickListener { listener?.signInGoogle() }
             val languages = CacheUtil.getInstance().concept.languages.toList()
             binding?.language?.apply {
                 french.isVisible =
@@ -372,15 +372,15 @@ class SignInFragment : BaseFragment(), AuthContract.View {
                     when (getButton(position)) {
 
 
-                        language.english -> if (!LocaleUtil.getInstance().isEnglish) listener.changeLanguage(
+                        language.english -> if (!LocaleUtil.getInstance().isEnglish) listener?.changeLanguage(
                             "en"
                         )
 
-                        language.arabic -> if (!LocaleUtil.getInstance().isArabic) listener.changeLanguage(
+                        language.arabic -> if (!LocaleUtil.getInstance().isArabic) listener?.changeLanguage(
                             "ar"
                         )
 
-                        language.french -> if (!LocaleUtil.getInstance().isFrench) listener.changeLanguage(
+                        language.french -> if (!LocaleUtil.getInstance().isFrench) listener?.changeLanguage(
                             "fr"
                         )
 
@@ -430,8 +430,8 @@ class SignInFragment : BaseFragment(), AuthContract.View {
 
     override fun signInEmail(email: String?, password: String?, mobileFormatIndex: Int) {}
     override fun forgotPassword(phoneNumber: String?, mobileFormatIndex: Int) {
-        listener.showLoadingDialog()
-        authPresenter!!.forgotPassword(phoneNumber,mobileFormatIndex)
+        listener?.showLoadingDialog()
+        authPresenter?.forgotPassword(phoneNumber, mobileFormatIndex)
     }
 
     override fun signInFacebook() {}
@@ -486,20 +486,16 @@ class SignInFragment : BaseFragment(), AuthContract.View {
     }
 
     override fun showMessage(message: String) {
-        listener.showMessage(message)
+        listener?.showMessage(message)
     }
 
     override fun showError(error: String) {
-        if (forgotPasswordDialogFragment != null) {
-            forgotPasswordDialogFragment!!.showError("")
-        }
+        forgotPasswordDialogFragment?.showError("")
         _listener?.showError(error)
     }
 
     override fun showSuccess(success: String) {
-        if (forgotPasswordDialogFragment != null) {
-            forgotPasswordDialogFragment!!.dismiss()
-        }
+        forgotPasswordDialogFragment?.dismiss()
         _listener?.dismissDialogs()
         _listener?.showAlertDialog("", success)
     }

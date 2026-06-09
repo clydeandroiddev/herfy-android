@@ -49,6 +49,7 @@ import com.herfy.auth.AuthContract
 import com.herfy.auth.AuthFragmentPagerAdapter
 import com.herfy.auth.AuthPresenter
 import com.herfy.base.BaseActivity
+import com.herfy.base.BaseApplication
 import com.herfy.base.BaseFragment
 import com.herfy.cart.views.CartFragment
 import com.herfy.databinding.FragmentAuthBinding
@@ -124,7 +125,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     ) { result: ActivityResult? ->
         if (result != null && result.data != null) {
             try {
-                val message = result.data!!.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+                val message = result.data?.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
                 if (message != null) {
                     val otpLength = CacheUtil.getInstance().concept.otpLength.toString()
                     val p = Pattern.compile(String.format("\\b\\d{%s}\\b", otpLength))
@@ -133,9 +134,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
                     while (m.find()) {
                         codeValue = m.group(0)
                     }
-                    if (verifyCodeDialogFragment != null) {
-                        verifyCodeDialogFragment!!.setCode(codeValue)
-                    }
+                    verifyCodeDialogFragment?.setCode(codeValue)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -167,7 +166,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         super.onViewCreated(view, savedInstanceState)
         dismissDialogs()
         checkBackground()
-        authPresenter!!.start()
+        authPresenter.start()
         LoginManager.getInstance().registerCallback(facebookCallbackManager, this)
         activity?.let {
             val googleSignInOptions =
@@ -253,7 +252,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
             }
 
             override fun onPageSelected(position: Int) {
-                adapter!!.notifyDataSetChanged()
+                adapter?.notifyDataSetChanged()
             }
 
             override fun onPageScrollStateChanged(state: Int) {}
@@ -265,12 +264,12 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     override fun setupTranslations() {}
     override fun signInEmail(email: String, password: String, mobileFormatIndex: Int) {
         showLoadingDialog()
-        authPresenter!!.signIn(email, password, mobileFormatIndex)
+        authPresenter.signIn(email, password, mobileFormatIndex)
     }
 
     override fun forgotPassword(phoneNumber: String?, mobileFormatIndex: Int) {
         showLoadingDialog()
-        authPresenter!!.forgotPassword(phoneNumber, mobileFormatIndex)
+        authPresenter.forgotPassword(phoneNumber, mobileFormatIndex)
     }
 
     override fun signInFacebook() {
@@ -288,10 +287,17 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
 
     override fun signInGoogle() {
         showLoadingDialog()
-        googleSignInClient!!.signOut()
+        val client = googleSignInClient
+        val launcher = googleLauncher
+        if (client == null || launcher == null) {
+            dismissDialogs()
+            showMessage(CacheUtil.getInstance().getTranslations(Text.GOOGLE_ERROR))
+            return
+        }
+        client.signOut()
         showLoadingDialog()
-        val signInIntent = googleSignInClient!!.signInIntent
-        googleLauncher!!.launch(signInIntent)
+        val signInIntent = client.signInIntent
+        launcher.launch(signInIntent)
     }
 
     override fun signUp(
@@ -302,11 +308,11 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
         index: Int
     ) {
         showLoadingDialog()
-        authPresenter!!.signUp(fullName, phoneNumber, email, password, index)
+        authPresenter.signUp(fullName, phoneNumber, email, password, index)
     }
 
     override fun showErrorEmail(error: String) {
-        val baseFragment = adapter!!.getItem(binding.viewPager.currentItem) as BaseFragment
+        val baseFragment = adapter?.getItem(binding.viewPager.currentItem) as? BaseFragment ?: return
         if (baseFragment is SignInFragment) {
             baseFragment.showErrorEmail(error)
         } else if (baseFragment is RegisterFragment) {
@@ -330,7 +336,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun showErrorUsername(error: String) {
-        val baseFragment = adapter!!.getItem(binding.viewPager.currentItem) as AuthContract.View
+        val baseFragment = adapter?.getItem(binding.viewPager.currentItem) as? AuthContract.View ?: return
         baseFragment.showErrorUsername(error)
         if (!error.isEmpty()) dismissDialogs()
     }
@@ -358,7 +364,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun showErrorFirstName(error: String) {
-        val baseFragment = adapter!!.getItem(binding.viewPager.currentItem) as BaseFragment
+        val baseFragment = adapter?.getItem(binding.viewPager.currentItem) as? BaseFragment ?: return
         if (baseFragment is RegisterFragment) {
             baseFragment.showErrorFirstName(error)
         }
@@ -368,7 +374,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun showErrorPhoneNumber(error: String) {
-        val baseFragment = adapter!!.getItem(binding.viewPager.currentItem) as BaseFragment
+        val baseFragment = adapter?.getItem(binding.viewPager.currentItem) as? BaseFragment ?: return
         if (baseFragment is RegisterFragment) {
             baseFragment.showErrorPhoneNumber(error)
         } else if (baseFragment is SignInFragment) {
@@ -445,7 +451,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
 
     override fun setupCodeBroadcastListener() {
         codeBroadcastReceiver = CodeBroadcastReceiver()
-        codeBroadcastReceiver!!.setCodeBroadcastReceiverListener(object :
+        codeBroadcastReceiver?.setCodeBroadcastReceiverListener(object :
             CodeBroadcastReceiver.CodeBroadcastReceiverListener {
             override fun onReceived(intent: Intent) {
                 try {
@@ -505,31 +511,54 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun showMain() {
-        //HYDRA SIGN IN EVENT
-        getDefaultInstance(requireContext())!!.pushUserSignin(
-            AuthUtil.getInstance().customer.attributes.mobile,
-            AuthUtil.getInstance().customer.attributes.firstName,
-            AuthUtil.getInstance().customer.attributes.lastName,
-            AuthUtil.getInstance().customer.attributes.email,
-            AuthUtil.getInstance().customer.attributes.mobile,
-            emptyMap())
+        val hydraApi = getDefaultInstance(requireContext())
+        if (hydraApi == null || !isHydraReady()) {
+            verifyCodeDialogFragment?.dismiss()
+            CacheUtil.getInstance().signinUsername = ""
+            dismissDialogs()
+            navigateUp()
+            return
+        }
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            getDefaultInstance(requireContext())!!
-                .passUserPreferences(
-                    AuthUtil.getInstance().customer.attributes.mobile,
+        val customer = AuthUtil.getInstance().customer
+        val attributes = customer?.attributes
+        val mobile = attributes?.mobile
+        if (attributes == null || mobile.isNullOrBlank()) {
+            verifyCodeDialogFragment?.dismiss()
+            CacheUtil.getInstance().signinUsername = ""
+            dismissDialogs()
+            navigateUp()
+            return
+        }
+
+        try {
+            // HYDRA SIGN IN EVENT
+            hydraApi.pushUserSignin(
+                mobile,
+                attributes.firstName.orEmpty(),
+                attributes.lastName.orEmpty(),
+                attributes.email.orEmpty(),
+                mobile,
+                emptyMap()
+            )
+
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                hydraApi.passUserPreferences(
+                    mobile,
                     UserPreferences(false, false)
                 )
-        } else {
-            getDefaultInstance(requireContext())!!
-                .passUserPreferences(
-                    AuthUtil.getInstance().customer.attributes.mobile,
+            } else {
+                hydraApi.passUserPreferences(
+                    mobile,
                     UserPreferences(true, true)
                 )
+            }
+        } catch (e: Exception) {
+            AppLogger.error(e.message)
         }
 
 
@@ -578,7 +607,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
 
         SoloAuth.getInstance()
             .setLanguage(LocaleUtil.getInstance().languageSymbol)
-        authPresenter!!.changeLanguage()
+        authPresenter.changeLanguage()
         activity?.let {
             val intent = Intent(it, AuthActivity::class.java)
             startActivity(intent)
@@ -597,7 +626,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
     }
 
     override fun logRegistrationEvent(registrationMethod: String?) {
-        FacebookAppEventUtil.completeRegistrationEvent(requireContext(), registrationMethod!!)
+        FacebookAppEventUtil.completeRegistrationEvent(requireContext(), registrationMethod.orEmpty())
     }
 
     override fun dismissDialogs() {
@@ -625,7 +654,7 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
                     if (it.has("email")) {
                         try {
                             showLoadingDialog()
-                            authPresenter!!.signInFacebook(it.getString("email"), token)
+                            authPresenter.signInFacebook(it.getString("email"), token)
                         } catch (e: JSONException) {
                             e.printStackTrace()
                             showMessage(
@@ -651,11 +680,16 @@ class AuthFragment : BaseFragment(), AuthContract.View, FacebookCallback<LoginRe
 
     override fun onError(error: FacebookException) {
         dismissDialogs()
-        showMessage(error.message!!)
+        showMessage(error.message ?: CacheUtil.getInstance().getTranslations(Text.FACEBOOK_ERROR))
     }
 
     override fun signIn(username: String, password: String, mobileFormatIndex: Int) {
         showLoadingDialog()
-        authPresenter!!.signIn(username, password, mobileFormatIndex)
+        authPresenter.signIn(username, password, mobileFormatIndex)
+    }
+
+    private fun isHydraReady(): Boolean {
+        val app = requireContext().applicationContext as? BaseApplication ?: return false
+        return app.ensureHydraInitializedFromCache()
     }
 }

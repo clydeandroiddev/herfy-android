@@ -31,7 +31,8 @@ class MenuCategoriesAdapter(
     private val VIEW_TYPE_MENU_EMPTY = 1
     private val VIEW_TYPE_MENU_CATEGORY = 2
 
-    private val menuItemsAdapters = mutableMapOf<Int, MenuItemsAdapter>()
+    private val menuItemsAdapters = mutableMapOf<String, MenuItemsAdapter>()
+    private val sharedViewPool = RecyclerView.RecycledViewPool()
 
     class EmptyMenuItemViewHolder(
         private val binding: ItemEmptyMenuBinding
@@ -65,14 +66,21 @@ class MenuCategoriesAdapter(
          */
         fun bind(
             menuCategory: MenuCategory,
-            menuItemsAdapter: MenuItemsAdapter
+            menuItemsAdapter: MenuItemsAdapter,
+            sharedViewPool: RecyclerView.RecycledViewPool
         ) {
 
             binding.name.text = menuCategory.getName(LocaleUtil.getInstance().language)
 
             binding.menuItemsRecyclerView.apply {
-                layoutManager = LinearLayoutManager(itemView.context)
-                adapter = menuItemsAdapter
+                if (layoutManager == null) {
+                    layoutManager = LinearLayoutManager(itemView.context)
+                    setHasFixedSize(true)
+                    setRecycledViewPool(sharedViewPool)
+                }
+                if (adapter !== menuItemsAdapter) {
+                    adapter = menuItemsAdapter
+                }
             }
 
         }
@@ -101,33 +109,39 @@ class MenuCategoriesAdapter(
         } else if(holder is MenuCategoryViewHolder) {
             if (position < menuCategories.size) {
                 val menuCategory = menuCategories[position]
-                val isStoreSelected = CacheUtil.getInstance().orderStore != null
-                val filteredMenuItems = LinkedList<MenuItem>()
-                for (menuItem in menuCategory.menuItems) {
-                    if (menuItem.enabled == 1 && (!isStoreSelected || !menuItem.excludedLocations.contains(
-                            CacheUtil.getInstance().orderStore.id
-                        ))
-                    ) {
-                        filteredMenuItems.add(menuItem)
-                    }
+                val menuItemsAdapter = menuItemsAdapters.getOrPut(menuCategory.id) {
+                    MenuItemsAdapter(
+                        menuCategory = menuCategory,
+                        menuItems = buildFilteredMenuItems(menuCategory),
+                        onSelect = onSelect,
+                        onAddRemoveFavorite = onAddRemoveFavorite,
+                        onAddToCart = onAddToCart
+                    )
                 }
-                if (filteredMenuItems.size > 0) {
-                    filteredMenuItems.sortBy { it.displayOrder }
-                }
-                val menuItemsAdapter = MenuItemsAdapter(
-                    menuCategory = menuCategory,
-                    menuItems = filteredMenuItems.toTypedArray(),
-                    onSelect = onSelect,
-                    onAddRemoveFavorite = onAddRemoveFavorite,
-                    onAddToCart = onAddToCart
-                )
-                menuItemsAdapters[position] = menuItemsAdapter
                 holder.bind(
                     menuCategory = menuCategory,
-                    menuItemsAdapter = menuItemsAdapter
+                    menuItemsAdapter = menuItemsAdapter,
+                    sharedViewPool = sharedViewPool
                 )
             }
         }
+    }
+
+    private fun buildFilteredMenuItems(menuCategory: MenuCategory): Array<MenuItem> {
+        val isStoreSelected = CacheUtil.getInstance().orderStore != null
+        val filteredMenuItems = LinkedList<MenuItem>()
+        for (menuItem in menuCategory.menuItems) {
+            if (menuItem.enabled == 1 && (!isStoreSelected || !menuItem.excludedLocations.contains(
+                    CacheUtil.getInstance().orderStore.id
+                ))
+            ) {
+                filteredMenuItems.add(menuItem)
+            }
+        }
+        if (filteredMenuItems.isNotEmpty()) {
+            filteredMenuItems.sortBy { it.displayOrder }
+        }
+        return filteredMenuItems.toTypedArray()
     }
 
     /**
@@ -156,8 +170,8 @@ class MenuCategoriesAdapter(
     }
 
     fun updateMenuItems(position: Int) {
-        if(menuItemsAdapters.contains(position)) {
-            menuItemsAdapters[position]?.notifyDataSetChanged()
+        if (position in menuCategories.indices) {
+            menuItemsAdapters[menuCategories[position].id]?.notifyDataSetChanged()
         }
     }
 

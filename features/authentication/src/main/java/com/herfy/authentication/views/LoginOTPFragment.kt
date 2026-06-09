@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.capillary.hydra.android.sdk.HydraAPI
-import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 import com.capillary.hydra.android.sdk.UserPreferences
 import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
@@ -138,9 +137,7 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
         viewModel.state.collectViewModelState(viewLifecycleOwner) {
             when (it) {
                 is LoginOTPPageViewState.UserResend -> {
-                    if (countDownTimer != null) {
-                        countDownTimer!!.cancel()
-                    }
+                    countDownTimer?.cancel()
                     initTimer()
                 }
 
@@ -172,32 +169,49 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
 
     private fun toNextPage() {
         if (args.isVerified) {
+            val hydraApi = HydraAPI.getDefaultInstance(requireContext())
+            if (hydraApi == null) {
+                requireActivity().setResult(Activity.RESULT_OK)
+                requireActivity().finish()
+                return
+            }
 
-            //HYDRA SIGN IN EVENT
-            HydraAPI.getDefaultInstance(requireContext())!!.pushUserSignin(
-                AuthUtil.getInstance().customer.attributes.mobile,
-                AuthUtil.getInstance().customer.attributes.firstName,
-                AuthUtil.getInstance().customer.attributes.lastName,
-                AuthUtil.getInstance().customer.attributes.email,
-                AuthUtil.getInstance().customer.attributes.mobile,
-                emptyMap())
+            val customer = AuthUtil.getInstance().customer
+            val attributes = customer?.attributes
+            val mobile = attributes?.mobile
+            if (attributes == null || mobile.isNullOrBlank()) {
+                requireActivity().setResult(Activity.RESULT_OK)
+                requireActivity().finish()
+                return
+            }
 
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                getDefaultInstance(requireContext())!!
-                    .passUserPreferences(
-                        AuthUtil.getInstance().customer.attributes.mobile,
+            try {
+                //HYDRA SIGN IN EVENT
+                hydraApi.pushUserSignin(
+                    mobile,
+                    attributes.firstName.orEmpty(),
+                    attributes.lastName.orEmpty(),
+                    attributes.email.orEmpty(),
+                    mobile,
+                    emptyMap())
+
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    hydraApi.passUserPreferences(
+                        mobile,
                         UserPreferences(false, false)
                     )
-            } else {
-                getDefaultInstance(requireContext())!!
-                    .passUserPreferences(
-                        AuthUtil.getInstance().customer.attributes.mobile,
+                } else {
+                    hydraApi.passUserPreferences(
+                        mobile,
                         UserPreferences(true, true)
                     )
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
 
@@ -209,14 +223,18 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
             requireActivity().setResult(Activity.RESULT_OK)
             requireActivity().finish()
         } else {
-            HydraAPI.getDefaultInstance(requireActivity())?.pushUserSignup(
-                cuid = args.phoneNumber ?: "",
-                firstName = args.givenName,
-                lastName = args.givenName,
-                email = args.phoneNumber,
-                phone = args.givenName,
-                customData = emptyMap()
-            )
+            try {
+                HydraAPI.getDefaultInstance(requireActivity())?.pushUserSignup(
+                    cuid = args.phoneNumber ?: "",
+                    firstName = args.givenName,
+                    lastName = args.givenName,
+                    email = args.phoneNumber,
+                    phone = args.givenName,
+                    customData = emptyMap()
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
 
             findNavController().navigate(
@@ -234,4 +252,5 @@ class LoginOTPFragment : BaseFragment<LoginOTPViewModel, FragmentOtpPageBinding>
     private fun initArgs() {
         binding.userNumber.text = "+" + args.phoneNumber.replace("+", "")
     }
+
 }

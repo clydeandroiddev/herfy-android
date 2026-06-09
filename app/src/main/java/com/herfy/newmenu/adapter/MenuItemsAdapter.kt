@@ -3,7 +3,6 @@ package com.herfy.newmenu.adapter
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.style.StrikethroughSpan
 import android.util.TypedValue
@@ -14,12 +13,8 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.herfy.R
 import com.herfy.analytics.firebase.FirebaseECommerceEventUtil
 import com.herfy.analytics.firebase.FirebaseService
@@ -104,18 +99,11 @@ class MenuItemsAdapter(
                 .load(imageUrl)
                 .skipMemoryCache(false)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
+                .dontAnimate()
                 .apply(RequestOptions.centerCropTransform())
-                .listener(object : RequestListener<Drawable?> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable?>?, isFirstResource: Boolean): Boolean {
-                        binding.imageItem.visibility = View.INVISIBLE
-                        return false
-                    }
-
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable?>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        binding.imageItem.visibility = View.VISIBLE
-                        return false
-                    }
-                }).into(binding.imageItem)
+                .into(binding.imageItem)
             val description = menuItem.getDescription(LocaleUtil.getInstance().language)
             binding.itemDescription.text = if (description != null && !description.isEmpty() && !description.equals("null", ignoreCase = true)) {
                 description
