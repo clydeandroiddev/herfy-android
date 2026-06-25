@@ -45,7 +45,6 @@ class PaymentMethodsUserFragment : BaseFragment(), AccountContract.View,
         super.onViewCreated(view, savedInstanceState)
         paymentPresenter?.start()
         showLoadingDialog()
-        paymentPresenter?.fetchCustomerCards()
     }
 
     override fun setPresenter(presenter: AccountContract.Presenter) {

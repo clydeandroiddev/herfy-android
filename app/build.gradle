@@ -216,8 +216,8 @@ android {
         herfy {
             signingConfig signingConfigs.release
             applicationId "com.herfy.order"
-            versionCode 300037
-            versionName "3.1.7"
+            versionCode 300038
+            versionName "3.1.8"
             buildConfigField "String", "TAG", "\"Herfy\""
             buildConfigField "String", "SOLO_CONCEPT", "\"\""
             buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
