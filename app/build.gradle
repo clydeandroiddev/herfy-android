@@ -216,8 +216,8 @@ android {
         herfy {
             signingConfig signingConfigs.release
             applicationId "com.herfy.order"
-            versionCode 300036
-            versionName "3.1.6"
+            versionCode 300037
+            versionName "3.1.7"
             buildConfigField "String", "TAG", "\"Herfy\""
             buildConfigField "String", "SOLO_CONCEPT", "\"\""
             buildConfigField "String", "SPLASH_COLOR", "\"#FAFBFC\""
@@ -469,7 +469,7 @@ dependencies {
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
 
     //Checkout Sdk
-    implementation "com.checkout:checkout-android-components:1.12.0"
+    implementation "com.checkout:checkout-android-components:2.0.0"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.31.5-beta"
 
     //Moyasar SDK

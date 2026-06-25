@@ -28,7 +28,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:scaleType="centerInside"
-            android:src="@drawable/logo_herfy"
+            tools:src="@drawable/logo_herfy"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
