@@ -498,11 +498,12 @@ public class CacheUtil {
     }
 
     public List<CustomerCard> getCustomerCards() {
-        String cards = cacheSharedPreferences.getString(CUSTOMER_CARDS, null);
-        if (cards != null) {
-            return GsonHelper.gsonFinal().fromJson(cards, new TypeToken<List<CustomerCard>>() {
-            }.getType());
-        }
+        // TODO Uncomment below when saved cards are ready from BE
+//        String cards = cacheSharedPreferences.getString(CUSTOMER_CARDS, null);
+//        if (cards != null) {
+//            return GsonHelper.gsonFinal().fromJson(cards, new TypeToken<List<CustomerCard>>() {
+//            }.getType());
+//        }
         return new ArrayList<>();
     }
 
