@@ -32,17 +32,16 @@
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
     </queries>
+    <queries>
+        <package android:name="com.whatsapp" />
+    </queries>
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <queries>
-        <package android:name="com.whatsapp" />
-    </queries>
-
     <application
-        android:name="com.herfy.base.BaseApplication"
+        android:name=".base.BaseApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -53,7 +52,10 @@
         tools:ignore="LockedOrientationActivity"
         tools:replace="android:allowBackup">
         <activity
-            android:name="com.herfy.payment.views.MoyasarActivity"
+            android:name=".loyalty.LoyaltyIFrameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".payment.views.MoyasarActivity"
             android:exported="false" />
 
         <uses-library
@@ -98,19 +100,19 @@
             android:value="@string/facebook_client_token" />
 
         <receiver
-            android:name="com.herfy.ratings.AppRatingBroadcastReceiver"
+            android:name=".ratings.AppRatingBroadcastReceiver"
             android:exported="false" />
         <receiver
-            android:name="com.herfy.cart.receivers.CartNotificationBroadcastReceiver"
+            android:name=".cart.receivers.CartNotificationBroadcastReceiver"
             android:exported="false" />
         <receiver
-            android:name="com.herfy.cart.receivers.CartExpiryBroadcastReceiver"
+            android:name=".cart.receivers.CartExpiryBroadcastReceiver"
             android:exported="false" />
         <receiver
-            android:name="com.herfy.util.receivers.InAppRatingBroadcastReceivers"
+            android:name=".util.receivers.InAppRatingBroadcastReceivers"
             android:exported="false" />
-
-        <!--<receiver
+        <!--
+<receiver
             android:name="com.kochava.base.ReferralReceiver"
             tools:node="remove" />
         -->
@@ -149,7 +151,7 @@
         -->
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service
-            android:name="com.herfy.analytics.firebase.FirebaseService"
+            android:name=".analytics.firebase.FirebaseService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -164,9 +166,8 @@
             </intent-filter>
         </service>
 
-
         <activity
-            android:name="com.herfy.router.RouterActivity"
+            android:name=".router.RouterActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
@@ -182,7 +183,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.herfy.splash.SplashActivity"
+            android:name=".splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -192,31 +193,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.herfy.language.LanguageActivity"
+            android:name=".language.LanguageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.language.LanguageNewActivity"
+            android:name=".language.LanguageNewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.onboarding.views.OnboardingActivity"
+            android:name=".onboarding.views.OnboardingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.main.MainActivity"
+            android:name=".main.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.herfy.main.NavigationActivity"
+            android:name=".main.NavigationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.menu.views.MenuItemActivity"
+            android:name=".menu.views.MenuItemActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.order.views.OrderTypeActivity"
+            android:name=".order.views.OrderTypeActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.herfy.order.views.AddressActivity"
+            android:name=".order.views.AddressActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".order.views.ordertype.addaddress.AddNewAddressActivity"
@@ -225,22 +226,22 @@
             android:name=".curbside.curbsidenew.CurbsideNewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.addresses.views.AddressesActivity"
+            android:name=".addresses.views.AddressesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.main.GatewayActivity"
+            android:name=".main.GatewayActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.concepts.views.ConceptsActivity"
+            android:name=".concepts.views.ConceptsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.upsell.UpsellActivity"
+            android:name=".upsell.UpsellActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.loyalty.LoyaltyQrActivity"
+            android:name=".loyalty.LoyaltyQrActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.payment.views.PaymentActivity"
+            android:name=".payment.views.PaymentActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -292,94 +293,94 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.herfy.order.views.OrderCompleteActivity"
+            android:name=".order.views.OrderCompleteActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.order.views.OrderStatusActivity"
+            android:name=".order.views.OrderStatusActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.order.views.OrderTrackActivity"
+            android:name=".order.views.OrderTrackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.auth.views.AuthActivity"
-            android:screenOrientation="portrait"
+            android:name=".auth.views.AuthActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.herfy.auth.views.SignInActivity"
+            android:name=".auth.views.SignInActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.auth.views.SignUpActivity"
+            android:name=".auth.views.SignUpActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.auth.views.GuestActivity"
+            android:name=".auth.views.GuestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.auth.views.ForgotPasswordActivity"
+            android:name=".auth.views.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.verification.views.PhoneNumberActivity"
+            android:name=".verification.views.PhoneNumberActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.verification.views.CodeActivity"
+            android:name=".verification.views.CodeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.verification.views.VerifiedActivity"
+            android:name=".verification.views.VerifiedActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.loyalty.LoyaltyActivity"
+            android:name=".loyalty.LoyaltyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.branches.BranchesActivity"
+            android:name=".branches.BranchesActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.herfy.account.views.AccountActivity"
+            android:name=".account.views.AccountActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.account.views.EditProfileActivity"
+            android:name=".account.views.EditProfileActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.herfy.account.views.ChangePasswordActivity"
+            android:name=".account.views.ChangePasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.herfy.places.PlacesActivity"
+            android:name=".places.PlacesActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.herfy.summary.OrderSummaryActivity"
+            android:name=".summary.OrderSummaryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.selection.SelectionActivity"
+            android:name=".selection.SelectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.subscription.premade.views.PreMadeStep1Activity"
+            android:name=".subscription.premade.views.PreMadeStep1Activity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.subscription.branch.PickupBranchActivity"
+            android:name=".subscription.branch.PickupBranchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.subscription.seemeal.SeeMealActivity"
+            android:name=".subscription.seemeal.SeeMealActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.browser.BrowserActivity"
+            android:name=".browser.BrowserActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.cmspage.CmsPageActivity"
+            android:name=".cmspage.CmsPageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.loyalty.LoyaltyPointsHistory"
+            android:name=".loyalty.LoyaltyPointsHistory"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.mukafaa_otp.MukafaaOTPActivity"
+            android:name=".mukafaa_otp.MukafaaOTPActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.feedback.FeedbackActivity"
+            android:name=".feedback.FeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.herfy.country.CountriesActivity"
+            android:name=".country.CountriesActivity"
             android:screenOrientation="portrait" />
     </application>
 

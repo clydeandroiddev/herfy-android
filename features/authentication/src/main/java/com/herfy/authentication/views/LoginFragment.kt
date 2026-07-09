@@ -26,7 +26,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.capillary.hydra.android.sdk.HydraAPI
-import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 import com.capillary.hydra.android.sdk.UserPreferences
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -250,31 +249,41 @@ class LoginFragment : BaseFragment<LoginViewModel, FragmentLoginBinding>() {
                     requireActivity().setResult(Activity.RESULT_OK)
                     requireActivity().finish()
 
-                    //HYDRA SIGN IN EVENT
-                   HydraAPI.getDefaultInstance(requireContext())!!.pushUserSignin(
-                        AuthUtil.getInstance().customer.attributes.mobile,
-                        AuthUtil.getInstance().customer.attributes.firstName,
-                        AuthUtil.getInstance().customer.attributes.lastName,
-                        AuthUtil.getInstance().customer.attributes.email,
-                        AuthUtil.getInstance().customer.attributes.mobile,
-                        emptyMap())
+                    val hydraApi = HydraAPI.getDefaultInstance(requireContext()) ?: return@collectViewModelState
 
-                    if (ContextCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        getDefaultInstance(requireContext())!!
-                            .passUserPreferences(
-                                AuthUtil.getInstance().customer.attributes.mobile,
+                    val customer = AuthUtil.getInstance().customer
+                    val attributes = customer?.attributes
+                    val mobile = attributes?.mobile
+                    if (attributes == null || mobile.isNullOrBlank()) return@collectViewModelState
+
+                    try {
+                        //HYDRA SIGN IN EVENT
+                        hydraApi.pushUserSignin(
+                            mobile,
+                            attributes.firstName.orEmpty(),
+                            attributes.lastName.orEmpty(),
+                            attributes.email.orEmpty(),
+                            mobile,
+                            emptyMap()
+                        )
+
+                        if (ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            hydraApi.passUserPreferences(
+                                mobile,
                                 UserPreferences(false, false)
                             )
-                    } else {
-                        getDefaultInstance(requireContext())!!
-                            .passUserPreferences(
-                                AuthUtil.getInstance().customer.attributes.mobile,
+                        } else {
+                            hydraApi.passUserPreferences(
+                                mobile,
                                 UserPreferences(true, true)
                             )
+                        }
+                    } catch (e: Exception) {
+                        AppLogger.error(e.message)
                     }
 
 

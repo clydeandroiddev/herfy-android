@@ -5,6 +5,7 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.capillary.hydra.android.sdk.HydraAPI
 import com.herfy.analytics.kochava.KochavaEventType
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
@@ -14,6 +15,7 @@ import com.herfy.authentication.state.LoginOTPPageViewState
 import com.herfy.authentication.viewmodel.LoginOTPViewModel
 import com.herfy.utils.base.mvvm.BaseFragment
 import com.herfy.utils.constants.Text
+import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.CacheUtil
 import com.herfy.utils.helper.collectViewModelState
 import dagger.hilt.android.AndroidEntryPoint
@@ -100,6 +102,30 @@ class InputUserDetailFragment : BaseFragment<LoginOTPViewModel, FragmentAddNewNa
                 }
 
                 is LoginOTPPageViewState.SuccessUpdate -> {
+                    val hydraApi = HydraAPI.getDefaultInstance(requireActivity())
+                    val attributes = AuthUtil.getInstance().customer?.attributes
+                    val mobile = attributes?.mobile
+                    if (hydraApi != null && !mobile.isNullOrBlank()) {
+                        try {
+                            hydraApi.pushUserUpdate(
+                                mobile,
+                                attributes.firstName,
+                                attributes.lastName,
+                                attributes.email,
+                                mobile,
+                            )
+
+                            hydraApi.pushUserSignin(
+                                mobile,
+                                attributes.firstName,
+                                attributes.lastName,
+                                attributes.email,
+                                mobile,
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
                     binding.skipButton.performClick()
                 }
 

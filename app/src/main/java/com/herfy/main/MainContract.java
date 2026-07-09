@@ -50,6 +50,8 @@ public interface MainContract {
 
         void setTermsAndConditions(String content);
 
+        void showLoyalty(boolean proceedToLoyalty);
+
     }
 
     interface Presenter extends BasePresenter {
@@ -59,6 +61,8 @@ public interface MainContract {
         void getCartQuantity();
 
         void getCaloriesPage();
+
+        void getLoyaltyIFrame();
 
         void getOrders();
 

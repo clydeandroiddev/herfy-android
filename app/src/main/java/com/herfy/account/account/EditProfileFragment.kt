@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
 import android.widget.Toast
+import com.capillary.hydra.android.sdk.HydraAPI
 import com.herfy.account.AccountContract
 import com.herfy.account.AccountPresenter
 import com.herfy.base.BaseFragment
@@ -402,6 +403,13 @@ class EditProfileFragment : BaseFragment(), AccountContract.View {
     override fun showAccount() {
         try {
             dismissDialogs()
+            HydraAPI.getDefaultInstance(requireActivity())!!.pushUserUpdate(
+                AuthUtil.getInstance().customer.attributes.mobile,
+                AuthUtil.getInstance().customer.attributes.firstName,
+                AuthUtil.getInstance().customer.attributes.lastName,
+                AuthUtil.getInstance().customer.attributes.email,
+                AuthUtil.getInstance().customer.attributes.mobile,
+            )
             Toast.makeText(
                 requireActivity(),
                 CacheUtil.getInstance().getTranslations(Text.PROFILE_UPDATED, "Profile Updated"),

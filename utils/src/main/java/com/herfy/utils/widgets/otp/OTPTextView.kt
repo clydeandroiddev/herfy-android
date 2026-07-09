@@ -168,7 +168,14 @@ class OTPTextView : FrameLayout {
         addView(linearLayout, linearLayoutParams)
 
         for (i in 0 until length) {
-            val itemView = ItemView(context, attrsNew)
+            // Regeneration can happen after the original XML parser is no longer valid.
+            // Fall back to a context-only constructor so OTP setup continues instead of crashing.
+            val itemView = try {
+                ItemView(context, attrsNew)
+            } catch (e: RuntimeException) {
+                Log.w("OTPTextView", "Falling back to default ItemView attrs", e)
+                ItemView(context)
+            }
             itemView.setViewState(ItemView.INACTIVE)
             linearLayout.addView(itemView, i, params)
             itemViews?.add(itemView)

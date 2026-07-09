@@ -134,6 +134,37 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     private var fromInitialLaunch = false
     private var isDiffMenuEnabled = false
 
+    private val tabsSelectionListener = object : TabLayout.OnTabSelectedListener {
+        override fun onTabSelected(tab: TabLayout.Tab?) {
+            if (!menuIsScrolled) {
+                tab?.position?.let {
+                    if (it != selectedMenuCategoryPosition) {
+                        binding.menuRecyclerView.smoothSnapToPosition(it)
+                        binding.menuRecyclerView.removeOnScrollListener(menuOnScrollListener)
+                        binding.menuRecyclerView.clearOnScrollListeners()
+                        selectTab(it)
+                    }
+                }
+            }
+        }
+
+        override fun onTabUnselected(tab: TabLayout.Tab?) {
+        }
+
+        override fun onTabReselected(tab: TabLayout.Tab?) {
+            if (!menuIsScrolled) {
+                tab?.position?.let {
+                    if (it != selectedMenuCategoryPosition) {
+                        binding.menuRecyclerView.smoothSnapToPosition(it)
+                        binding.menuRecyclerView.removeOnScrollListener(menuOnScrollListener)
+                        binding.menuRecyclerView.clearOnScrollListeners()
+                        selectTab(it)
+                    }
+                }
+            }
+        }
+    }
+
     private var selectOrderTypeDialog: SelectOrderTypeDialogFragment? = null
 
     private var menuIsScrolled = false
@@ -1036,37 +1067,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     binding.tabsLayout.addTab(tab)
                 }
             }
-            binding.tabsLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    if (!menuIsScrolled) {
-                        tab?.position?.let {
-                            if (it != selectedMenuCategoryPosition) {
-                                binding.menuRecyclerView.smoothSnapToPosition(it)
-                                binding.menuRecyclerView.removeOnScrollListener(menuOnScrollListener)
-                                binding.menuRecyclerView.clearOnScrollListeners()
-                                selectTab(it)
-                            }
-                        }
-                    }
-                }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-                }
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {
-                    if (!menuIsScrolled) {
-                        tab?.position?.let {
-                            if (it != selectedMenuCategoryPosition) {
-                                binding.menuRecyclerView.smoothSnapToPosition(it)
-                                binding.menuRecyclerView.removeOnScrollListener(menuOnScrollListener)
-                                binding.menuRecyclerView.clearOnScrollListeners()
-                                selectTab(it)
-                            }
-                        }
-                    }
-                }
-            })
+            // Avoid stacking duplicate listeners across refreshes.
+            binding.tabsLayout.clearOnTabSelectedListeners()
+            binding.tabsLayout.addOnTabSelectedListener(tabsSelectionListener)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1209,8 +1212,9 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
         } else {
             binding.menuItemsSearchList.visibility = View.VISIBLE
             binding.searchEmptyLayout.visibility = View.GONE
-            searchAdapter = SearchMenuRecyclerViewAdapter(activity, menuPresenter)
-            binding.menuItemsSearchList.adapter = searchAdapter
+            if (binding.menuItemsSearchList.adapter == null) {
+                binding.menuItemsSearchList.adapter = searchAdapter
+            }
             searchAdapter?.updateMenuList(searchedMenuItems)
         }
     }

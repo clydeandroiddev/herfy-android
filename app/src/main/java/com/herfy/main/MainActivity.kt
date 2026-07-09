@@ -31,6 +31,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -45,7 +46,6 @@ import com.capillary.hydra.android.sdk.HydraAPI
 import com.capillary.hydra.android.sdk.HydraAPI.Companion.getDefaultInstance
 import com.capillary.hydra.android.sdk.UserPreferences
 import com.capillary.hydra.firebase.HydraFirebaseAPI
-import com.capillary.hydra.pushbase.HydraPushApi
 import com.facebook.login.LoginManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -56,6 +56,7 @@ import com.herfy.R
 import com.herfy.animation.ActivitySwitcher
 import com.herfy.auth.views.AuthActivity
 import com.herfy.base.BaseActivity
+import com.herfy.base.BaseApplication
 import com.herfy.browser.BrowserActivity
 import com.herfy.cart.views.CartFragment
 import com.herfy.cmspage.CmsPageActivity
@@ -71,8 +72,10 @@ import com.herfy.feedback.FeedbackActivity
 import com.herfy.home.views.HomeFragment
 import com.herfy.home.views.HomeFragmentDirections
 import com.herfy.loyalty.LoyaltyActivity
+import com.herfy.loyalty.LoyaltyIFrameActivity
 import com.herfy.main.adapter.LanguageAdapter
 import com.herfy.main.adapter.SwitchServerAdapter
+import com.herfy.main.session.SessionExpiryManager
 import com.herfy.menu.view.MenuFragment
 import com.herfy.menuitem.view.MenuItemDetailFragmentDirections
 import com.herfy.newmenu.NewMenuFragmentCommonListener
@@ -169,9 +172,11 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     private var isFromLogOut = false
     private var isFromFavorites = false
     private var fromChangeLanguage = false
+    private var isSessionExpiredDialogVisible = false
     var currentDestination = -1
     private var languageAdapter: LanguageAdapter? = null
     var isDrawerOpen = false
+
     @Volatile
     private var shouldCheckAlarmPermission = false
 
@@ -181,6 +186,18 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 if (AuthUtil.getInstance().isSignedIn) {
                     setupSideBar()
                 }
+            }
+        }
+
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            try {
+                if (isGranted) {
+                    shouldCheckAlarmPermission = true
+                }
+                passUserPreferenceUpdate(isGranted)
+            } catch (e: Exception) {
+                AppLogger.error(e.message)
             }
         }
 
@@ -194,7 +211,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
 
-
     override fun onRestart() {
         super.onRestart()
         val locale = LocaleUtil.getLocale()
@@ -202,9 +218,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             mCurrentLocale = locale
             val i = Intent(this@MainActivity, MainActivity::class.java)
             startActivity(i)
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
-            }else {
+            } else {
                 overridePendingTransition(0, 0)
             }
         }
@@ -214,11 +230,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        if (AuthUtil.getInstance().isSignedIn) {
+        val auth = AuthUtil.getInstance()
+        val signedInCustomer = auth?.customer
+        if (auth?.isSignedIn == true && signedInCustomer != null) {
             val firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-            firebaseAnalytics.setUserId(AuthUtil.getInstance().customer.id)
+            firebaseAnalytics.setUserId(signedInCustomer.id)
         }
-
 
 
         val bundle = intent.extras
@@ -236,14 +253,8 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
         //HYDRA LOGS
         runOnUiThread {
-
-            HydraPushApi.getInstance().addPermissionResponseListener { isGranted ->
-                if (isGranted) {
-                    shouldCheckAlarmPermission = true
-                    passUserPreferenceUpdate(true)
-                } else {
-                    passUserPreferenceUpdate(false)
-                }
+            if (!isHydraReady()) {
+                return@runOnUiThread
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !fromChangeLanguage) {
@@ -252,26 +263,33 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                         Manifest.permission.POST_NOTIFICATIONS
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    HydraPushApi.getInstance().requestPushPermission(this)
-                }else{
+                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                } else {
                     shouldCheckAlarmPermission = true
                     passUserPreferenceUpdate(true)
                 }
             }
 
-            if (AuthUtil.getInstance().firebase.isNotEmpty() && AuthUtil.getInstance().isSignedIn) {
-                //HYDRA SIGN IN EVENT
-                getDefaultInstance(applicationContext)!!.pushUserSignin(
-                    AuthUtil.getInstance().customer.attributes.mobile,
-                    AuthUtil.getInstance().customer.attributes.firstName,
-                    AuthUtil.getInstance().customer.attributes.lastName,
-                    AuthUtil.getInstance().customer.attributes.email,
-                    AuthUtil.getInstance().customer.attributes.mobile,
-                    emptyMap<String, Any>())
+            val authState = AuthUtil.getInstance() ?: return@runOnUiThread
+            val hydraCustomer = authState.customer
+            val attributes = hydraCustomer?.attributes
+            val firebaseToken = authState.firebase
+            if (!firebaseToken.isNullOrBlank() && authState.isSignedIn && hydraCustomer != null && attributes != null) {
+                try {
+                    //HYDRA SIGN IN EVENT
+                    getDefaultInstance(applicationContext)?.pushUserSignin(
+                        attributes.mobile.orEmpty(),
+                        attributes.firstName.orEmpty(),
+                        attributes.lastName.orEmpty(),
+                        attributes.email.orEmpty(),
+                        attributes.mobile.orEmpty(),
+                        emptyMap<String, Any>()
+                    )
 
-                HydraFirebaseAPI.getInstance()
-                    .passPushToken(this, AuthUtil.getInstance().firebase)
-
+                    HydraFirebaseAPI.getInstance()?.passPushToken(this, firebaseToken)
+                } catch (e: Exception) {
+                    AppLogger.error(e.message)
+                }
             }
 
         }
@@ -302,7 +320,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             currentDestination = destination.id
             binding.toolbarMain.apply {
                 if (currentDestination == R.id.nav_herfy_home || currentDestination == R.id.nav_dialog_popup) {
-                    setStatusBarColor(ContextCompat.getColor(this@MainActivity, com.herfy.commonstyles.R.color.toolbar_color))
+                    setStatusBarColor(
+                        ContextCompat.getColor(
+                            this@MainActivity,
+                            com.herfy.commonstyles.R.color.toolbar_color
+                        )
+                    )
                     hide(false)
                     setCartQuantity()
                     setupSideBar()
@@ -448,6 +471,19 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
     }
 
+    private fun setupConceptLogo() {
+        val cacheUtil = CacheUtil.getInstance()
+        val logoUrl = cacheUtil.concept?.logo?.takeIf { it.isNotBlank() }
+            ?: cacheUtil.application?.attributes?.logo?.takeIf { it.isNotBlank() }
+
+        val logoSizePx = ViewUtil.dpToPx(this, 48)
+        Glide.with(this)
+            .load(logoUrl)
+            .error(R.drawable.logo_herfy)
+            .apply(RequestOptions().centerInside().override(logoSizePx, logoSizePx))
+            .into(binding.sidebar.concept)
+    }
+
     override fun preloadImage(imageUrl: String, requestOptions: RequestOptions) {
         runOnUiThread {
             if (!isDestroyed && !isFinishing) {
@@ -528,6 +564,9 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     override fun onResume() {
         super.onResume()
+        SessionExpiryManager.setListener {
+            handleGlobalSessionExpired()
+        }
 
         if (shouldCheckAlarmPermission) {
 
@@ -637,7 +676,6 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         signUpHydra()
 
 
-
     }
 
     private fun setupSideBar() {
@@ -647,12 +685,17 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val calcDrawerWidth = (screenWidth - drawerWidthMultiplier).toInt()
             layoutParams.width = calcDrawerWidth
         }
+        setupConceptLogo()
         val customer = AuthUtil.getInstance().customer
         val isSubs = CacheUtil.getInstance().mode == 2
         val isSignedIn = AuthUtil.getInstance().isSignedIn
+        val hasCustomer = customer != null
         val isGuest =
-            (isSignedIn && !customer.attributes.accountType.equals("full", ignoreCase = true))
-        if (isSignedIn) {
+            (isSignedIn && hasCustomer && !customer!!.attributes.accountType.equals(
+                "full",
+                ignoreCase = true
+            ))
+        if (isSignedIn && hasCustomer) {
             val customerNameLabel =
                 CacheUtil.getInstance().getTranslations(Text.HI_LABEL, "Hi (x)!")
             binding.sidebar.customerName.text = customerNameLabel.replace(
@@ -672,17 +715,19 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             ) ||
                     CacheUtil.getInstance().application.attributes.getPickupPaymentTypes()
                         .contains(PaymentType.LOYALTY)
-        if(containsLoyalty && isSignedIn){
+        if (containsLoyalty && isSignedIn && hasCustomer) {
             binding.sidebar.fmLoyalty.visible()
-        }else {
+        } else {
             binding.sidebar.fmLoyalty.gone()
         }
-        binding.sidebar.fmAccount.visibility = if (isSignedIn) View.VISIBLE else View.GONE
+        binding.sidebar.fmAccount.visibility =
+            if (isSignedIn && hasCustomer) View.VISIBLE else View.GONE
         binding.sidebar.fmActiveSubscription.visibility =
-            if (isSubs && isSignedIn) View.VISIBLE else View.GONE
+            if (isSubs && isSignedIn && hasCustomer) View.VISIBLE else View.GONE
         binding.sidebar.fmSignin.visibility =
             if (isSignedIn && !isGuest) View.GONE else View.VISIBLE
-        val loggedInRules = if (isSignedIn) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
+        val loggedInRules =
+            if (isSignedIn && hasCustomer) (if (isSubs) View.GONE else View.VISIBLE) else View.GONE
         binding.sidebar.fmHistory.visibility = loggedInRules
         binding.sidebar.fmFavorites.visibility = loggedInRules
         binding.sidebar.selectionLayout.visibility =
@@ -692,7 +737,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             val intent = Intent(this, FeedbackActivity::class.java)
             startActivity(intent)
         }
-        binding.sidebar.fmStoreLocator.isVisible = isSignedIn
+        binding.sidebar.fmStoreLocator.isVisible = isSignedIn && hasCustomer
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -701,6 +746,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     override fun onPause() {
+        SessionExpiryManager.setListener(null)
         super.onPause()
         mainPresenter.detachAbly()
     }
@@ -772,10 +818,12 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         }
         binding.sidebar.fmHistory.setOnClickListener { showHistory() }
         binding.sidebar.fmLoyalty.setOnClickListener {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-            val intent = Intent(this@MainActivity, LoyaltyActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
+            if (CacheUtil.getInstance().loyaltyIframeToken.isNullOrEmpty()) {
+                showLoadingDialog()
+                mainPresenter.getLoyaltyIFrame()
+            } else {
+                showLoyaltyPage()
+            }
         }
         binding.sidebar.fmFeedback.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -891,6 +939,14 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
             intent.removeExtra("autoLogin")
             binding.sidebar.signin.performClick()
         }
+    }
+
+    private fun showLoyaltyPage() {
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        val intent = Intent(this@MainActivity, LoyaltyIFrameActivity::class.java)
+        intent.putExtra("iframe_name", Values.IFRAME_NAME_SIDEBAR_REWARDS)
+        startActivity(intent)
+        overridePendingTransition(AnimUtil.inF(), AnimUtil.inS())
     }
 
     private fun showNotifications() {
@@ -1037,7 +1093,56 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         googleSignInClient.signOut()
         SoloAuth.getInstance().logout()
         AuthUtil.getInstance().customer = null
+        AuthUtil.getInstance().setCustomerLoyalty(null)
+        AuthUtil.getInstance().setCustomerLoyaltyTier(null)
         CacheUtil.getInstance().setConsumerData(null)
+        CacheUtil.getInstance().setLoyaltyIframeToken(null)
+        CacheUtil.getInstance().setCurrentOrderId(null)
+    }
+
+    private fun handleGlobalSessionExpired() {
+        if (isFinishing || isDestroyed) {
+            SessionExpiryManager.releaseForRetry()
+            return
+        }
+
+        if (isSessionExpiredDialogVisible) {
+            return
+        }
+
+        isSessionExpiredDialogVisible = true
+        logoutUser()
+        CacheUtil.getInstance().clearOrder()
+
+        val title = CacheUtil.getInstance().getTranslations(Text.ERROR_CAPS, "ERROR")
+        val message = CacheUtil.getInstance().getTranslations(
+            Text.LOGIN_SESSION_EXPIRED,
+            "Your session has expired. Please login again."
+        )
+        val loginLabel = CacheUtil.getInstance().getTranslations(Text.LOGIN_REGISTER_LABEL, "Login")
+
+        AlertDialog.Builder(this)
+            .setCancelable(false)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(loginLabel) { dialog, _ ->
+                dialog.dismiss()
+                isSessionExpiredDialogVisible = false
+                SessionExpiryManager.consume()
+                navigateToLoginAfterSessionExpiry()
+            }
+            .show()
+    }
+
+    private fun navigateToLoginAfterSessionExpiry() {
+        val intent = Intent(this, AuthActivity::class.java)
+        intent.putExtra("sign_in", true)
+        intent.putExtra("guest", false)
+        intent.putExtra("curbside", false)
+        intent.putExtra("checkout", false)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        finish()
     }
 
     override fun gateWay() {
@@ -1081,6 +1186,13 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
                 title = CacheUtil.getInstance()
                     .getTranslations(Text.TERMS_LABEL, "Terms & Condition"), content = content
             )
+        }
+    }
+
+    override fun showLoyalty(proceedToLoyalty: Boolean) {
+        dismissDialogs()
+        if (proceedToLoyalty) {
+            showLoyaltyPage()
         }
     }
 
@@ -1144,7 +1256,7 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
 
     @OptIn(DelicateCoroutinesApi::class)
     fun setCartQuantity() {
-        GlobalScope.launch(context = CoroutineContextProvider().Main){
+        GlobalScope.launch(context = CoroutineContextProvider().Main) {
             cacheUtilHelper.getCartItems {
                 cacheUtilHelper.setCartQuantity(it)
                 binding.toolbarMain.setCart(cacheUtilHelper.getCartQuantity())
@@ -1573,20 +1685,22 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
         if (BuildConfig.VERSION_NAME != "3.1.2") return
 
         val customer = auth.customer ?: return
-        val phone =customer.attributes?.mobile ?: ""
+        val phone = customer.attributes?.mobile ?: ""
         if (phone.isBlank()) return
 
         if (!auth.isHydraSignedUp(phone)) {
             HydraAPI.getDefaultInstance(this@MainActivity)?.pushUserSignup(
                 cuid = phone ?: "",
                 firstName = customer.attributes?.firstName,
-                lastName  = customer.attributes?.lastName,
-                email     = customer.attributes?.email,
-                phone     = phone,
+                lastName = customer.attributes?.lastName,
+                email = customer.attributes?.email,
+                phone = phone,
                 customData = emptyMap()
             )
             auth.saveHydraSignUp(phone)
         }
+
+
     }
 
     private fun checkAlarmPermission() {
@@ -1629,15 +1743,27 @@ class MainActivity : BaseActivity(), MainContract.View, NewMenuFragmentCommonLis
     }
 
     private fun passUserPreferenceUpdate(hasPermission: Boolean) {
-        if (AuthUtil.getInstance().isSignedIn) {
-            val mobile = AuthUtil.getInstance().customer.attributes.mobile
+        try {
+            if (!isHydraReady()) return
 
-            HydraAPI.Companion.getDefaultInstance(applicationContext)!!
-                .passUserPreferences(
-                    mobile,
-                    UserPreferences(hasPermission, hasPermission)
-                )
+            val auth = AuthUtil.getInstance() ?: return
+            if (!auth.isSignedIn) return
 
+            val customer = auth.customer ?: return
+            val mobile = customer.attributes?.mobile
+            if (mobile.isNullOrBlank()) return
+
+            HydraAPI.getDefaultInstance(applicationContext)?.passUserPreferences(
+                mobile,
+                UserPreferences(hasPermission, hasPermission)
+            )
+        } catch (e: Exception) {
+            AppLogger.error(e.message)
         }
+    }
+
+    private fun isHydraReady(): Boolean {
+        val app = applicationContext as? BaseApplication ?: return false
+        return app.ensureHydraInitializedFromCache()
     }
 }

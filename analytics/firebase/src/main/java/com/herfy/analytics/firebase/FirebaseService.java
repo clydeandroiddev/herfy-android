@@ -50,7 +50,20 @@ public class FirebaseService extends FirebaseMessagingService {
 
         super.onNewToken(token);
 
-        HydraFirebaseAPI.getInstance().passPushToken(getApplicationContext(), token);
+        HydraAPI hydraAPI = HydraAPI.Companion.getDefaultInstance(getApplicationContext());
+        if (hydraAPI == null) {
+            AuthUtil.getInstance().setFirebase(token);
+            return;
+        }
+
+        try {
+            HydraFirebaseAPI hydraFirebaseAPI = HydraFirebaseAPI.getInstance();
+            if (hydraFirebaseAPI != null) {
+                hydraFirebaseAPI.passPushToken(getApplicationContext(), token);
+            }
+        } catch (Exception e) {
+            AppLogger.printRetrofitError(e);
+        }
 
         AuthUtil.getInstance().setFirebase(token);
 
@@ -64,17 +77,55 @@ public class FirebaseService extends FirebaseMessagingService {
         String customerId = null;
         String customerMobileNumber = null;
         if (AuthUtil.getInstance().isSignedIn()) {
+            if (AuthUtil.getInstance().getCustomer() == null
+                    || AuthUtil.getInstance().getCustomer().getAttributes() == null
+                    || AuthUtil.getInstance().getCustomer().getAttributes().getMobile() == null
+                    || AuthUtil.getInstance().getCustomer().getAttributes().getMobile().isEmpty()) {
+                UtilitiesApiCall.getInstance().postIdentify(token, uniqueID, customerMobileNumber, customerId,
+                        new ApiRequestListener() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                DeviceUtil.save(object.toString());
+                            }
+
+                            @Override
+                            public void onError(Object error) {
+                                AppLogger.printRetrofitError(error);
+                            }
+                        });
+                return;
+            }
+
+            hydraAPI = HydraAPI.Companion.getDefaultInstance(getApplicationContext());
+            if (hydraAPI == null) {
+                UtilitiesApiCall.getInstance().postIdentify(token, uniqueID, customerMobileNumber, customerId,
+                        new ApiRequestListener() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                DeviceUtil.save(object.toString());
+                            }
+
+                            @Override
+                            public void onError(Object error) {
+                                AppLogger.printRetrofitError(error);
+                            }
+                        });
+                return;
+            }
 
 
-            //HYDRA SIGN IN EVENT
-            HydraAPI.Companion.getDefaultInstance(getApplicationContext()).
-                    pushUserSignin(
-                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
-                            AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
-                            Collections.emptyMap());
+            try {
+                //HYDRA SIGN IN EVENT
+                hydraAPI.pushUserSignin(
+                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getFirstName(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getLastName(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getEmail(),
+                                AuthUtil.getInstance().getCustomer().getAttributes().getMobile(),
+                                Collections.emptyMap());
+            } catch (Exception e) {
+                AppLogger.printRetrofitError(e);
+            }
 
 
             customerId = AuthUtil.getInstance().getCustomer().getId();
@@ -129,8 +180,23 @@ public class FirebaseService extends FirebaseMessagingService {
     public void onMessageReceived(@NotNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         
-        if (HydraPushApi.getInstance().isFromHydraPlatform(remoteMessage.getData())) {
-            HydraFirebaseAPI.getInstance().passPushPayload(getApplicationContext(), remoteMessage.getData());
+        boolean isHydraPayload = false;
+        try {
+            HydraPushApi hydraPushApi = HydraPushApi.getInstance();
+            isHydraPayload = hydraPushApi != null && hydraPushApi.isFromHydraPlatform(remoteMessage.getData());
+        } catch (Exception e) {
+            AppLogger.printRetrofitError(e);
+        }
+
+        if (isHydraPayload) {
+            try {
+                HydraFirebaseAPI hydraFirebaseAPI = HydraFirebaseAPI.getInstance();
+                if (hydraFirebaseAPI != null) {
+                    hydraFirebaseAPI.passPushPayload(getApplicationContext(), remoteMessage.getData());
+                }
+            } catch (Exception e) {
+                AppLogger.printRetrofitError(e);
+            }
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), getResources().getString(R.string.app_name));

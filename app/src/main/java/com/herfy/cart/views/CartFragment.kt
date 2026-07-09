@@ -2,6 +2,8 @@ package com.herfy.cart.views
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -36,6 +38,7 @@ import com.herfy.cart.CartContract
 import com.herfy.cart.adapters.CartMenuItemsRecyclerViewAdapter
 import com.herfy.cart.databinding.FragmentHerfyCartBinding
 import com.herfy.checkout.CheckoutActivity
+import com.herfy.common.dialog.CommonCustomDialog
 import com.herfy.decorator.BeforeDateDecorator
 import com.herfy.decorator.OneDayDecorator
 import com.herfy.ext.cast
@@ -60,6 +63,7 @@ import com.herfy.utils.extensions.loadImageFromUrl
 import com.herfy.utils.extensions.navigateToDeepLink
 import com.herfy.utils.extensions.runOnMain
 import com.herfy.utils.extensions.visible
+import com.herfy.utils.helper.AppLogger
 import com.herfy.utils.helper.AuthUtil
 import com.herfy.utils.helper.BuildUtil
 import com.herfy.utils.helper.CacheHelper
@@ -693,6 +697,17 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             }
         }
 
+        binding.paymentSummaryContainer.apply {
+            btnPaste.setOnClickListener {
+                val couponVal = checkAndroidClipboard()
+                if (couponVal.isEmpty()) {
+                    return@setOnClickListener
+                }
+                tieCoupon.setText(couponVal)
+                btnApply.performClick()
+            }
+        }
+
         binding.paymentSummaryContainer.viewCoupon.setOnClickListener {
             val couponVal = binding.paymentSummaryContainer.applyCouponLabel.text.toString()
             if (couponVal.equals(
@@ -713,6 +728,57 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
         binding.orderDetailsContainer.addMore.setOnClickListener {
             findNavController().navigateToDeepLink("nav_menu")
         }
+
+        binding.paymentSummaryContainer.btnApply.setOnClickListener {
+            showLoadingDialog()
+            val couponCode = binding.paymentSummaryContainer.tieCoupon.text.toString()
+            if (couponCode.isEmpty()) {
+                dismissDialogs()
+                showInvalidCouponDialog(
+                    CacheUtil.getInstance().getTranslations(
+                        Text.PLEASE_INPUT_A_COUPON_CODE_FIRST,
+                        "Coupon code is required"
+                    )
+                )
+                return@setOnClickListener
+            }
+
+            if (couponCode.isNotEmpty()) {
+                cartPresenter.validateDigitalCoupon(couponCode) { valitedResult ->
+                    runOnMain {
+                        dismissDialogs()
+                        if (!valitedResult.isSuccess) {
+                            showInvalidCouponDialog(valitedResult.message)
+                        }
+                    }
+                }
+            } else {
+                runOnMain {
+                    dismissDialogs()
+                    showInvalidCouponDialog(
+                        CacheUtil.getInstance().getTranslations(
+                            Text.PLEASE_INPUT_A_COUPON_CODE_FIRST,
+                            "Coupon code is required"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun checkAndroidClipboard(): String {
+        val clipboard =
+            requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        if (clipboard.hasPrimaryClip()) {
+            val clipData = clipboard.primaryClip
+            if (clipData != null && clipData.itemCount > 0) {
+                val text = clipData.getItemAt(0).text
+                if (text != null) {
+                    return text.toString()
+                }
+            }
+        }
+        return ""
     }
 
     private fun promoCodeShow() {
@@ -727,6 +793,12 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
     @SuppressLint("SetTextI18n")
     override fun setupTranslations() {
+        binding.paymentSummaryContainer.btnPaste.text =
+            CacheUtil.getInstance().getTranslations(Text.PASTE_LABEL, "Paste")
+        binding.paymentSummaryContainer.btnApply.text =
+            CacheUtil.getInstance().getTranslations(Text.APPLY, "Apply")
+        binding.paymentSummaryContainer.tvEnterCoupon.text = CacheUtil.getInstance()
+            .getTranslations(Text.ENTER_COUPON_CODE, "Enter coupon code?")
         binding.toolbarTitle.title =
             CacheUtil.getInstance().getTranslations(Text.YOUR_BAG_LABEL, "Your Bag")
         binding.paymentSummaryContainer.totalLabel.text =
@@ -1104,7 +1176,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     override fun deleteCartItem(position: Int) {
         runOnMain {
             activity?.cast<BaseActivity> {
-                it.showDeleteAlertDialog("",
+                it.showDeleteAlertDialog(
+                    "",
                     CacheUtil.getInstance().getTranslations(Text.PROMPT_REMOVE_ITEM),
                     CacheUtil.getInstance().getTranslations(
                         Text.YES_CAPS
@@ -1376,7 +1449,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             val promisedTime =
                 CacheUtil.getInstance().orderStore.attributes.promisedTimeDelta.pickup
             paymentOrderTimeDialog =
-                PaymentOrderTimeDialog.newInstance(CacheUtil.getInstance().orderType,
+                PaymentOrderTimeDialog.newInstance(
+                    CacheUtil.getInstance().orderType,
                     promisedTime,
                     branch,
                     imageUrl,
@@ -1973,7 +2047,8 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
 
                         delete.setOnClickListener(View.OnClickListener {
                             activity?.cast<BaseActivity> {
-                                it.showDeleteAlertDialog("",
+                                it.showDeleteAlertDialog(
+                                    "",
                                     CacheUtil.getInstance()
                                         .getTranslations(Text.PROMPT_REMOVE_ITEM),
                                     CacheUtil.getInstance().getTranslations(
@@ -2348,4 +2423,11 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
     }
 
 
+    private fun showInvalidCouponDialog(message: String) {
+        context?.let {
+            if (message.isNotEmpty()) {
+                showAlertDialog("", message)
+            }
+        }
+    }
 }

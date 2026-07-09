@@ -253,13 +253,27 @@ public class SplashPresenter implements SplashContract.Presenter {
 
                         try {
 
-                            if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release") || BuildConfig.BUILD_TYPE.equalsIgnoreCase("prodrelease")){
-                                CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config"));
-                            }else{
-                                CacheUtil.getInstance().setCapillaryHydraConfig(firebaseRemoteConfig.getString("capillary_hydra_sdk_config_debug"));
+                            String configStr;
+                            if (BuildConfig.BUILD_TYPE.equalsIgnoreCase("release") || BuildConfig.BUILD_TYPE.equalsIgnoreCase("prodrelease")) {
+                                configStr = firebaseRemoteConfig.getString("capillary_hydra_sdk_config");
+                            } else {
+                                configStr = firebaseRemoteConfig.getString("capillary_hydra_sdk_config_debug");
+                            }
+                            CacheUtil.getInstance().setCapillaryHydraConfig(configStr);
+
+                            if (configStr != null && !configStr.isEmpty()) {
+                                try {
+                                    JSONObject configJson = new JSONObject(configStr);
+                                    if (configJson.has("capillary_iframes")) {
+                                        String iframesStr = configJson.getJSONArray("capillary_iframes").toString();
+                                        CacheUtil.getInstance().setCapillaryIframes(iframesStr);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
                             splashView.initializeHydraSdk();
-                            
+
 
                             String inAppReviewEnableKey = "android_enable_in_app_review";
                             boolean inAppReviewEnable = firebaseRemoteConfig.getBoolean(inAppReviewEnableKey);
@@ -478,7 +492,12 @@ public class SplashPresenter implements SplashContract.Presenter {
                                         splashView.preloadImage(conceptLogo, RequestOptions.centerInsideTransform());
                                     }
                                 } else if (included.getJSONObject(i).optString("type").equalsIgnoreCase("popup")) {
-                                    CacheUtil.getInstance().setPopup(included.getJSONObject(i));
+                                    JSONObject popupObj = included.getJSONObject(i);
+                                    String label = popupObj.optJSONObject("attributes") != null ? popupObj.getJSONObject("attributes").optString("label") : "";
+                                    if (label.equalsIgnoreCase("Capillary") || label.toLowerCase().contains("capillary")) {
+                                        CacheUtil.getInstance().setCapillaryPopup(popupObj);
+                                    }
+                                    CacheUtil.getInstance().setPopup(popupObj);
                                 }
                             }
                         } else {
@@ -608,6 +627,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                                     key = Values.HOME_PAGE_BOTTOM_BANNER_LABEL;
                                 } else if (label.equalsIgnoreCase(Values.CATEGORY_PAGE_TOP_BANNER_LABEL)) {
                                     key = Values.CATEGORY_PAGE_TOP_BANNER_LABEL;
+                                    } else if (label.equalsIgnoreCase(Values.CAPILLARY_BANNER_LABEL)) {
+                                        key = Values.CAPILLARY_BANNER_LABEL;
                                 }
                                 if (label.equalsIgnoreCase(Values.CATER_HERFY_BANNER)) {
                                     CacheUtil.getInstance().setSliderId(Values.CATER_HERFY_BANNER, slider.getId());
@@ -627,6 +648,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                     CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_TOP_BANNER_LABEL, "");
                     CacheUtil.getInstance().setSliderId(Values.HOME_PAGE_BOTTOM_BANNER_LABEL, "");
                     CacheUtil.getInstance().setSliderId(Values.CATEGORY_PAGE_TOP_BANNER_LABEL, "");
+                    CacheUtil.getInstance().setSliderId(Values.CAPILLARY_BANNER_LABEL, "");
                 }
 
                 //getSlider(false);
@@ -637,6 +659,7 @@ public class SplashPresenter implements SplashContract.Presenter {
             public void onError(Object o) {
                 AppLogger.printRetrofitError(o.toString());
                 CacheUtil.getInstance().setMidSliderId("");
+                CacheUtil.getInstance().setSliderId(Values.CAPILLARY_BANNER_LABEL, "");
                 //getSlider(false);
                 proceed();
             }
@@ -1054,7 +1077,6 @@ public class SplashPresenter implements SplashContract.Presenter {
             String uniqueID = AuthUtil.getInstance().getUniqueId();
 
 
-
             if (uniqueID.isEmpty()) {
                 uniqueID = UUID.randomUUID().toString();
                 AuthUtil.getInstance().setUniqueId(uniqueID);
@@ -1133,7 +1155,8 @@ public class SplashPresenter implements SplashContract.Presenter {
                 try {
                     JSONObject object = new JSONObject(o.toString());
                     JSONArray tiersArray = object.getJSONArray("data");
-                    Type type = new TypeToken<List<LoyaltyTierV2>>() {}.getType();
+                    Type type = new TypeToken<List<LoyaltyTierV2>>() {
+                    }.getType();
                     List<LoyaltyTierV2> tiers = GsonHelper.gsonFinal().fromJson(tiersArray.toString(), type);
                     if (tiers != null && !tiers.isEmpty()) {
                         CacheUtil.getInstance().setLoyaltyTiers(new ArrayList<>(tiers));
@@ -1193,7 +1216,6 @@ public class SplashPresenter implements SplashContract.Presenter {
         }
 
     }
-
 
 
 }

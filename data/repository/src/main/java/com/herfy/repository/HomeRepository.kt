@@ -1,5 +1,6 @@
 package com.herfy.repository
 
+import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -17,8 +18,8 @@ import com.skylinedynamics.solosdk.api.calls.CmsApiCall
 import com.skylinedynamics.solosdk.api.calls.CouponsApiCall
 import com.skylinedynamics.solosdk.api.calls.CustomersApiCall
 import com.skylinedynamics.solosdk.api.calls.OrdersApiCall
+import com.skylinedynamics.solosdk.api.calls.RewardApiCall
 import com.skylinedynamics.solosdk.api.models.objects.Campaign
-import com.skylinedynamics.solosdk.api.models.objects.Loyalty
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyTierV2
 import com.skylinedynamics.solosdk.api.models.objects.LoyaltyV2
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
@@ -29,7 +30,6 @@ import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import com.skylinedynamics.solosdk.api.models.objects.Promotion
 import com.skylinedynamics.solosdk.api.models.objects.Slide
 import com.skylinedynamics.solosdk.api.models.objects.Store
-import com.skylinedynamics.solosdk.api.models.objects.Tier
 import com.skylinedynamics.solosdk.util.GsonHelper
 import org.json.JSONException
 import org.json.JSONObject
@@ -63,6 +63,8 @@ interface HomeRepository {
     suspend fun getLastOrder(orderId: String, response: (HomeResponse) -> Unit)
     suspend fun getCustomerOrder(customerId: String, response: (HomeResponse) -> Unit)
     suspend fun getMenuCartItems(menuItems: (ArrayList<MenuItem>) -> Unit)
+
+    suspend fun getLoyaltyIframeToken(customerId: String, response: (HomeResponse) -> Unit)
 }
 
 class HomeRepositoryImpl @Inject constructor(
@@ -70,26 +72,26 @@ class HomeRepositoryImpl @Inject constructor(
 ) : HomeRepository {
     override suspend fun getSliders(sliderId: String, response: (HomeResponse) -> Unit) {
         CmsApiCall.getInstance().getSlider(sliderId, object : ApiRequestListener {
-                override fun onSuccess(o: Any) {
-                    val slides = arrayListOf<Slide>()
-                    try {
-                        val `object` = JSONObject(o.toString())
-                        val dataArray = `object`.getJSONArray("data")
-                        for (i in 0 until dataArray.length()) {
-                            val slideObject = dataArray.getJSONObject(i)
-                            val slide = Slide.parse(slideObject)
-                            slides.add(slide)
-                        }
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
+            override fun onSuccess(o: Any) {
+                val slides = arrayListOf<Slide>()
+                try {
+                    val `object` = JSONObject(o.toString())
+                    val dataArray = `object`.getJSONArray("data")
+                    for (i in 0 until dataArray.length()) {
+                        val slideObject = dataArray.getJSONObject(i)
+                        val slide = Slide.parse(slideObject)
+                        slides.add(slide)
                     }
-                    response(HomeResponse(true, slides, ""))
+                } catch (e: JSONException) {
+                    e.printStackTrace()
                 }
+                response(HomeResponse(true, slides, ""))
+            }
 
-                override fun onError(o: Any) {
-                    response(HomeResponse(false, null, o.toString()))
-                }
-            })
+            override fun onError(o: Any) {
+                response(HomeResponse(false, null, o.toString()))
+            }
+        })
     }
 
     override suspend fun getGuestDigitalCoupons(
@@ -161,7 +163,8 @@ class HomeRepositoryImpl @Inject constructor(
                 try {
                     val `object` = JSONObject(o.toString())
                     val data = `object`.getJSONObject("data")
-                    val loyalty = GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2::class.java)
+                    val loyalty =
+                        GsonHelper.gsonFinal().fromJson(data.toString(), LoyaltyV2::class.java)
                     response(HomeResponse(true, loyalty, ""))
                 } catch (e: JSONException) {
                     e.printStackTrace()
@@ -239,10 +242,10 @@ class HomeRepositoryImpl @Inject constructor(
                             if (`object`.has("included")) {
                                 val promotions =
                                     GsonHelper.gsonFinal().fromJson<java.util.ArrayList<Promotion>>(
-                                            `object`.getJSONArray("included").toString(),
-                                            object :
-                                                TypeToken<java.util.ArrayList<Promotion?>?>() {}.type
-                                        )
+                                        `object`.getJSONArray("included").toString(),
+                                        object :
+                                            TypeToken<java.util.ArrayList<Promotion?>?>() {}.type
+                                    )
                                 val promotionsHashMap = java.util.HashMap<String, Promotion>()
                                 for (promotion in promotions) {
                                     promotionsHashMap[promotion.id] = promotion
@@ -383,7 +386,11 @@ class HomeRepositoryImpl @Inject constructor(
 
             val vatAmount = 0.0
             var total =
-                String.format(Locale.ENGLISH, "%.2f", discountedSubtotal + deliveryCharge + vatAmount)
+                String.format(
+                    Locale.ENGLISH,
+                    "%.2f",
+                    discountedSubtotal + deliveryCharge + vatAmount
+                )
                     .toDouble()
             if (total < 0) {
                 total = 0.0
@@ -400,7 +407,8 @@ class HomeRepositoryImpl @Inject constructor(
                 item.addProperty("id", menuItem.id)
                 item.addProperty(
                     "price",
-                    String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId)).toDouble()
+                    String.format(Locale.ENGLISH, "%.2f", menuItem.getPrice(orderStoreId))
+                        .toDouble()
                 )
                 item.addProperty("quantity", menuItem.attributes.quantity)
                 item.addProperty("is-reorder", menuItem.attributes.isReorder)
@@ -458,7 +466,11 @@ class HomeRepositoryImpl @Inject constructor(
                                 modifier.addProperty("id", modifierItem.id)
                                 modifier.addProperty(
                                     "price",
-                                    String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
+                                    String.format(
+                                        Locale.ENGLISH,
+                                        "%.2f",
+                                        modifierItem.attributes.price
+                                    )
                                         .toDouble()
                                 )
                                 modifier.addProperty("quantity", modifierItem.attributes.quantity)
@@ -472,7 +484,8 @@ class HomeRepositoryImpl @Inject constructor(
                     modifier.addProperty("id", modifierItem.id)
                     modifier.addProperty(
                         "price",
-                        String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price).toDouble()
+                        String.format(Locale.ENGLISH, "%.2f", modifierItem.attributes.price)
+                            .toDouble()
                     )
                     modifier.addProperty("quantity", modifierItem.attributes.quantity)
                     modifiers.add(modifier)
@@ -664,9 +677,11 @@ class HomeRepositoryImpl @Inject constructor(
                     val tiersArray = `object`.getJSONArray("data")
                     val type = object : TypeToken<List<LoyaltyTierV2?>?>() {}.type
                     val tiers =
-                        GsonHelper.gsonFinal().fromJson<List<LoyaltyTierV2>>(tiersArray.toString(), type)
+                        GsonHelper.gsonFinal()
+                            .fromJson<List<LoyaltyTierV2>>(tiersArray.toString(), type)
                     // TODO: Should set Tier as Comparable in SDK
-                    Collections.sort(tiers,
+                    Collections.sort(
+                        tiers,
                         java.util.Comparator { o1: LoyaltyTierV2, o2: LoyaltyTierV2 -> o1.startingPoints - o2.startingPoints } as java.util.Comparator<LoyaltyTierV2>)
                     response(HomeResponse(true, tiers, ""))
                 } catch (ex: JSONException) {
@@ -681,7 +696,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLastOrder(orderId: String, response: (HomeResponse) -> Unit) {
-        OrdersApiCall.getInstance().getOrder(orderId, object: ApiRequestListener {
+        OrdersApiCall.getInstance().getOrder(orderId, object : ApiRequestListener {
             override fun onSuccess(obj: Any?) {
                 if (obj is JSONObject) {
                     try {
@@ -694,6 +709,7 @@ class HomeRepositoryImpl @Inject constructor(
                     }
                 }
             }
+
             override fun onError(error: Any?) {
                 response(HomeResponse(false, null, error.toString()))
             }
@@ -702,11 +718,11 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCustomerOrder(customerId: String, response: (HomeResponse) -> Unit) {
-        CustomersApiCall.getInstance().getOrders(customerId, "1", "1", object: ApiRequestListener {
+        CustomersApiCall.getInstance().getOrders(customerId, "1", "1", object : ApiRequestListener {
             override fun onSuccess(obj: Any?) {
                 if (obj is JSONObject) {
                     try {
-                        val jsonObject  = obj as JSONObject
+                        val jsonObject = obj as JSONObject
                         val array = jsonObject.optJSONArray("data")
                         if (array != null && array.length() > 0) {
                             val order = OrderHistory.parse(array.getJSONObject(0))
@@ -718,15 +734,44 @@ class HomeRepositoryImpl @Inject constructor(
                     }
                 }
             }
+
             override fun onError(error: Any?) {
                 response(HomeResponse(false, null, error.toString()))
             }
         })
     }
 
-    override suspend fun getMenuCartItems(menuItems : (ArrayList<MenuItem>) -> Unit) {
+    override suspend fun getMenuCartItems(menuItems: (ArrayList<MenuItem>) -> Unit) {
         cacheUtilHelper.getCartItems {
             menuItems(it)
         }
+    }
+
+    override suspend fun getLoyaltyIframeToken(
+        customerId: String,
+        response: (HomeResponse) -> Unit
+    ) {
+        RewardApiCall.getInstance().getLoyaltyIframeToken(customerId, object : ApiRequestListener {
+            override fun onSuccess(obj: Any?) {
+                if (obj is JSONObject) {
+                    try {
+                        val data = obj.getJSONObject("data")
+                        if (data != null) {
+                            val token = data.getString("token")
+                            if (token != null) {
+                                CacheUtil.getInstance().loyaltyIframeToken = token
+                                response(HomeResponse(true, data, ""))
+                            }
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
+            override fun onError(error: Any?) {
+                response(HomeResponse(false, null, error.toString()))
+            }
+        })
     }
 }

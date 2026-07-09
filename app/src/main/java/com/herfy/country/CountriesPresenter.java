@@ -93,7 +93,12 @@ public class CountriesPresenter implements CountriesContract.Presenter {
                             concept = concept.parse(included.getJSONObject(i));
                             CacheUtil.getInstance().setConcept(concept);
                         } else if (included.getJSONObject(i).optString("type").equalsIgnoreCase("popup")) {
-                            CacheUtil.getInstance().setPopup(included.getJSONObject(i));
+                            JSONObject popupObj = included.getJSONObject(i);
+                            String label = popupObj.optJSONObject("attributes") != null ? popupObj.getJSONObject("attributes").optString("label") : "";
+                            if (label.equalsIgnoreCase("Capillary") || label.toLowerCase().contains("capillary")) {
+                                CacheUtil.getInstance().setCapillaryPopup(popupObj);
+                            }
+                            CacheUtil.getInstance().setPopup(popupObj);
                         }
                     }
                 } else {
@@ -172,13 +177,16 @@ public class CountriesPresenter implements CountriesContract.Presenter {
                     Slider slider = Slider.parse(data.getJSONObject(i));
                     if (slider.getLabel().equalsIgnoreCase("Mid Banner")) {
                         CacheUtil.getInstance().setMidSliderId(slider.getId());
-                        break;
+                    }
+                    if (slider.getLabel().equalsIgnoreCase(Values.CAPILLARY_BANNER_LABEL)) {
+                        CacheUtil.getInstance().setSliderId(Values.CAPILLARY_BANNER_LABEL, slider.getId());
                     }
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
             CacheUtil.getInstance().setMidSliderId("");
+            CacheUtil.getInstance().setSliderId(Values.CAPILLARY_BANNER_LABEL, "");
         }
         proceed();
     }

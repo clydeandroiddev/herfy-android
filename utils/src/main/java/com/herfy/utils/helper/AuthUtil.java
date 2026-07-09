@@ -86,6 +86,7 @@ public class AuthUtil {
         }
 
         editor.apply();
+        CacheUtil.getInstance().setLoyaltyIframeToken(null);
     }
 
     public synchronized Customer getCustomer() {
