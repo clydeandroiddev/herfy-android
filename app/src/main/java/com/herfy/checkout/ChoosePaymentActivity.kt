@@ -324,7 +324,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 cardContainer = view.findViewById(com.herfy.checkout.R.id.container_card)
                 cardImage = view.findViewById(com.herfy.checkout.R.id.card_image)
                 cardPayment = view.findViewById(com.herfy.checkout.R.id.cards_layout)
-                cardLabel.text = CacheUtil.getInstance().getTranslations(Text.NEW_DEBIT_CREDIT_CARD, "New Debit/Credit Card")
+                cardLabel.text = CacheUtil.getInstance().getTranslations(Text.DEBIT_CREDIT_CARD, "Debit/Credit Card")
                 binding.paymentTypeContainer.addView(view)
                 cardContainer.setOnClickListener {
                     selectedPaymentType = PaymentType.CARD

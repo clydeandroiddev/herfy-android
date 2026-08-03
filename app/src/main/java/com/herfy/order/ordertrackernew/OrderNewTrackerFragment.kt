@@ -518,7 +518,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
     override fun setupTranslations() {
         binding.apply {
             title.text =
-                CacheUtil.getInstance().getTranslations(Text.ORDER_TRACKER, "Order Trackre")
+                CacheUtil.getInstance().getTranslations(Text.ORDER_TRACKER, "Order Tracker")
             orderPaymentDetails.subtotalLabel.text =
                 CacheUtil.getInstance().getTranslations(Text.SUBTOTAL, "Subtotal")
             orderPaymentDetails.deliverLabel.text =

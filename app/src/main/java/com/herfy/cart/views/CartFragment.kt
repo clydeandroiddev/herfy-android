@@ -322,7 +322,7 @@ class CartFragment : BaseFragment(), CartContract.View, OnDateSelectedListener {
             cartPresenter.getConcept()
             cartPresenter.showCoupon()
             cartPresenter.getUpsells()
-            cartPresenter.fetchCustomerCards()
+//            cartPresenter.fetchCustomerCards()
         }, 100)
     }
 
