@@ -18,7 +18,7 @@
     "isProd": true
   },
   {
-    "url": "https://test-consumer-api2.getsolo.io/",
+    "url": "https://fe-online-api-pr-2190.foodics.dev/",
     "displayName": "Test Consumer",
     "contentUrlPrefix": "test-consumer/",
     "isProd": false
