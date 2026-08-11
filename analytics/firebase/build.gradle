@@ -97,6 +97,12 @@ android {
             shrinkResources false
             buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
         }
+        featureenvironment {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "String", "SOLO_APP", "\"0xeF2K8cOYRypcF7\""
+        }
     }
 
     compileOptions {
