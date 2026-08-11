@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,6 +15,7 @@ import com.herfy.utils.constants.Values
 import com.herfy.utils.helper.LocaleUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuCategory
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /**
  * [MenuCategoryAdapter] adapter for displaying all the menu items
@@ -22,8 +24,13 @@ class MenuCategoryAdapter(
     val onSelect: (Int, MenuCategory) -> Unit
 ) : RecyclerView.Adapter<MenuCategoryAdapter.MenuCategoryViewHolder>() {
 
+    companion object {
+        private const val PAYLOAD_IMAGE_VISIBILITY = "payload_image_visibility"
+    }
+
     private var selected = 0
     private var itemList = mutableListOf<MenuCategory>()
+    private var hideCategoryImagesOnScroll = false
 
     /**
      * [MenuCategoryViewHolder] for binding the views
@@ -38,7 +45,7 @@ class MenuCategoryAdapter(
         /**
          * bind the [MenuCategory] to display
          */
-        fun bind(isSelected: Boolean, menuCategory: MenuCategory) {
+        fun bind(isSelected: Boolean, menuCategory: MenuCategory, hideImage: Boolean) {
 
             binding.apply {
 
@@ -67,6 +74,8 @@ class MenuCategoryAdapter(
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(ivImage)
 
+                setImageVisibility(hideImage)
+
                 tvName.apply {
                     text = menuCategory.getName(LocaleUtil.getInstance().language)
                     if(isSelected) {
@@ -90,6 +99,32 @@ class MenuCategoryAdapter(
 
             }
 
+        }
+
+        fun setImageVisibility(hidden: Boolean) {
+            binding.ivImage.visibility = if (hidden) View.GONE else View.VISIBLE
+
+            val nameLayoutParams = binding.tvName.layoutParams as? MarginLayoutParams
+            val titleTopMargin = if (hidden) dpToPx(6) else dpToPx(8)
+            val titleBottomMargin = dpToPx(14)
+            if (nameLayoutParams != null &&
+                (nameLayoutParams.topMargin != titleTopMargin || nameLayoutParams.bottomMargin != titleBottomMargin)
+            ) {
+                nameLayoutParams.topMargin = titleTopMargin
+                nameLayoutParams.bottomMargin = titleBottomMargin
+                binding.tvName.layoutParams = nameLayoutParams
+            }
+
+            val itemLayoutParams = binding.layoutMenuCategory.layoutParams
+            val itemHeight = if (hidden) dpToPx(74) else dpToPx(118)
+            if (itemLayoutParams != null && itemLayoutParams.height != itemHeight) {
+                itemLayoutParams.height = itemHeight
+                binding.layoutMenuCategory.layoutParams = itemLayoutParams
+            }
+        }
+
+        private fun dpToPx(dp: Int): Int {
+            return (dp * itemView.resources.displayMetrics.density).roundToInt()
         }
     }
 
@@ -115,7 +150,23 @@ class MenuCategoryAdapter(
         holder.layoutMenuCategory.setOnClickListener {
             onSelect(position, menuCategory)
         }
-        holder.bind(selected == position, menuCategory)
+        holder.bind(selected == position, menuCategory, hideCategoryImagesOnScroll)
+    }
+
+    override fun onBindViewHolder(
+        holder: MenuCategoryViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.contains(PAYLOAD_IMAGE_VISIBILITY)) {
+            val menuCategory = itemList[position]
+            holder.layoutMenuCategory.setOnClickListener {
+                onSelect(position, menuCategory)
+            }
+            holder.setImageVisibility(hideCategoryImagesOnScroll)
+            return
+        }
+        super.onBindViewHolder(holder, position, payloads)
     }
 
     /**
@@ -145,6 +196,16 @@ class MenuCategoryAdapter(
             }
         }
         return null
+    }
+
+    fun setCategoryImagesHidden(hidden: Boolean) {
+        if (hideCategoryImagesOnScroll == hidden) {
+            return
+        }
+        hideCategoryImagesOnScroll = hidden
+        if (itemList.isNotEmpty()) {
+            notifyItemRangeChanged(0, itemList.size, PAYLOAD_IMAGE_VISIBILITY)
+        }
     }
 
 }

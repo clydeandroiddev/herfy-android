@@ -63,14 +63,14 @@
 						<View
 							android:id="@+id/viewMenu"
 							android:layout_width="match_parent"
-							android:layout_height="195dp"
+							android:layout_height="0dp"
 							app:layout_constraintTop_toBottomOf="@+id/containerSlider"
 							android:background="@color/color_background"/>
 
 						<View
 							android:id="@+id/viewSearch"
 							android:layout_width="match_parent"
-							android:layout_height="100dp"
+							android:layout_height="0dp"
 							app:layout_constraintTop_toBottomOf="@+id/containerSlider"
 							android:background="@color/color_background"
 							android:visibility="gone"/>
@@ -92,6 +92,58 @@
 							app:progressMode="false"
 							app:selectedDotColor="#D12928"/>
 
+						<LinearLayout
+							android:id="@+id/layoutSearch"
+							android:layout_width="0dp"
+							android:layout_height="45dp"
+							android:orientation="horizontal"
+							android:layout_marginTop="12dp"
+							android:layout_marginStart="12dp"
+							android:layout_marginEnd="12dp"
+							android:layout_marginBottom="12dp"
+							android:paddingStart="12dp"
+							android:paddingTop="8dp"
+							android:paddingBottom="8dp"
+							android:paddingEnd="12dp"
+							android:background="@drawable/background_search"
+							android:visibility="gone"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintTop_toBottomOf="@id/dots_indicator">
+
+							<androidx.appcompat.widget.AppCompatImageView
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center_vertical"
+								app:tint="#BABABA"
+								app:srcCompat="@drawable/ic_search" />
+
+							<EditText
+								android:id="@+id/etSearch"
+								android:layout_width="0dp"
+								android:layout_height="match_parent"
+								android:layout_weight="1"
+								android:layout_marginStart="12dp"
+								android:layout_marginEnd="12dp"
+								android:background="@null"
+								android:imeOptions="actionSearch"
+								android:gravity="start"
+								android:textAlignment="viewStart"
+								android:textColorHint="#BABABA"
+								android:textColor="#0C0C0C"/>
+
+							<androidx.appcompat.widget.AppCompatImageButton
+								android:id="@+id/btnClear"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_gravity="center_vertical"
+								android:background="?selectableItemBackgroundBorderless"
+								android:tint="#BABABA"
+								app:srcCompat="@drawable/ic_clear"
+								android:visibility="gone"/>
+
+						</LinearLayout>
+
 						<include
 							android:id="@+id/shimmerSlider"
 							layout="@layout/shimmer_slider"
@@ -104,85 +156,31 @@
 
 					</androidx.constraintlayout.widget.ConstraintLayout>
 
-					<androidx.appcompat.widget.Toolbar
-						android:id="@+id/toolbar"
-						android:layout_width="match_parent"
-						android:layout_height="170dp"
-						android:layout_gravity="bottom"
-						app:contentInsetLeft="0dp"
-						app:contentInsetStart="0dp"
-						app:contentInsetStartWithNavigation="0dp">
-
-						<LinearLayout
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:orientation="vertical">
-
-							<include
-								android:id="@+id/shimmerMenuCategories"
-								layout="@layout/shimmer_menu_categories"
-								android:layout_width="match_parent"
-								android:layout_height="wrap_content" />
-
-							<LinearLayout
-								android:id="@+id/layoutSearch"
-								android:layout_width="match_parent"
-								android:layout_height="45dp"
-								android:orientation="horizontal"
-								android:layout_marginTop="12dp"
-								android:layout_marginStart="12dp"
-								android:layout_marginEnd="12dp"
-								android:paddingStart="12dp"
-								android:paddingTop="8dp"
-								android:paddingBottom="8dp"
-								android:paddingEnd="12dp"
-								android:background="@drawable/background_search"
-								android:visibility="gone">
-
-								<androidx.appcompat.widget.AppCompatImageView
-									android:layout_width="wrap_content"
-									android:layout_height="wrap_content"
-									android:layout_gravity="center_vertical"
-									app:tint="#BABABA"
-									app:srcCompat="@drawable/ic_search" />
-
-								<EditText
-									android:id="@+id/etSearch"
-									android:layout_width="0dp"
-									android:layout_height="match_parent"
-									android:layout_weight="1"
-									android:layout_marginStart="12dp"
-									android:layout_marginEnd="12dp"
-									android:background="@null"
-									android:imeOptions="actionSearch"
-									android:gravity="start"
-									android:textAlignment="viewStart"
-									android:textColorHint="#BABABA"
-									android:textColor="#0C0C0C"/>
-
-								<androidx.appcompat.widget.AppCompatImageButton
-									android:id="@+id/btnClear"
-									android:layout_width="wrap_content"
-									android:layout_height="wrap_content"
-									android:layout_gravity="center_vertical"
-									android:background="?selectableItemBackgroundBorderless"
-									android:tint="#BABABA"
-									app:srcCompat="@drawable/ic_clear"
-									android:visibility="gone"/>
-
-							</LinearLayout>
-
-							<androidx.recyclerview.widget.RecyclerView
-								android:id="@+id/rvMenuCategories"
-								android:layout_width="match_parent"
-								android:layout_height="wrap_content"
-								android:layout_marginTop="16dp"/>
-
-						</LinearLayout>
-
-					</androidx.appcompat.widget.Toolbar>
-
 				</com.google.android.material.appbar.CollapsingToolbarLayout>
+
+				<FrameLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@color/color_background">
+
+					<include
+						android:id="@+id/shimmerMenuCategories"
+						layout="@layout/shimmer_menu_categories"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content" />
+
+					<androidx.recyclerview.widget.RecyclerView
+						android:id="@+id/rvMenuCategories"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="24dp"
+						android:layout_marginBottom="10dp"
+						android:paddingTop="4dp"
+						android:paddingBottom="6dp"
+						android:clipToPadding="false"
+						android:visibility="gone" />
+
+				</FrameLayout>
 
 			</com.google.android.material.appbar.AppBarLayout>
 
