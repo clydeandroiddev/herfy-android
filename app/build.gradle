@@ -154,12 +154,14 @@ android {
             buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
             buildConfigField "String", "SOLO_APP", "\"gSG2h3Zn9BDutS4B\""
         }
+       // https://fe-online-api-pr-2190.foodics.dev/
+//        https://test-consumer-api2.getsolo.io/
         consumer {
             debuggable true
             minifyEnabled false
             shrinkResources false
             versionNameSuffix "-consumer-$dateToday.$apkCountForToday"
-            buildConfigField "String", "BASE_URL", "\"https://test-consumer-api2.getsolo.io/\""
+            buildConfigField "String", "BASE_URL", "\"https://fe-online-api-pr-2190.foodics.dev/\""
             buildConfigField "boolean", "DISABLE_FACEBOOK_LOGIN", "false"
             buildConfigField "float", "FEATURE_PHASE", '1.3'
             buildConfigField "String", "MOYASAR_BASE_URL", "\"https://api.moyasar.com\""
