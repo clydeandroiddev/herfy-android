@@ -67,6 +67,12 @@ android {
             minifyEnabled false
             shrinkResources false
         }
+
+        featureenvironment {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
         kiosk {
             debuggable true
             minifyEnabled false
