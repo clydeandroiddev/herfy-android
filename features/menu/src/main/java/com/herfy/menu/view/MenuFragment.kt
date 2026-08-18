@@ -183,13 +183,16 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
         }
 
         val expandedItemHeight = ViewUtil.dpToPx(requireContext(), 118)
-        val collapsedItemHeight = ViewUtil.dpToPx(requireContext(), 74)
+        val collapsedItemHeight = ViewUtil.dpToPx(requireContext(), 60)
         val targetItemHeight = (expandedItemHeight - ((expandedItemHeight - collapsedItemHeight) * normalizedProgress)).toInt()
         val expandedNameTopMargin = ViewUtil.dpToPx(requireContext(), 8)
-        val collapsedNameTopMargin = ViewUtil.dpToPx(requireContext(), 6)
+        val collapsedNameTopMargin = ViewUtil.dpToPx(requireContext(), 0)
         val targetNameTopMargin = (expandedNameTopMargin -
             ((expandedNameTopMargin - collapsedNameTopMargin) * normalizedProgress)).toInt()
-        val targetNameBottomMargin = ViewUtil.dpToPx(requireContext(), 14)
+        val expandedNameBottomMargin = ViewUtil.dpToPx(requireContext(), 14)
+        val collapsedNameBottomMargin = ViewUtil.dpToPx(requireContext(), 0)
+        val targetNameBottomMargin = (expandedNameBottomMargin -
+            ((expandedNameBottomMargin - collapsedNameBottomMargin) * normalizedProgress)).toInt()
 
         val childCount = binding.rvMenuCategories.childCount
         for (i in 0 until childCount) {

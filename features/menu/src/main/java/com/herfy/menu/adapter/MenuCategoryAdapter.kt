@@ -105,8 +105,8 @@ class MenuCategoryAdapter(
             binding.ivImage.visibility = if (hidden) View.GONE else View.VISIBLE
 
             val nameLayoutParams = binding.tvName.layoutParams as? MarginLayoutParams
-            val titleTopMargin = if (hidden) dpToPx(6) else dpToPx(8)
-            val titleBottomMargin = dpToPx(14)
+            val titleTopMargin = if (hidden) 0 else dpToPx(8)
+            val titleBottomMargin = 0
             if (nameLayoutParams != null &&
                 (nameLayoutParams.topMargin != titleTopMargin || nameLayoutParams.bottomMargin != titleBottomMargin)
             ) {
@@ -116,7 +116,7 @@ class MenuCategoryAdapter(
             }
 
             val itemLayoutParams = binding.layoutMenuCategory.layoutParams
-            val itemHeight = if (hidden) dpToPx(74) else dpToPx(118)
+            val itemHeight = if (hidden) dpToPx(60) else dpToPx(118)
             if (itemLayoutParams != null && itemLayoutParams.height != itemHeight) {
                 itemLayoutParams.height = itemHeight
                 binding.layoutMenuCategory.layoutParams = itemLayoutParams
