@@ -3,6 +3,8 @@
     android:id="@+id/custom_checkout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="240dp"
+    android:clipToPadding="false"
     android:background="?attr/colorPrimary">
 
     <FrameLayout
