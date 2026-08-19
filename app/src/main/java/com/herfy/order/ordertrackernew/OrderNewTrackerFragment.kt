@@ -1873,23 +1873,7 @@ class OrderNewTrackerFragment : BaseFragment(), OrdersContract.View,
 
                     try {
                         if (orderAddress != null) {
-
-                            if (eta == null || eta == 0) {
-                                textView.visibility = View.INVISIBLE
-                            } else {
-                                textView.text = if (eta > 1) {
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.DRIVER_MINUTES_AWAY,
-                                        "(x) mins away"
-                                    ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
-                                } else {
-                                    CacheUtil.getInstance().getTranslations(
-                                        Text.DRIVER_MINUTE_AWAY,
-                                        "(x) min away"
-                                    ).replace("(x)", eta.toString()).lowercase(Locale.getDefault())
-                                }
-                                textView.visibility = View.VISIBLE
-                            }
+                            textView.visibility = View.GONE
 
                             currentLocationToUse =
                                 orderAddress?.attributes?.lat?.toDouble()?.let { orderAddressLat ->

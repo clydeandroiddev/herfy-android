@@ -11,7 +11,9 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +25,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import com.herfy.analytics.facebook.FacebookAppEventUtil
 import com.herfy.analytics.kochava.KochavaEventUtil
 import com.herfy.analytics.kochava.KochavaTrackerUtil
@@ -53,6 +56,7 @@ import com.herfy.utils.menu.MenuUtil
 import com.skylinedynamics.solosdk.api.models.objects.MenuItem
 import com.skylinedynamics.solosdk.api.models.objects.OrderType
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 import org.greenrobot.eventbus.EventBus
 
 
@@ -66,6 +70,9 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
     private lateinit var sliderImageAdapter: SliderImageAdapter
     private var sliderHandler: Handler? = null
     private var isCartEmpty = true
+    private var areCategoryImagesHidden = false
+    private var appBarFullyCollapsed = false
+    private var categoryExpandedTopMarginPx = 0
 
     private var orderTypeLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -122,6 +129,134 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 }
             }
         }
+    }
+
+    private fun setupCategoryHeaderMetrics() {
+        categoryExpandedTopMarginPx = ViewUtil.dpToPx(requireContext(), 24)
+    }
+
+    private fun setSearchModeUi(isSearching: Boolean) {
+        if (isSearching) {
+            binding.containerSlider.gone()
+            binding.dotsIndicator.gone()
+            binding.shimmerSlider.root.gone()
+            binding.rvMenuCategories.gone()
+            binding.viewMenu.gone()
+            binding.viewSearch.visible()
+            binding.appBarLayout.setExpanded(true, false)
+        } else {
+            binding.containerSlider.visible()
+            binding.shimmerSlider.root.gone()
+            if (sliderImageAdapter.itemCount > 1) {
+                binding.dotsIndicator.visible()
+            }
+            binding.rvMenuCategories.visible()
+            binding.viewMenu.visible()
+            binding.viewSearch.gone()
+            binding.appBarLayout.setExpanded(true, false)
+        }
+    }
+
+    private fun applyCategoryHeaderState(isCollapsed: Boolean) {
+        areCategoryImagesHidden = isCollapsed
+        menuCategoryAdapter.setCategoryImagesHidden(isCollapsed)
+        binding.rvMenuCategories.visible()
+        (binding.rvMenuCategories.layoutParams as? MarginLayoutParams)?.let { params ->
+            val targetTopMargin = if (isCollapsed) ViewUtil.dpToPx(requireContext(), 12) else categoryExpandedTopMarginPx
+            if (params.topMargin != targetTopMargin) {
+                params.topMargin = targetTopMargin
+                binding.rvMenuCategories.layoutParams = params
+            }
+        }
+    }
+
+    private fun applyCategoryHeaderProgress(progress: Float) {
+        val normalizedProgress = progress.coerceIn(0f, 1f)
+        val expandedTopMargin = categoryExpandedTopMarginPx
+        val collapsedTopMargin = ViewUtil.dpToPx(requireContext(), 12)
+        (binding.rvMenuCategories.layoutParams as? MarginLayoutParams)?.let { params ->
+            val targetTopMargin = (expandedTopMargin - ((expandedTopMargin - collapsedTopMargin) * normalizedProgress)).toInt()
+            if (params.topMargin != targetTopMargin) {
+                params.topMargin = targetTopMargin
+                binding.rvMenuCategories.layoutParams = params
+            }
+        }
+
+        val expandedItemHeight = ViewUtil.dpToPx(requireContext(), 118)
+        val collapsedItemHeight = ViewUtil.dpToPx(requireContext(), 60)
+        val targetItemHeight = (expandedItemHeight - ((expandedItemHeight - collapsedItemHeight) * normalizedProgress)).toInt()
+        val expandedNameTopMargin = ViewUtil.dpToPx(requireContext(), 8)
+        val collapsedNameTopMargin = ViewUtil.dpToPx(requireContext(), 0)
+        val targetNameTopMargin = (expandedNameTopMargin -
+            ((expandedNameTopMargin - collapsedNameTopMargin) * normalizedProgress)).toInt()
+        val expandedNameBottomMargin = ViewUtil.dpToPx(requireContext(), 14)
+        val collapsedNameBottomMargin = ViewUtil.dpToPx(requireContext(), 0)
+        val targetNameBottomMargin = (expandedNameBottomMargin -
+            ((expandedNameBottomMargin - collapsedNameBottomMargin) * normalizedProgress)).toInt()
+
+        val childCount = binding.rvMenuCategories.childCount
+        for (i in 0 until childCount) {
+            val item = binding.rvMenuCategories.getChildAt(i) ?: continue
+            item.layoutParams = item.layoutParams.apply {
+                if (height != targetItemHeight) {
+                    height = targetItemHeight
+                }
+            }
+
+            item.findViewById<ImageView>(R.id.ivImage)?.let { imageView ->
+                imageView.visibility = View.VISIBLE
+                imageView.alpha = 1f - normalizedProgress
+                val expandedImageSize = ViewUtil.dpToPx(requireContext(), 54)
+                val collapsedImageSize = 0
+                val targetImageSize = (expandedImageSize -
+                    ((expandedImageSize - collapsedImageSize) * normalizedProgress)).toInt().coerceAtLeast(0)
+                imageView.layoutParams = imageView.layoutParams.apply {
+                    if (width != targetImageSize || height != targetImageSize) {
+                        width = targetImageSize
+                        height = targetImageSize
+                    }
+                }
+                if (normalizedProgress >= 0.98f) {
+                    imageView.visibility = View.GONE
+                }
+            }
+
+            item.findViewById<TextView>(R.id.tvName)?.let { title ->
+                (title.layoutParams as? MarginLayoutParams)?.let { params ->
+                    if (params.topMargin != targetNameTopMargin || params.bottomMargin != targetNameBottomMargin) {
+                        params.topMargin = targetNameTopMargin
+                        params.bottomMargin = targetNameBottomMargin
+                        title.layoutParams = params
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupAppBarCollapseListener() {
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (binding.viewSearch.isVisible()) {
+                return@OnOffsetChangedListener
+            }
+
+            val offset = abs(verticalOffset)
+            val progress = (offset / appBarLayout.totalScrollRange.toFloat().coerceAtLeast(1f)).coerceIn(0f, 1f)
+            applyCategoryHeaderProgress(progress)
+            val collapseThreshold = appBarLayout.totalScrollRange - ViewUtil.dpToPx(requireContext(), 1)
+            val expandThreshold = appBarLayout.totalScrollRange - ViewUtil.dpToPx(requireContext(), 32)
+            val shouldCollapse = if (appBarFullyCollapsed) {
+                offset >= expandThreshold
+            } else {
+                offset >= collapseThreshold
+            }
+
+            if (appBarFullyCollapsed == shouldCollapse) {
+                return@OnOffsetChangedListener
+            }
+
+            appBarFullyCollapsed = shouldCollapse
+            applyCategoryHeaderState(shouldCollapse)
+        })
     }
 
     override fun onResume() {
@@ -185,19 +320,13 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                         override fun afterTextChanged(p0: Editable?) {
                             p0?.let {
                                 if (it.isNotEmpty()) {
-                                    rvMenuCategories.gone()
-                                    viewMenu.gone()
-                                    viewSearch.visible()
-                                    toolbar.layoutParams.height =
-                                        resources.getDimensionPixelSize(R.dimen.toolbar_height_search)
+                                    resetHeaderCollapse()
+                                    setSearchModeUi(isSearching = true)
                                     viewModel.searchMenuItems(it.toString())
                                     btnClear.visible()
                                 } else {
-                                    rvMenuCategories.visible()
-                                    viewMenu.visible()
-                                    viewSearch.gone()
-                                    toolbar.layoutParams.height =
-                                        resources.getDimensionPixelSize(R.dimen.toolbar_height_menu)
+                                    resetHeaderCollapse()
+                                    setSearchModeUi(isSearching = false)
                                     viewModel.menuAdapterItems.value?.peekContent()
                                         ?.let { menuAdapterItems ->
                                             menuCategoryItemAdapter.addData(menuAdapterItems)
@@ -237,6 +366,9 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                     snapHelper.attachToRecyclerView(this)
                     adapter = menuCategoryAdapter
                 }
+                setupCategoryHeaderMetrics()
+                applyCategoryHeaderState(false)
+                setupAppBarCollapseListener()
 
                 rvMenuCategoriesItems.apply {
                     layoutManager = LinearLayoutManager(it)
@@ -262,6 +394,14 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
             getSlides()
             getMenuCategoriesItems()
         }
+    }
+
+    private fun resetHeaderCollapse() {
+        appBarFullyCollapsed = false
+        applyCategoryHeaderState(false)
+        binding.layoutSearch.alpha = 1f
+        binding.layoutSearch.translationY = 0f
+        binding.layoutSearch.visibility = View.VISIBLE
     }
 
     override fun observe() {
@@ -422,7 +562,8 @@ class MenuFragment : BaseFragment<MenuViewModel, FragmentMenuBinding>() {
                 activity?.apply {
                     runOnUiThread {
                         binding.apply {
-                            appBarLayout.setExpanded(false, false)
+                            // Keep slider/search header visible while user is searching.
+                            appBarLayout.setExpanded(true, false)
                             rvMenuCategoriesItems.isNestedScrollingEnabled = false
                             layoutSearchEmptyStateView.apply {
                                 if (searchMenuAdapterItems.isEmpty()) {

@@ -133,6 +133,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
     private var selectedMenuCategoryPosition = 0
     private var fromInitialLaunch = false
     private var isDiffMenuEnabled = false
+    private var isHeaderCollapsedByScroll = false
 
     private val tabsSelectionListener = object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -192,6 +193,7 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
 
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
+            updateHeaderOnMenuScroll(dy)
             if (menuIsScrolled) {
                 val firstVisibleItem =
                     (binding.menuRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
@@ -202,6 +204,53 @@ class NewMenuFragment : BaseFragment(), MenuContract.View, SliderContract.View, 
                     selectTab(firstVisibleItem)
                 }
             }
+        }
+    }
+
+    private fun updateHeaderOnMenuScroll(dy: Int) {
+        if (dy > 0 && !isHeaderCollapsedByScroll) {
+            isHeaderCollapsedByScroll = true
+            hideSearchBoxOnScroll()
+            setCategoryImagesVisible(false)
+        } else if (dy < 0 && isHeaderCollapsedByScroll) {
+            isHeaderCollapsedByScroll = false
+            showSearchBoxOnScroll()
+            setCategoryImagesVisible(true)
+        }
+    }
+
+    private fun hideSearchBoxOnScroll() {
+        if (binding.cardClose.visibility == View.VISIBLE || binding.searchBox.visibility != View.VISIBLE) {
+            return
+        }
+        binding.searchBox.animate().cancel()
+        binding.searchBox.animate().alpha(0f).setDuration(150).withEndAction {
+            binding.searchBox.visibility = View.GONE
+        }.start()
+    }
+
+    private fun showSearchBoxOnScroll() {
+        if (binding.cardClose.visibility == View.VISIBLE || binding.searchBox.visibility == View.VISIBLE) {
+            return
+        }
+        binding.searchBox.animate().cancel()
+        binding.searchBox.alpha = 0f
+        binding.searchBox.visibility = View.VISIBLE
+        binding.searchBox.animate().alpha(1f).setDuration(150).start()
+    }
+
+    private fun setCategoryImagesVisible(visible: Boolean) {
+        if (!CacheUtil.getInstance().application.attributes.settings.categoryDisplay.equals(
+                Values.IMAGE_TEXT,
+                ignoreCase = true
+            )
+        ) {
+            return
+        }
+        val imageVisibility = if (visible) View.VISIBLE else View.GONE
+        val size = cardViewList.size
+        for (i in 0 until size) {
+            cardViewList[i]?.visibility = imageVisibility
         }
     }
     private val menuCategoriesAdapter: MenuCategoriesAdapter by lazy {
