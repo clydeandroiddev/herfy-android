@@ -352,7 +352,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         paymentPresenter!!.validateOrder(
             false, CacheUtil.getInstance().orderStore, null, loyaltypointsInput, isShowCardFailed
         )
-        paymentPresenter!!.fetchCustomerCards()
+//        paymentPresenter!!.fetchCustomerCards()
         showSelectedPayment()
         isShowCardFailed = false
     }

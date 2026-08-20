@@ -479,7 +479,7 @@ public class PaymentActivity extends BaseActivity implements PaymentContract.Vie
         }
 
         paymentPresenter.validateOrder(false, CacheUtil.getInstance().getOrderStore(), null, 0, isShowCardFailed);
-        paymentPresenter.fetchCustomerCards();
+//        paymentPresenter.fetchCustomerCards();
         isShowCardFailed = false;
     }
 

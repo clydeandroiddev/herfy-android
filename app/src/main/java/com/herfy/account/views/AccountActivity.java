@@ -112,7 +112,7 @@ public class AccountActivity extends BaseActivity implements AccountContract.Vie
         showLoadingDialog();
         accountPresenter.start();
         accountPresenter.getPassword();
-        accountPresenter.fetchCustomerCards();
+//        accountPresenter.fetchCustomerCards();
     }
 
     @Override
