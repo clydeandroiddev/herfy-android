@@ -758,6 +758,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         binding!!.layoutLoyalty.loyaltySwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
+                if (CacheUtil.getInstance().orderPayment == PaymentType.CASH) {
+                    CacheUtil.getInstance().orderPayment = PaymentType.NONE
+                    showSelectedPayment()
+                }
                 binding!!.layoutLoyalty.layoutLoyaltyPoints.visibility = View.VISIBLE
             } else {
                 binding!!.layoutLoyalty.layoutLoyaltyPoints.visibility = View.GONE
@@ -1091,6 +1095,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             mukafaaSelected = false
             binding!!.placeOrder.setVisibility(View.VISIBLE)
         }
+        
+        binding!!.layoutLoyalty.loyaltySwitch.isChecked = false
     }
 
     override fun showValidateOrderError(errors: List<String>) {}
@@ -1251,7 +1257,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         if (totalPrice == 0.0 && pointsUsed > 0) {
             if (deliveryCharge <= 0) {
                 binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.visibility = View.VISIBLE
-                selectPaymentTypeCash()
+                CacheUtil.getInstance().orderPayment = PaymentType.NONE
+                showSelectedPayment()
             } else if (subtotalPrice == pointsSarValue && deliveryCharge > 0) {
                 CacheUtil.getInstance().orderPayment = PaymentType.NONE
                 showSelectedPayment()
@@ -1453,16 +1460,11 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
             it.apply {
                 if (CacheUtil.getInstance().orderPayment == PaymentType.CASH || CacheUtil.getInstance().orderPayment == PaymentType.NONE) {
                     alrajhiBlocker.isVisible = true
-                    loyaltyBlocker.isVisible = true
                     alrhajiPayment.alpha = 0.5f
-                    loyaltyPayment.alpha = 0.5f
-                    binding!!.layoutLoyalty.loyaltySwitch.isChecked = false
                     binding!!.layoutAlrahji.switchAlrahji.isChecked = false
-
-
-                    //test only
-                    /*loyaltyPayment.alpha = 1f
-                    loyaltyBlocker.isVisible = false*/
+                    
+                    loyaltyPayment.alpha = 1f
+                    loyaltyBlocker.isVisible = false
                 } else {
                     alrhajiPayment.alpha = 1f
                     loyaltyPayment.alpha = 1f
@@ -1499,6 +1501,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
     private fun showPaymentMethod() {
         val intent = Intent(this, ChoosePaymentActivity::class.java)
+        intent.putExtra("isLoyaltyUsed", binding!!.layoutLoyalty.loyaltySwitch.isChecked)
         startActivity(intent)
     }
 
