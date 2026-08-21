@@ -872,12 +872,15 @@ public class PaymentPresenter implements PaymentContract.Presenter {
 
         orderBody.addProperty("total", total);
 
-        if (canProceedViaFullPoints()) {
-            CacheUtil.getInstance().setOrderPayment(PaymentType.CASH);
-        }
-
         PaymentType orderPayment = CacheUtil.getInstance().getOrderPayment();
-        if (orderPayment != PaymentType.NONE && orderPayment != PaymentType.CARD) {
+        
+        if (canProceedViaFullPoints() || total == 0) {
+            JsonObject payment = new JsonObject();
+            payment.addProperty("method", "cash");
+            payment.addProperty("amount", total);
+            payment.addProperty("cash-presented", Double.parseDouble(String.format(Locale.ENGLISH, "%.2f", cashPresented)));
+            orderBody.add("payment", payment);
+        } else if (orderPayment != PaymentType.NONE && orderPayment != PaymentType.CARD) {
             if (checkIfHasCashPaymentType(CacheUtil.getInstance().getOrderPayment())) {
                 JsonObject payment = new JsonObject();
                 payment.addProperty("method", CacheUtil.getInstance().getOrderPayment().getValue());

@@ -1128,7 +1128,8 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showCardFailed() {
-        if (CacheUtil.getInstance().orderPayment == PaymentType.CARD) {
+        val isLoyaltyUsed = binding?.layoutLoyalty?.loyaltySwitch?.isChecked ?: false
+        if (CacheUtil.getInstance().orderPayment == PaymentType.CARD && !isLoyaltyUsed) {
             showAlertDialog(
                 "", CacheUtil.getInstance().getTranslations(
                     Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH,
