@@ -63,11 +63,8 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
     private lateinit var cardLabel: TextView
     private lateinit var codLabel: TextView
 
-    private var isLoyaltyUsed = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isLoyaltyUsed = intent.getBooleanExtra("isLoyaltyUsed", false)
         binding = ActivityChoosePaymentMethodBinding.inflate(layoutInflater)
         setContentView(binding.root)
         checkoutPresenter  = PaymentPresenter(this)
@@ -316,14 +313,7 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                 cashLabel = view.findViewById(R.id.cash_label)
                 cashImage = view.findViewById(R.id.cash_image)
                 cashLabel.text = CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
-                
-                if (isLoyaltyUsed) {
-                    cashContainer.alpha = 0.5f
-                    cashContainer.setOnClickListener(null)
-                } else {
-                    cashContainer.setOnClickListener { selectPaymentTypeCash() }
-                }
-                
+                cashContainer.setOnClickListener { selectPaymentTypeCash() }
                 binding.paymentTypeContainer.addView(view)
             } else if (paymentType == PaymentType.CARD) {
                 isCardPaymentAvailable = true
@@ -370,15 +360,15 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                     if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
                     checkoutPresenter.cashPresented = 0.0
 
-                   /* if (paymentPresenter.hasMukafaaTransactionId()) {
-                        mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
-                    } else {
-                        mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
-                        mukafaaNumbers.setVisibility(View.GONE)
-                        mukafaaSelected = false
-                        requestOTP.setVisibility(View.GONE)
-                        placeOrder.setVisibility(View.VISIBLE)
-                    }*/
+                    /* if (paymentPresenter.hasMukafaaTransactionId()) {
+                         mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
+                     } else {
+                         mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
+                         mukafaaNumbers.setVisibility(View.GONE)
+                         mukafaaSelected = false
+                         requestOTP.setVisibility(View.GONE)
+                         placeOrder.setVisibility(View.VISIBLE)
+                     }*/
 
                 }
 
