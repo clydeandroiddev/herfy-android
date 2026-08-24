@@ -944,7 +944,7 @@ public class Text {
     public static final String APPLY_DIGITAL_COUPONS = "apply_digital_coupons";
     public static final String AVAILABLE_TO_REDEEM = "available_to_redeem";
     public static final String MORE_TO_REDEEM = "more_to_redeem";
-    public static final String EXPIRES_LABEL = "expires_label";
+    public static final String EXPIRES_LABEL = "expires_value";
     public static final String APPLY_A_COUPON_LABEL = "apply_a_coupon";
     public static final String VIEW_COUPONS_LABEL = "view_coupons";
     public static final String INVALID_FOR_THIS_ORDER = "invalid_for_this_order";
