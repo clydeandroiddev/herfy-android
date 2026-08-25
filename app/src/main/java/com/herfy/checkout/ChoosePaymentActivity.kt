@@ -360,15 +360,15 @@ class ChoosePaymentActivity : BaseActivity(), PaymentContract.View {
                     if (this::creditCardAdapter.isInitialized)  creditCardAdapter.setSelectedPosition(-1)
                     checkoutPresenter.cashPresented = 0.0
 
-                   /* if (paymentPresenter.hasMukafaaTransactionId()) {
-                        mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
-                    } else {
-                        mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
-                        mukafaaNumbers.setVisibility(View.GONE)
-                        mukafaaSelected = false
-                        requestOTP.setVisibility(View.GONE)
-                        placeOrder.setVisibility(View.VISIBLE)
-                    }*/
+                    /* if (paymentPresenter.hasMukafaaTransactionId()) {
+                         mukafaaPayment.setStrokeColor(Color.parseColor(CacheUtil.getInstance().colorMain))
+                     } else {
+                         mukafaaPayment.setStrokeColor(Color.TRANSPARENT)
+                         mukafaaNumbers.setVisibility(View.GONE)
+                         mukafaaSelected = false
+                         requestOTP.setVisibility(View.GONE)
+                         placeOrder.setVisibility(View.VISIBLE)
+                     }*/
 
                 }
 

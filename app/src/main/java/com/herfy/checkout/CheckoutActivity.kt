@@ -1084,7 +1084,7 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
 
         binding!!.layoutPayment.tvSelectedPayment.text =
             CacheUtil.getInstance().getTranslations(Text.CASH_ON_PICKUP, "Cash")
-        binding!!.layoutPayment.ivSelectedPayment.setImageResource(com.herfy.checkout.R.drawable.ic_payment_cash)
+        binding!!.layoutPayment.ivSelectedPayment.setImageResource(com.herfy.common.R.drawable.ic_common_payment_type_cash)
 
         if (paymentPresenter!!.hasMukafaaTransactionId()) {
         } else {
@@ -1122,7 +1122,10 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
     }
 
     override fun showCardFailed() {
-        if (CacheUtil.getInstance().orderPayment == PaymentType.CARD) {
+        val isLoyaltyUsed = binding?.layoutLoyalty?.loyaltySwitch?.isChecked == true
+        val isAlrajhiUsed = binding?.layoutAlrahji?.switchAlrahji?.isChecked == true
+
+        if (CacheUtil.getInstance().orderPayment == PaymentType.CARD && !isLoyaltyUsed && !isAlrajhiUsed) {
             showAlertDialog(
                 "", CacheUtil.getInstance().getTranslations(
                     Text.CARD_PAYMENT_FAILED_PAY_WITH_CASH,
@@ -1189,7 +1192,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         binding!!.layoutPaymentSummary.viewDeliverySeparator.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.setVisible(isDeliverCharge)
         binding!!.layoutPaymentSummary.tvDeliveryChargeLabel.setVisible(isDeliverCharge)
-        binding
         binding!!.layoutPaymentSummary.tvDeliveryChargeValue.text = deliveryChargeTotal
 
         if (charges.size > 0) {
@@ -1251,7 +1253,6 @@ class CheckoutActivity : BaseActivity(), PaymentContract.View, SessionDelegate,
         if (totalPrice == 0.0 && pointsUsed > 0) {
             if (deliveryCharge <= 0) {
                 binding!!.layoutLoyalty.loyaltyPointsPaymentContainer.visibility = View.VISIBLE
-                selectPaymentTypeCash()
             } else if (subtotalPrice == pointsSarValue && deliveryCharge > 0) {
                 CacheUtil.getInstance().orderPayment = PaymentType.NONE
                 showSelectedPayment()
