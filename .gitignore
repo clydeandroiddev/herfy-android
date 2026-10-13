@@ -28,3 +28,6 @@ awsconfiguration.json
 app/**/release/*
 *.apk
 *.aab
+
+# JVM heap dumps
+*.hprof
